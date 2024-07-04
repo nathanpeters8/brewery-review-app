@@ -1,28 +1,42 @@
-// Run this example by adding <%= javascript_pack_tag 'hello_react' %> to the head of your layout file,
-// like app/views/layouts/application.html.erb. All it does is render <div>Hello React</div> at the bottom
-// of the page.
+import React from 'react';
+import ReactDOM from 'react-dom';
+import Layout from '@src/layout';
 
-import React from 'react'
-import ReactDOM from 'react-dom'
-import PropTypes from 'prop-types'
+import './home.scss';
 
-import './home.scss'
-
-const Hello = props => (
-  <div className='text-center text-danger h3'>Hello {props.name}!</div>
-)
-
-Hello.defaultProps = {
-  name: 'David'
-}
-
-Hello.propTypes = {
-  name: PropTypes.string
-}
+const Home = (props) => {
+  return (
+    <Layout>
+      <div className="container pt-5">
+        <div className="row">
+          <h4 className='text-center'>Search for breweries using any of all fields below:</h4>
+        </div>
+        <form className='row d-flex justify-content-center mt-4 border py-3'>
+          <div className="col-10 text-center">
+            <label htmlFor="breweryName" className='form-label'>Brewery Name</label>
+            <input type="text" id="breweryName" name='name' className='form-control text-center'/>
+          </div>
+          <div className="col-5 text-center mt-3">
+            <label htmlFor="state" className='form-label'>State</label>
+            <input type="text" id="state" name='state' className='form-control text-center'/>
+          </div>
+          <div className="col-5 text-center mt-3">
+            <label htmlFor="city" className='form-label'>City</label>
+            <input type="text" id="city" name='city' className='form-control text-center'/>
+          </div>
+          <div className="col-5 text-center mt-3">
+            <label htmlFor="zipCode" className='form-label'>Zip Code</label>
+            <input type="text" id="zipCode" name='zip' className='form-control text-center'/>
+          </div>
+          <div className="col-8 text-center mt-4">
+            <button className="btn btn-lg btn-primary">Search</button>
+          </div>
+        </form>
+      </div>
+    </Layout>
+  );
+};
 
 document.addEventListener('DOMContentLoaded', () => {
-  ReactDOM.render(
-    <Hello name="React" />,
-    document.body.appendChild(document.createElement('div')),
-  )
-})
+  ReactDOM.render(<Home />, document.body.appendChild(document.createElement('div')));
+});
