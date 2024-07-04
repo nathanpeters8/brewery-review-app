@@ -6,8 +6,10 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
 
+import './home.scss'
+
 const Hello = props => (
-  <div className='text-danger h3'>Hello {props.name}!</div>
+  <div className='text-center text-danger h3'>Hello {props.name}!</div>
 )
 
 Hello.defaultProps = {
