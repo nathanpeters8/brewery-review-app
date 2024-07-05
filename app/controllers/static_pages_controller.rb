@@ -4,4 +4,8 @@ class StaticPagesController < ApplicationController
 
   def results
   end
+
+  def brewery
+    
+  end
 end
