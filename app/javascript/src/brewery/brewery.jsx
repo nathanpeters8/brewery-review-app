@@ -1,11 +1,28 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from '@src/layout';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar } from '@fortawesome/free-solid-svg-icons';
+import { GetBreweriesById } from '../utils/breweryDBRequests';
 
 import './brewery.scss';
 
 const Brewery = (props) => {
+  const [id, setId] = useState('');
+  const [brewery, setBrewery] = useState([]);
+
+  useEffect(() => {
+    setId(props.data.id);
+  }, [props.data.id]);
+
+  useEffect(() => {
+    if(id) {
+      GetBreweriesById(id, (response) => {
+        console.log(response);
+        setBrewery(response);
+      })
+    }
+  }, [id]);
+
   return (
     <Layout>
       <div className='container'>
@@ -13,7 +30,7 @@ const Brewery = (props) => {
           <div className='col-8 mb-2 d-flex py-2 justify-content-around'>
             <img src='https://placehold.co/200' />
             <div className='d-flex flex-column'>
-              <h4 className=''>Brewery Name</h4>
+              <h4 className=''>{brewery.name}</h4>
               <h5>
                 <FontAwesomeIcon icon={faStar} />
                 <FontAwesomeIcon icon={faStar} />
@@ -22,17 +39,16 @@ const Brewery = (props) => {
                 <FontAwesomeIcon icon={faStar} />
                 <small className='fs-6 ms-3'>5.0 (5 reviews)</small>
               </h5>
-              <h6 className='lead fs-6 fw-normal'>Type</h6>
-              <h6 className='lead fs-6 fw-normal'>City, State</h6>
-              <h6 className='lead fs-6 fw-normal'>Address</h6>
+              <h6 className='lead fs-6 fw-normal'>{brewery.brewery_type}</h6>
+              <h6 className='lead fs-6 fw-normal'>{brewery.city}, {brewery.state}</h6>
             </div>
           </div>
           <hr />
           <div className='col-12 d-flex'>
             <div className='col-4 d-flex flex-column align-items-center border-end border-secondary'>
               <div className='border p-5 bg-light'>
-                <h6>(123)-456-7890</h6>
-                <h6>1111 Address Ln</h6>
+                <h6>{brewery.phone}</h6>
+                <h6>{brewery.street}</h6>
                 <h6>Open Until 11:00pm</h6>
               </div>
               <button className='btn btn-warning mt-3'>Upload Image</button>
