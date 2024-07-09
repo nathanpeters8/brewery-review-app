@@ -19,19 +19,16 @@ const Home = (props) => {
     if (state) params.append('state', state.toLowerCase());
     if (postal) params.append('postal', postal);
 
-    // const encodedName = encodeURIComponent(name);
-    // const underscoreName = name.replace(' ', '_');
-
     window.location.href = `/results?${params.toString()}`;
   };
 
   return (
     <Layout>
-      <div className='container pt-5'>
+      <div className='container-xl pt-5 d-flex flex-column align-items-center bg-light vh-100 '>
         <div className='row'>
           <h4 className='text-center'>Search for breweries using any of all fields below:</h4>
         </div>
-        <form className='row d-flex justify-content-center mt-4 border py-3' onSubmit={handleSearch}>
+        <form className='row w-50 d-flex justify-content-center mt-4 border py-3' onSubmit={handleSearch}>
           <div className='col-8 text-center'>
             <label htmlFor='breweryName' className='form-label'>
               Brewery Name
@@ -46,19 +43,6 @@ const Home = (props) => {
             />
           </div>
           <div className='col-5 text-center mt-3'>
-            <label htmlFor='state' className='form-label'>
-              State
-            </label>
-            <input
-              type='text'
-              id='state'
-              name='state'
-              className='form-control text-center'
-              onChange={(event) => setState(event.target.value)}
-              value={state}
-            />
-          </div>
-          <div className='col-5 text-center mt-3'>
             <label htmlFor='city' className='form-label'>
               City
             </label>
@@ -69,6 +53,19 @@ const Home = (props) => {
               className='form-control text-center'
               onChange={(event) => setCity(event.target.value)}
               value={city}
+            />
+          </div>
+          <div className='col-5 text-center mt-3'>
+            <label htmlFor='state' className='form-label'>
+              State
+            </label>
+            <input
+              type='text'
+              id='state'
+              name='state'
+              className='form-control text-center'
+              onChange={(event) => setState(event.target.value)}
+              value={state}
             />
           </div>
           <div className='col-5 text-center mt-3'>

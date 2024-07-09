@@ -3,7 +3,7 @@ import React from 'react';
 const Layout = (props) => {
   return (
     <>
-      <nav className='navbar navbar-expand border-bottom'>
+      <nav className='navbar navbar-expand border-bottom bg-light'>
         <div className='container-fluid'>
           <a href='/' className='navbar-brand'>
             Brewery Review

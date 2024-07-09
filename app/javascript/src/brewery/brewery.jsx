@@ -3,12 +3,14 @@ import Layout from '@src/layout';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar } from '@fortawesome/free-solid-svg-icons';
 import { GetBreweriesById } from '../utils/breweryDBRequests';
+import { Modal } from 'react-bootstrap';
 
 import './brewery.scss';
 
 const Brewery = (props) => {
   const [id, setId] = useState('');
   const [brewery, setBrewery] = useState([]);
+  const [showMap, setShowMap] = useState(false);
 
   useEffect(() => {
     setId(props.data.id);
@@ -22,6 +24,8 @@ const Brewery = (props) => {
       })
     }
   }, [id]);
+
+  const formatPhoneNumber = (num) => `(${num.slice(0, 3)}) ${num.slice(3, 6)}-${num.slice(6)}`;
 
   return (
     <Layout>
@@ -40,17 +44,27 @@ const Brewery = (props) => {
                 <small className='fs-6 ms-3'>5.0 (5 reviews)</small>
               </h5>
               <h6 className='lead fs-6 fw-normal'>{brewery.brewery_type}</h6>
-              <h6 className='lead fs-6 fw-normal'>{brewery.city}, {brewery.state}</h6>
+              <h6 className='lead fs-6 fw-normal'>
+                {brewery.city}, {brewery.state}
+              </h6>
             </div>
           </div>
           <hr />
           <div className='col-12 d-flex'>
             <div className='col-4 d-flex flex-column align-items-center border-end border-secondary'>
               <div className='border p-5 bg-light'>
-                <h6>{brewery.phone}</h6>
+                {(() => {
+                  if (!brewery.phone) {
+                    return null;
+                  }
+                  return <h6>{formatPhoneNumber(brewery.phone)}</h6>;
+                })()}
                 <h6>{brewery.street}</h6>
                 <h6>Open Until 11:00pm</h6>
               </div>
+              <button className='btn btn-warning mt-3' onClick={(e) => setShowMap(true)}>
+                Show Map
+              </button>
               <button className='btn btn-warning mt-3'>Upload Image</button>
               <button className='btn btn-warning mt-3'>Leave a Review</button>
             </div>
@@ -121,6 +135,25 @@ const Brewery = (props) => {
           </div>
         </div>
       </div>
+      <Modal show={showMap} onHide={() => setShowMap(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>{brewery.name}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className='d-flex justify-content-center'>
+            <iframe
+              width='475'
+              height='400'
+              loading='lazy'
+              allowFullScreen
+              referrerPolicy='no-referrer-when-downgrade'
+              src={`https://www.google.com/maps/embed/v1/search?q=${brewery.street} ${encodeURIComponent(
+                brewery.name
+              )} ${brewery.city}}&maptype=satellite&zoom=16&key=${process.env.GOOGLE_MAPS_API_KEY}`}
+            ></iframe>
+          </div>
+        </Modal.Body>
+      </Modal>
     </Layout>
   );
 }
