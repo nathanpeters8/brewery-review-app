@@ -2,21 +2,23 @@ import React, { useState, useEffect } from 'react';
 import Layout from '@src/layout';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar } from '@fortawesome/free-solid-svg-icons';
-import { GetBreweriesByName } from '../utils/breweryDBRequests';
+import { GetBreweries } from '../utils/breweryDBRequests';
 
 import './results.scss';
 
-const Results = (props) => {
+const Results = ({queryParams}) => {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
 
   useEffect(() => {
-    setQuery(props.data.query);
-  }, [props.data.query]);
+    const params = new URLSearchParams(queryParams);
+    setQuery(JSON.parse(params.keys().next().value));
+  }, [queryParams]);
 
   useEffect(() => {
     if (query) {
-      GetBreweriesByName(query, (response) => {
+      console.log(query);
+      GetBreweries(query, (response) => {
         console.log(response);
         setResults(response);
       });

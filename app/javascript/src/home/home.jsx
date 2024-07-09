@@ -6,46 +6,86 @@ import './home.scss';
 const Home = (props) => {
 
   const [name, setName] = useState('');
+  const [city, setCity] = useState('');
+  const [state, setState] = useState('');
+  const [postal, setPostal] = useState('');
   const [results, setResults] = useState([]);
 
   const handleSearch = (event) => {
     event.preventDefault();
-    const encodedName = encodeURIComponent(name);
-    const underscoreName = name.replace(' ', '_');
+    const params = new URLSearchParams();
+    if (name) params.append('name', name.replace(' ', '_').toLowerCase());
+    if (city) params.append('city', city.toLowerCase());
+    if (state) params.append('state', state.toLowerCase());
+    if (postal) params.append('postal', postal);
 
-    // GetBreweriesByName(encodedName, (response) => {
-    //   console.log(response);
-    //   setResults(response);
-    // })
+    // const encodedName = encodeURIComponent(name);
+    // const underscoreName = name.replace(' ', '_');
 
-    window.location.href = `/results/${underscoreName}`;
+    window.location.href = `/results?${params.toString()}`;
   };
 
   return (
     <Layout>
-      <div className="container pt-5">
-        <div className="row">
+      <div className='container pt-5'>
+        <div className='row'>
           <h4 className='text-center'>Search for breweries using any of all fields below:</h4>
         </div>
         <form className='row d-flex justify-content-center mt-4 border py-3' onSubmit={handleSearch}>
-          <div className="col-8 text-center">
-            <label htmlFor="breweryName" className='form-label'>Brewery Name</label>
-            <input type="search" id="breweryName" name='name' className='form-control text-center' onChange={(event) => setName(event.target.value)} value={name}/>
+          <div className='col-8 text-center'>
+            <label htmlFor='breweryName' className='form-label'>
+              Brewery Name
+            </label>
+            <input
+              type='search'
+              id='breweryName'
+              name='name'
+              className='form-control text-center'
+              onChange={(event) => setName(event.target.value)}
+              value={name}
+            />
           </div>
-          <div className="col-5 text-center mt-3">
-            <label htmlFor="state" className='form-label'>State</label>
-            <input type="text" id="state" name='state' className='form-control text-center'/>
+          <div className='col-5 text-center mt-3'>
+            <label htmlFor='state' className='form-label'>
+              State
+            </label>
+            <input
+              type='text'
+              id='state'
+              name='state'
+              className='form-control text-center'
+              onChange={(event) => setState(event.target.value)}
+              value={state}
+            />
           </div>
-          <div className="col-5 text-center mt-3">
-            <label htmlFor="city" className='form-label'>City</label>
-            <input type="text" id="city" name='city' className='form-control text-center'/>
+          <div className='col-5 text-center mt-3'>
+            <label htmlFor='city' className='form-label'>
+              City
+            </label>
+            <input
+              type='text'
+              id='city'
+              name='city'
+              className='form-control text-center'
+              onChange={(event) => setCity(event.target.value)}
+              value={city}
+            />
           </div>
-          <div className="col-5 text-center mt-3">
-            <label htmlFor="zipCode" className='form-label'>Zip Code</label>
-            <input type="text" id="zipCode" name='zip' className='form-control text-center'/>
+          <div className='col-5 text-center mt-3'>
+            <label htmlFor='zipCode' className='form-label'>
+              Zip Code
+            </label>
+            <input
+              type='text'
+              id='zipCode'
+              name='postal'
+              className='form-control text-center'
+              onChange={(event) => setPostal(event.target.value)}
+              value={postal}
+            />
           </div>
-          <div className="col-8 text-center mt-4">
-            <button className="btn btn-lg btn-primary">Search</button>
+          <div className='col-8 text-center mt-4'>
+            <button className='btn btn-lg btn-primary'>Search</button>
           </div>
         </form>
       </div>

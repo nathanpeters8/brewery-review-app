@@ -4,7 +4,8 @@ class StaticPagesController < ApplicationController
   end
 
   def results
-    @data = {query: params{:query}}.to_json
+    # @data = {query: params{:query}}.to_json
+    @query_params = request.query_parameters.to_json.html_safe
     render 'results'
   end
 
