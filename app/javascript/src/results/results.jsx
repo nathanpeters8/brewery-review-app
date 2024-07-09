@@ -2,26 +2,33 @@ import React, { useState, useEffect } from 'react';
 import Layout from '@src/layout';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar } from '@fortawesome/free-solid-svg-icons';
+import { GetBreweries } from '../utils/breweryDBRequests';
 
 import './results.scss';
-import { GetBreweriesByName } from '../utils/breweryDBRequests';
 
-const Results = (props) => {
+const Results = ({queryParams}) => {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
 
   useEffect(() => {
-    setQuery(props.data.query);
-  }, [props.data.query]);
+    const params = new URLSearchParams(queryParams);
+    setQuery(JSON.parse(params.keys().next().value));
+  }, [queryParams]);
 
   useEffect(() => {
     if (query) {
-      GetBreweriesByName(query, (response) => {
+      console.log(query);
+      GetBreweries(query, (response) => {
         console.log(response);
         setResults(response);
       });
     }
   }, [query]);
+
+  const handleBreweryClick = (e, id) => {
+    e.preventDefault();
+    window.location.href = `/brewery/${id}`;
+  }
 
   return (
     <Layout>
@@ -35,9 +42,18 @@ const Results = (props) => {
             return results.map((brewery, index) => {
               return (
                 <div key={index} className='col-12 mb-3 d-flex border-bottom pb-3 align-items-center'>
-                  <img src='https://placehold.co/150' alt='' />
+                  <img
+                    src='https://placehold.co/150'
+                    className='btn btn-lg'
+                    onClick={(e) => handleBreweryClick(e, brewery.id)}
+                  />
                   <div className='d-flex flex-column ms-5'>
-                    <h5 className='text-decoration-underline'>{brewery.name}</h5>
+                    <h5
+                      className='ps-0 pb-0 btn btn-lg btn-link text-dark'
+                      onClick={(e) => handleBreweryClick(e, brewery.id)}
+                    >
+                      {brewery.name}
+                    </h5>
                     <h4>
                       <FontAwesomeIcon icon={faStar} />
                       <FontAwesomeIcon icon={faStar} />

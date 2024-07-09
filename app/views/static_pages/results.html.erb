@@ -1,4 +1,6 @@
 <%= javascript_packs_with_chunks_tag 'results', 'application' %>
 <%= stylesheet_packs_with_chunks_tag 'results', 'application' %>
 
-<div id="params" data-params="<%= @data %>"></div>
+<script>
+  window.queryParams="<%= j @query_params %>";
+</script>
