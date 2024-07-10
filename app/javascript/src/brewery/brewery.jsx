@@ -1,17 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faStar } from '@fortawesome/free-solid-svg-icons';
+import { faStar, faGlobe } from '@fortawesome/free-solid-svg-icons';
+import { faFacebook, faInstagram } from '@fortawesome/free-brands-svg-icons';
 import Layout from '@utils/layout';
 import { GetBreweriesById } from '@utils/breweryDBRequests';
+import { SocialMediaSearch } from '@utils/googleRequests';
 import { MapModalTemplate, ReviewModal, ImageModal } from '@utils/modalTemplates';
 import './brewery.scss';
 
 const Brewery = (props) => {
   const [id, setId] = useState('');
-  const [brewery, setBrewery] = useState([]);
+  const [brewery, setBrewery] = useState({});
   const [showMap, setShowMap] = useState(false);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [showImageModal, setShowImageModal] = useState(false);
+  const [facebookLink, setFacebookLink] = useState('');
+  const [instagramLink, setInstagramLink] = useState('');
+
   useEffect(() => {
     setId(props.data.id);
   }, [props.data.id]);
@@ -19,11 +24,38 @@ const Brewery = (props) => {
   useEffect(() => {
     if (id) {
       GetBreweriesById(id, (response) => {
-        console.log(response);
         setBrewery(response);
       });
     }
   }, [id]);
+
+  useEffect(() => {
+    if (Object.keys(brewery).length > 0) {
+      console.log(brewery);
+      SocialMediaSearch(brewery.name, (response) => {
+        console.log(response);
+        getSocialLinks(response.items);
+      });
+    }
+  }, [brewery]);
+
+  const getSocialLinks = (results) => {
+    let facebookLink = null;
+    let instagramLink = null;
+
+    for (const item of results) {
+      if (!facebookLink && item.link.includes('facebook.com')) {
+        facebookLink = item.link;
+      } else if (!instagramLink && item.link.includes('instagram.com')) {
+        instagramLink = item.link;
+      }
+
+      if (facebookLink && instagramLink) break;
+    }
+
+    setFacebookLink(facebookLink);
+    setInstagramLink(instagramLink);
+  };
 
   const formatPhoneNumber = (num) => `(${num.slice(0, 3)}) ${num.slice(3, 6)}-${num.slice(6)}`;
 
@@ -53,6 +85,17 @@ const Brewery = (props) => {
           <div className='col-12 d-flex'>
             <div className='col-4 d-flex flex-column align-items-center border-end border-secondary'>
               <div className='border p-5 bg-light'>
+                <h4 className='d-flex flex-row gap-3'>
+                  <a href={brewery.website_url} className='link-dark' target='_blank' rel='noreferrer'>
+                    <FontAwesomeIcon icon={faGlobe} />
+                  </a>
+                  <a href={facebookLink} className='link-dark' target='_blank' rel='noreferrer'>
+                    <FontAwesomeIcon icon={faFacebook} />
+                  </a>
+                  <a href={instagramLink} className='link-dark' target='_blank' rel='noreferrer'>
+                    <FontAwesomeIcon icon={faInstagram} />
+                  </a>
+                </h4>
                 {(() => {
                   if (!brewery.phone) {
                     return null;
@@ -65,8 +108,12 @@ const Brewery = (props) => {
               <button className='btn btn-warning mt-3' onClick={(e) => setShowMap(true)}>
                 Show Map
               </button>
-              <button className='btn btn-warning mt-3' onClick={(e) => setShowImageModal(true)}>Upload Image</button>
-              <button className='btn btn-warning mt-3' onClick={(e) => setShowReviewModal(true)}>Leave a Review</button>
+              <button className='btn btn-warning mt-3' onClick={(e) => setShowImageModal(true)}>
+                Upload Image
+              </button>
+              <button className='btn btn-warning mt-3' onClick={(e) => setShowReviewModal(true)}>
+                Leave a Review
+              </button>
             </div>
             <div className='col-8 d-flex flex-column align-items-center mt-3'>
               <div className='col-10 d-flex flex-row justify-content-center gap-3 pb-4 ms-4 border-bottom'>
@@ -135,13 +182,20 @@ const Brewery = (props) => {
           </div>
         </div>
       </div>
-      <MapModalTemplate showMap={showMap} toggleShowMap={setShowMap} name={brewery.name} city={brewery.city} state={brewery.state} street={brewery.street} />
+      <MapModalTemplate
+        showMap={showMap}
+        toggleShowMap={setShowMap}
+        name={brewery.name}
+        city={brewery.city}
+        state={brewery.state}
+        street={brewery.street}
+      />
 
-      <ReviewModal show={showReviewModal} setShow={setShowReviewModal}/>
+      <ReviewModal show={showReviewModal} setShow={setShowReviewModal} />
 
       <ImageModal show={showImageModal} setShow={setShowImageModal} />
     </Layout>
   );
-}
+};
 
 export default Brewery;
