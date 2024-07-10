@@ -18,6 +18,9 @@ const Layout = (props) => {
           </a>
           <ul className='navbar-nav'>
             <div className='d-flex flex-row gap-2'>
+              <li className="nav-item">
+                <button className="btn btn-outline-primary" onClick={(e) => window.location.href="/account"}>My Account</button>
+              </li>
               <li className='nav-item'>
                 <button className='btn btn-outline-primary' onClick={(e) => setShowLogIn(true)}>
                   Log in
