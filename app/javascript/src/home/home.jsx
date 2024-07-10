@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Layout from '@src/layout';
-import { GetBreweriesByName } from '../utils/breweryDBRequests';
+import Layout from '@utils/layout';
 import './home.scss';
 
 const Home = (props) => {
@@ -9,7 +8,6 @@ const Home = (props) => {
   const [city, setCity] = useState('');
   const [state, setState] = useState('');
   const [postal, setPostal] = useState('');
-  const [results, setResults] = useState([]);
 
   const handleSearch = (event) => {
     event.preventDefault();
@@ -26,7 +24,7 @@ const Home = (props) => {
     <Layout>
       <div className='container-xl pt-5 d-flex flex-column align-items-center bg-light vh-100 '>
         <div className='row'>
-          <h4 className='text-center'>Search for breweries using any of all fields below:</h4>
+          <h4 className='text-center'>Search for breweries using any or all fields below:</h4>
         </div>
         <form className='row w-50 d-flex justify-content-center mt-4 border py-3' onSubmit={handleSearch}>
           <div className='col-8 text-center'>

@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import Layout from '@src/layout';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar } from '@fortawesome/free-solid-svg-icons';
-import { GetBreweries } from '../utils/breweryDBRequests';
+import { GetBreweries } from '@utils/breweryDBRequests';
+import Layout from '@utils/layout';
 import { Modal, Button } from 'react-bootstrap';
 
 import './results.scss';
+import { MapModalTemplate } from '../utils/modalTemplates';
 
 const Results = ({ queryParams }) => {
   const [query, setQuery] = useState('');
@@ -100,25 +101,7 @@ const Results = ({ queryParams }) => {
           return null;
         }
         return (
-          <Modal show={showMap} onHide={() => setClickedBrewery(null)} centered>
-            <Modal.Header closeButton>
-              <Modal.Title>{clickedBrewery.name}</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <div className='d-flex justify-content-center'>
-                <iframe
-                  width='475'
-                  height='400'
-                  loading='lazy'
-                  allowFullScreen
-                  referrerPolicy='no-referrer-when-downgrade'
-                  src={`https://www.google.com/maps/embed/v1/search?q=${clickedBrewery.street} ${encodeURIComponent(
-                    clickedBrewery.name
-                  )} ${clickedBrewery.city}}&maptype=satellite&zoom=16&key=${process.env.GOOGLE_MAPS_API_KEY}`}
-                ></iframe>
-              </div>
-            </Modal.Body>
-          </Modal>
+          <MapModalTemplate showMap={showMap} toggleShowMap={setShowMap} name={clickedBrewery.name} city={clickedBrewery.city} state={clickedBrewery.state} street={clickedBrewery.street}/>
         );
       })()}
     </Layout>
