@@ -13,4 +13,8 @@ class StaticPagesController < ApplicationController
     @data = {id: params{:id}}.to_json
     render 'brewery'
   end
+
+  def account
+    render 'account'
+  end
 end

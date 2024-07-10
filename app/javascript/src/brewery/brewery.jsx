@@ -1,27 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import Layout from '@src/layout';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar } from '@fortawesome/free-solid-svg-icons';
-import { GetBreweriesById } from '../utils/breweryDBRequests';
-
+import Layout from '@utils/layout';
+import { GetBreweriesById } from '@utils/breweryDBRequests';
+import { MapModalTemplate, ReviewModal, ImageModal } from '@utils/modalTemplates';
 import './brewery.scss';
 
 const Brewery = (props) => {
   const [id, setId] = useState('');
   const [brewery, setBrewery] = useState([]);
-
+  const [showMap, setShowMap] = useState(false);
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [showImageModal, setShowImageModal] = useState(false);
   useEffect(() => {
     setId(props.data.id);
   }, [props.data.id]);
 
   useEffect(() => {
-    if(id) {
+    if (id) {
       GetBreweriesById(id, (response) => {
         console.log(response);
         setBrewery(response);
-      })
+      });
     }
   }, [id]);
+
+  const formatPhoneNumber = (num) => `(${num.slice(0, 3)}) ${num.slice(3, 6)}-${num.slice(6)}`;
 
   return (
     <Layout>
@@ -40,19 +44,29 @@ const Brewery = (props) => {
                 <small className='fs-6 ms-3'>5.0 (5 reviews)</small>
               </h5>
               <h6 className='lead fs-6 fw-normal'>{brewery.brewery_type}</h6>
-              <h6 className='lead fs-6 fw-normal'>{brewery.city}, {brewery.state}</h6>
+              <h6 className='lead fs-6 fw-normal'>
+                {brewery.city}, {brewery.state}
+              </h6>
             </div>
           </div>
           <hr />
           <div className='col-12 d-flex'>
             <div className='col-4 d-flex flex-column align-items-center border-end border-secondary'>
               <div className='border p-5 bg-light'>
-                <h6>{brewery.phone}</h6>
+                {(() => {
+                  if (!brewery.phone) {
+                    return null;
+                  }
+                  return <h6>{formatPhoneNumber(brewery.phone)}</h6>;
+                })()}
                 <h6>{brewery.street}</h6>
                 <h6>Open Until 11:00pm</h6>
               </div>
-              <button className='btn btn-warning mt-3'>Upload Image</button>
-              <button className='btn btn-warning mt-3'>Leave a Review</button>
+              <button className='btn btn-warning mt-3' onClick={(e) => setShowMap(true)}>
+                Show Map
+              </button>
+              <button className='btn btn-warning mt-3' onClick={(e) => setShowImageModal(true)}>Upload Image</button>
+              <button className='btn btn-warning mt-3' onClick={(e) => setShowReviewModal(true)}>Leave a Review</button>
             </div>
             <div className='col-8 d-flex flex-column align-items-center mt-3'>
               <div className='col-10 d-flex flex-row justify-content-center gap-3 pb-4 ms-4 border-bottom'>
@@ -121,6 +135,11 @@ const Brewery = (props) => {
           </div>
         </div>
       </div>
+      <MapModalTemplate showMap={showMap} toggleShowMap={setShowMap} name={brewery.name} city={brewery.city} state={brewery.state} street={brewery.street} />
+
+      <ReviewModal show={showReviewModal} setShow={setShowReviewModal}/>
+
+      <ImageModal show={showImageModal} setShow={setShowImageModal} />
     </Layout>
   );
 }
