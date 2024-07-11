@@ -22,9 +22,9 @@ const Layout = (props) => {
 
   return (
     <>
-      <nav className='navbar navbar-expand border-bottom bg-light'>
+      <nav className='navbar sticky-top navbar-expand border-bottom bg-secondary bg-opacity-25'>
         <div className='container-fluid'>
-          <a href='/' className='navbar-brand'>
+          <a href='/' className='navbar-brand text-ochre'>
             Brewery Review
           </a>
           {(props.currentComponent === 'results' || props.currentComponent === 'brewery') && (
@@ -38,7 +38,7 @@ const Layout = (props) => {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 value={searchTerm}
               />
-              <button className='btn btn-sm btn-primary' type='submit'>
+              <button className='btn btn-sm bg-ochre text-light' type='submit'>
                 <FontAwesomeIcon icon={faMagnifyingGlass} />
               </button>
             </form>
@@ -46,17 +46,17 @@ const Layout = (props) => {
           <ul className='navbar-nav'>
             <div className='d-flex flex-row gap-2'>
               <li className='nav-item'>
-                <button className='btn btn-outline-primary' onClick={(e) => (window.location.href = '/account')}>
+                <button className='btn text-ochre' onClick={(e) => (window.location.href = '/account')}>
                   My Account
                 </button>
               </li>
               <li className='nav-item'>
-                <button className='btn btn-outline-primary' onClick={(e) => setShowLogIn(true)}>
+                <button className='btn text-ochre' onClick={(e) => setShowLogIn(true)}>
                   Log in
                 </button>
               </li>
               <li className='nav-item'>
-                <button className='btn btn-outline-primary' onClick={(e) => setShowSignUp(true)}>
+                <button className='btn text-ochre' onClick={(e) => setShowSignUp(true)}>
                   Sign up
                 </button>
               </li>

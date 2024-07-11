@@ -84,61 +84,63 @@ const Results = ({ queryParams }) => {
 
   return (
     <Layout currentComponent='results'>
-      <div className='container mt-4'>
-        <h4 className='text-center'>Search Results</h4>
-        {(currentPage > 1 || results.length >= itemsPerPage) && (
-          <PaginationButtons handlePageChange={handlePageChange} currentPage={currentPage} pagesArray={pagesArray} />
-        )}
-        <div id='breweryResults' className='row mt-5'>
-          {(() => {
-            if (results.length == 0) {
-              return null;
-            }
-            return results.map((brewery, index) => {
-              return (
-                <div key={index} className='col-12 mb-3 d-flex border-bottom pb-3 align-items-center'>
-                  <img
-                    src='https://placehold.co/150'
-                    className='btn btn-lg'
-                    onClick={(e) => handleBreweryClick(e, brewery.id)}
-                  />
-                  <div className='d-flex flex-column ms-5'>
-                    <h5 className='ps-0 pb-0 text-dark' onClick={(e) => handleBreweryClick(e, brewery.id)}>
-                      <a href='#' className='link-primary'>
-                        {brewery.name}
-                      </a>
-                    </h5>
-                    <h4>
-                      <FontAwesomeIcon icon={faStar} />
-                      <FontAwesomeIcon icon={faStar} />
-                      <FontAwesomeIcon icon={faStar} />
-                      <FontAwesomeIcon icon={faStar} />
-                      <FontAwesomeIcon icon={faStar} />
-                      <small className='fs-6'>{brewery.rating} (0 reviews)</small>
-                    </h4>
-                    {(() => {
-                      if (!brewery.phone) {
-                        return null;
-                      }
-                      return <h6 className='lead fs-6 fw-normal'>{formatPhoneNumber(brewery.phone)}</h6>;
-                    })()}
-                    <h6 className='lead fs-6 fw-normal'>
-                      {brewery.city}, {brewery.state}
-                    </h6>
-                    <h6 className='lead fs-6 fw-normal' onClick={(e) => setClickedBrewery(brewery)}>
-                      <a href='#' className='link-warning'>
-                        {brewery.street}
-                      </a>
-                    </h6>
+      <div id='resultsContainer' className='container-xl pt-5 bg-secondary bg-opacity-10'>
+        <div className="row">
+          <h4 className='text-center'>Search Results</h4>
+          {(currentPage > 1 || results.length >= itemsPerPage) && (
+            <PaginationButtons handlePageChange={handlePageChange} currentPage={currentPage} pagesArray={pagesArray} />
+          )}
+          <div id='breweryResults' className='row mt-5'>
+            {(() => {
+              if (results.length == 0) {
+                return null;
+              }
+              return results.map((brewery, index) => {
+                return (
+                  <div key={index} className='col-12 mb-3 d-flex border-bottom pb-3 align-items-center'>
+                    <img
+                      src='https://placehold.co/150'
+                      className='btn btn-lg'
+                      onClick={(e) => handleBreweryClick(e, brewery.id)}
+                    />
+                    <div className='d-flex flex-column ms-5'>
+                      <h5 className='ps-0 pb-0 text-dark' onClick={(e) => handleBreweryClick(e, brewery.id)}>
+                        <a href='#' className='link-primary text-ochre'>
+                          {brewery.name}
+                        </a>
+                      </h5>
+                      <h4>
+                        <FontAwesomeIcon icon={faStar} />
+                        <FontAwesomeIcon icon={faStar} />
+                        <FontAwesomeIcon icon={faStar} />
+                        <FontAwesomeIcon icon={faStar} />
+                        <FontAwesomeIcon icon={faStar} />
+                        <small className='fs-6'>{brewery.rating} (0 reviews)</small>
+                      </h4>
+                      {(() => {
+                        if (!brewery.phone) {
+                          return null;
+                        }
+                        return <h6 className='lead fs-6 fw-normal'>{formatPhoneNumber(brewery.phone)}</h6>;
+                      })()}
+                      <h6 className='lead fs-6 fw-normal'>
+                        {brewery.city}, {brewery.state}
+                      </h6>
+                      <h6 className='lead fs-6 fw-normal' onClick={(e) => setClickedBrewery(brewery)}>
+                        <a href='#' className='text-primary'>
+                          {brewery.street}
+                        </a>
+                      </h6>
+                    </div>
                   </div>
-                </div>
-              );
-            });
-          })()}
+                );
+              });
+            })()}
+          </div>
+          {(currentPage > 1 || results.length >= itemsPerPage) && (
+            <PaginationButtons handlePageChange={handlePageChange} currentPage={currentPage} pagesArray={pagesArray} />
+          )}
         </div>
-        {(currentPage > 1 || results.length >= itemsPerPage) && (
-          <PaginationButtons handlePageChange={handlePageChange} currentPage={currentPage} pagesArray={pagesArray} />
-        )}
       </div>
       {(() => {
         if (!clickedBrewery) {
