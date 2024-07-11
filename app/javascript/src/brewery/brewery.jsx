@@ -31,11 +31,11 @@ const Brewery = (props) => {
 
   useEffect(() => {
     if (Object.keys(brewery).length > 0) {
-      console.log(brewery);
-      SocialMediaSearch(brewery.name, (response) => {
-        console.log(response);
-        getSocialLinks(response.items);
-      });
+      console.log('social media search for ' + brewery.name);
+      // SocialMediaSearch(brewery.name, (response) => {
+      //   console.log(response);
+      //   getSocialLinks(response.items);
+      // });
     }
   }, [brewery]);
 
@@ -60,7 +60,7 @@ const Brewery = (props) => {
   const formatPhoneNumber = (num) => `(${num.slice(0, 3)}) ${num.slice(3, 6)}-${num.slice(6)}`;
 
   return (
-    <Layout>
+    <Layout currentComponent='brewery'>
       <div className='container'>
         <div className='row justify-content-start'>
           <div className='col-8 mb-2 d-flex py-2 justify-content-around'>

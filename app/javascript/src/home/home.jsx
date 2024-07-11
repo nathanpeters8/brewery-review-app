@@ -21,7 +21,7 @@ const Home = (props) => {
   };
 
   return (
-    <Layout>
+    <Layout currentComponent='home'>
       <div className='container-xl pt-5 d-flex flex-column align-items-center bg-light vh-100 '>
         <div className='row'>
           <h4 className='text-center'>Search for breweries using any or all fields below:</h4>

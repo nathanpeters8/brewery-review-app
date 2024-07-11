@@ -23,3 +23,11 @@ export const GetBreweriesById = (id, callback) => {
       return callback(response);
     });
 };
+
+export const GetBreweriesBySearchTerm = (search, page, per_page, callback) => {
+  fetch(`https://api.openbrewerydb.org/v1/breweries/search?query=${search.query}&page=${page}&per_page=${per_page}`)
+    .then(handleErrors)
+    .then((response) => {
+      return callback(response);
+    });
+};

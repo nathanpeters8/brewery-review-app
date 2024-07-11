@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar } from '@fortawesome/free-solid-svg-icons';
-import { GetBreweries } from '@utils/breweryDBRequests';
+import { GetBreweries, GetBreweriesBySearchTerm } from '@utils/breweryDBRequests';
 import { MapModalTemplate } from '@utils/modalTemplates';
 import Layout from '@utils/layout';
 import PaginationButtons from './paginationButtons';
@@ -27,22 +27,36 @@ const Results = ({ queryParams }) => {
   // fetch breweries when query or currentPage changes
   useEffect(() => {
     if (query) {
-      GetBreweries(query, currentPage, itemsPerPage, (response) => {
-        console.log(response);
-        setResults(response);
-      });
+      console.log(query);
+      if(query.hasOwnProperty('query')) {
+        GetBreweriesBySearchTerm(query, currentPage, itemsPerPage, (response) => {
+          console.log(response);
+          setResults(response);
+        });
+      }
+      else {
+        GetBreweries(query, currentPage, itemsPerPage, (response) => {
+          console.log(response);
+          setResults(response);
+        });
+      }
     }
   }, [query, currentPage]);
 
   // update pagesArray when currentPage changes
   useEffect(() => {
     if(currentPage > 1) {
-      setPagesArray([currentPage-1, currentPage, currentPage+1]);
+      if(results.length < itemsPerPage) {
+        setPagesArray([currentPage - 1, currentPage]);
+      }
+      else {
+        setPagesArray([currentPage-1, currentPage, currentPage+1]);
+      }
     }
     else if(currentPage === 1) {
-      setPagesArray([1, 2, 3]);
+      setPagesArray([1, 2]);
     }
-  }, [currentPage]);
+  }, [results, currentPage]);
 
   // show map modal when clickedBrewery changes
   useEffect(() => {
@@ -69,10 +83,10 @@ const Results = ({ queryParams }) => {
   const formatPhoneNumber = (num) => `(${num.slice(0, 3)}) ${num.slice(3, 6)}-${num.slice(6)}`;
 
   return (
-    <Layout>
+    <Layout currentComponent='results'>
       <div className='container mt-4'>
         <h4 className='text-center'>Search Results</h4>
-        {results.length >= itemsPerPage && (
+        {(currentPage > 1 || results.length >= itemsPerPage) && (
           <PaginationButtons handlePageChange={handlePageChange} currentPage={currentPage} pagesArray={pagesArray} />
         )}
         <div id='breweryResults' className='row mt-5'>
@@ -122,7 +136,7 @@ const Results = ({ queryParams }) => {
             });
           })()}
         </div>
-        {results.length >= itemsPerPage && (
+        {(currentPage > 1 || results.length >= itemsPerPage) && (
           <PaginationButtons handlePageChange={handlePageChange} currentPage={currentPage} pagesArray={pagesArray} />
         )}
       </div>
