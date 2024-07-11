@@ -3,25 +3,37 @@ import Layout from '@utils/layout';
 import './account.scss';
 
 const Account = (props) => {
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   return (
     <Layout currentComponent='account'>
-      <div className='container-xl'>
-        <div className='row'>
-          <div className='col-3 d-flex flex-column justify-content-center align-items-center border vh-100'>
-            <img src='https://placehold.co/150' className='mb-5' />
-            <div className='d-flex flex-column gap-2 mb-5'>
+      <div className='container-xl bg-secondary bg-opacity-10'>
+        <div className='row justify-content-center'>
+          <div
+            className={`col-10 col-md-3 d-flex flex-row flex-md-column justify-content-between justify-content-md-center align-items-center ${
+              windowWidth >= 768 ? 'vh-100 border' : 'mt-4 border-bottom pb-4'
+            }`}
+          >
+            <img src='https://placehold.co/150' className='mb-0 mb-md-5' />
+            <div className='d-flex flex-column gap-2 mb-0 mb-md-5'>
               <h5 className='text-center'>Username</h5>
               <h5 className='text-center'>City, State</h5>
             </div>
             <div className='d-flex flex-column gap-2'>
-              <button className='btn btn-primary'>Edit Account</button>
-              <button className='btn btn-danger'>Delete Account</button>
+              <button className='btn btn-outline-warning text-ochre border-0'>Edit Account</button>
+              <button className='btn btn-outline-danger text-ochre border-0'>Delete Account</button>
             </div>
           </div>
-          <div className='col-9 d-flex flex-column align-items-center'>
-            <div className='col-9 table-responsive mt-5'>
+          <div className='col-12 col-md-9 d-flex flex-column align-items-center'>
+            <div className='col-11 col-md-9 table-responsive mt-5'>
               <h5 className='text-center text-decoration-underline mb-3'>My Uploaded Images</h5>
-              <table className='table table-striped table-hover table-bordered align-items-center'>
+              <table className='table table-striped table-hover table-bordered table-secondary align-items-center'>
                 <thead>
                   <tr className='align-middle text-center'>
                     <th></th>
@@ -38,7 +50,7 @@ const Account = (props) => {
                     <td>Brewery Name</td>
                     <td>MM/DD/YYYY</td>
                     <td>
-                      <button className='btn btn-sm btn-danger'>Delete</button>
+                      <button className='btn btn-sm btn-outline-danger border-0'>Delete</button>
                     </td>
                   </tr>
                   <tr className='align-middle text-center'>
@@ -48,15 +60,15 @@ const Account = (props) => {
                     <td>Brewery Name</td>
                     <td>MM/DD/YYYY</td>
                     <td>
-                      <button className='btn btn-sm btn-danger'>Delete</button>
+                      <button className='btn btn-sm btn-outline-danger border-0'>Delete</button>
                     </td>
                   </tr>
                 </tbody>
               </table>
             </div>
-            <div className='col-9 table-responsive mt-5'>
+            <div className='col-11 col-md-9 table-responsive mt-5'>
               <h5 className='text-center text-decoration-underline mb-3'>My Reviews</h5>
-              <table className='table table-striped table-hover table-bordered align-items-center'>
+              <table className='table table-striped table-hover table-bordered table-secondary align-items-center'>
                 <thead>
                   <tr className='align-middle text-center'>
                     <th>Brewery Name</th>
@@ -77,7 +89,21 @@ const Account = (props) => {
                     </td>
                     <td className='w-25'>MM/DD/YYYY</td>
                     <td className='w-25'>
-                      <button className='btn btn-sm btn-danger'>Delete</button>
+                      <button className='btn btn-sm btn-outline-danger border-0'>Delete</button>
+                    </td>
+                  </tr>
+                  <tr className='align-middle text-center'>
+                    <td className='w-25'>Brewery Name</td>
+                    <td id='reviewCell'>
+                      <textarea name='review' className='form-control-plaintext lh-sm small' readOnly>
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cupiditate dignissimos minima tempora
+                        accusamus nam culpa assumenda eveniet, repudiandae perferendis, accusantium tenetur beatae
+                        recusandae reiciendis quibusdam, libero unde nulla ratione sed!
+                      </textarea>
+                    </td>
+                    <td className='w-25'>MM/DD/YYYY</td>
+                    <td className='w-25'>
+                      <button className='btn btn-sm btn-outline-danger border-0'>Delete</button>
                     </td>
                   </tr>
                 </tbody>

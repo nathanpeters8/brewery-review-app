@@ -3,9 +3,14 @@ import React, { useState, useEffect } from 'react';
 const PaginationButtons = ({ handlePageChange, currentPage, pagesArray }) => {
   return (
     <nav aria-label='Page navigation example'>
-      <ul className='pagination'>
+      <ul className='pagination ms-0 ms-sm-3 my-3 d-flex justify-content-center justify-content-sm-start'>
         <li className='page-item'>
-          <a className='page-link' href='#' onClick={(e) => handlePageChange(e, currentPage - 1)} aria-label='Previous'>
+          <a
+            className='page-link text-ochre'
+            href='#'
+            onClick={(e) => handlePageChange(e, currentPage - 1)}
+            aria-label='Previous'
+          >
             <span aria-hidden='true'>&laquo;</span>
           </a>
         </li>
@@ -13,7 +18,7 @@ const PaginationButtons = ({ handlePageChange, currentPage, pagesArray }) => {
           return (
             <li key={index} className='page-item'>
               <a
-                className={`page-link btn ${page === currentPage ? 'bg-primary text-white disabled' : ''}`}
+                className={`page-link btn text-ochre ${page === currentPage ? 'bg-dark text-light disabled' : ''}`}
                 name={page.toString()}
                 href='#'
                 onClick={(e) => handlePageChange(e, page)}
@@ -24,7 +29,12 @@ const PaginationButtons = ({ handlePageChange, currentPage, pagesArray }) => {
           );
         })}
         <li className='page-item'>
-          <a className='page-link' href='#' onClick={(e) => handlePageChange(e, currentPage + 1)} aria-label='Next'>
+          <a
+            className='page-link text-ochre'
+            href='#'
+            onClick={(e) => handlePageChange(e, currentPage + 1)}
+            aria-label='Next'
+          >
             <span aria-hidden='true'>&raquo;</span>
           </a>
         </li>

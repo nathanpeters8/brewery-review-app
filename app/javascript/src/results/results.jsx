@@ -15,7 +15,7 @@ const Results = ({ queryParams }) => {
   const [clickedBrewery, setClickedBrewery] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [pagesArray, setPagesArray] = useState([1, 2, 3]);
-  
+
   const itemsPerPage = 10;
 
   // update query state when queryParams change
@@ -28,13 +28,12 @@ const Results = ({ queryParams }) => {
   useEffect(() => {
     if (query) {
       console.log(query);
-      if(query.hasOwnProperty('query')) {
+      if (query.hasOwnProperty('query')) {
         GetBreweriesBySearchTerm(query, currentPage, itemsPerPage, (response) => {
           console.log(response);
           setResults(response);
         });
-      }
-      else {
+      } else {
         GetBreweries(query, currentPage, itemsPerPage, (response) => {
           console.log(response);
           setResults(response);
@@ -45,15 +44,13 @@ const Results = ({ queryParams }) => {
 
   // update pagesArray when currentPage changes
   useEffect(() => {
-    if(currentPage > 1) {
-      if(results.length < itemsPerPage) {
+    if (currentPage > 1) {
+      if (results.length < itemsPerPage) {
         setPagesArray([currentPage - 1, currentPage]);
+      } else {
+        setPagesArray([currentPage - 1, currentPage, currentPage + 1]);
       }
-      else {
-        setPagesArray([currentPage-1, currentPage, currentPage+1]);
-      }
-    }
-    else if(currentPage === 1) {
+    } else if (currentPage === 1) {
       setPagesArray([1, 2]);
     }
   }, [results, currentPage]);
@@ -77,44 +74,48 @@ const Results = ({ queryParams }) => {
   const handlePageChange = (e, num) => {
     setCurrentPage(num);
     e.target.blur();
-  }
+  };
 
   // format phone number
   const formatPhoneNumber = (num) => `(${num.slice(0, 3)}) ${num.slice(3, 6)}-${num.slice(6)}`;
 
   return (
     <Layout currentComponent='results'>
-      <div className='container mt-4'>
-        <h4 className='text-center'>Search Results</h4>
-        {(currentPage > 1 || results.length >= itemsPerPage) && (
-          <PaginationButtons handlePageChange={handlePageChange} currentPage={currentPage} pagesArray={pagesArray} />
-        )}
-        <div id='breweryResults' className='row mt-5'>
+      <div id='resultsContainer' className='container-xl pt-5 bg-secondary bg-opacity-10'>
+        <div id='breweryResults' className='row'>
+          {(currentPage > 1 || results.length >= itemsPerPage) && (
+            <PaginationButtons handlePageChange={handlePageChange} currentPage={currentPage} pagesArray={pagesArray} />
+          )}
           {(() => {
             if (results.length == 0) {
               return null;
             }
             return results.map((brewery, index) => {
               return (
-                <div key={index} className='col-12 mb-3 d-flex border-bottom pb-3 align-items-center'>
+                <div
+                  key={index}
+                  className='col-12 mb-3 d-flex border-bottom pb-3 align-items-center flex-column flex-sm-row'
+                >
                   <img
                     src='https://placehold.co/150'
                     className='btn btn-lg'
                     onClick={(e) => handleBreweryClick(e, brewery.id)}
                   />
-                  <div className='d-flex flex-column ms-5'>
-                    <h5 className='ps-0 pb-0 text-dark' onClick={(e) => handleBreweryClick(e, brewery.id)}>
-                      <a href='#' className='link-primary'>
+                  <div className='d-flex flex-column ms-1 ms-sm-5 text-center text-sm-start'>
+                    <h4 className='ps-0 pb-0 text-dark mb-3 h4' onClick={(e) => handleBreweryClick(e, brewery.id)}>
+                      <a href='#' className='link-primary text-ochre'>
                         {brewery.name}
                       </a>
-                    </h5>
-                    <h4>
-                      <FontAwesomeIcon icon={faStar} />
-                      <FontAwesomeIcon icon={faStar} />
-                      <FontAwesomeIcon icon={faStar} />
-                      <FontAwesomeIcon icon={faStar} />
-                      <FontAwesomeIcon icon={faStar} />
-                      <small className='fs-6'>{brewery.rating} (0 reviews)</small>
+                    </h4>
+                    <h4 className='d-flex flex-column flex-sm-row gap-sm-2 align-items-sm-center'>
+                      <div>
+                        <FontAwesomeIcon icon={faStar} />
+                        <FontAwesomeIcon icon={faStar} />
+                        <FontAwesomeIcon icon={faStar} />
+                        <FontAwesomeIcon icon={faStar} />
+                        <FontAwesomeIcon icon={faStar} />
+                      </div>
+                      <small className='fs-6 fst-italic'>{brewery.rating} (0 reviews)</small>
                     </h4>
                     {(() => {
                       if (!brewery.phone) {
@@ -126,7 +127,7 @@ const Results = ({ queryParams }) => {
                       {brewery.city}, {brewery.state}
                     </h6>
                     <h6 className='lead fs-6 fw-normal' onClick={(e) => setClickedBrewery(brewery)}>
-                      <a href='#' className='link-warning'>
+                      <a href='#' className='text-primary'>
                         {brewery.street}
                       </a>
                     </h6>
@@ -135,10 +136,10 @@ const Results = ({ queryParams }) => {
               );
             });
           })()}
+          {(currentPage > 1 || results.length >= itemsPerPage) && (
+            <PaginationButtons handlePageChange={handlePageChange} currentPage={currentPage} pagesArray={pagesArray} />
+          )}
         </div>
-        {(currentPage > 1 || results.length >= itemsPerPage) && (
-          <PaginationButtons handlePageChange={handlePageChange} currentPage={currentPage} pagesArray={pagesArray} />
-        )}
       </div>
       {(() => {
         if (!clickedBrewery) {
