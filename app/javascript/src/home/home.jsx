@@ -3,7 +3,6 @@ import Layout from '@utils/layout';
 import './home.scss';
 
 const Home = (props) => {
-
   const [name, setName] = useState('');
   const [city, setCity] = useState('');
   const [state, setState] = useState('');
@@ -27,7 +26,8 @@ const Home = (props) => {
           <h4 className='text-center'>Search for breweries using any or all fields below:</h4>
         </div>
         <form
-          className='row w-50 d-flex justify-content-center mt-4 border bg-secondary bg-opacity-25 py-3'
+          id='homeBrewerySearch'
+          className='row d-flex justify-content-center mt-4 border bg-secondary bg-opacity-25 py-3'
           onSubmit={handleSearch}
         >
           <div className='col-8 text-center text-dark'>

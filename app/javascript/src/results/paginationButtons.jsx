@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 const PaginationButtons = ({ handlePageChange, currentPage, pagesArray }) => {
   return (
     <nav aria-label='Page navigation example'>
-      <ul className='pagination ms-3'>
+      <ul className='pagination ms-0 ms-sm-3 my-3 d-flex justify-content-center justify-content-sm-start'>
         <li className='page-item'>
           <a
             className='page-link text-ochre'
