@@ -118,9 +118,11 @@ const Brewery = (props) => {
             >
               <div className='col-6 col-sm-5 col-md-10 d-flex flex-column justify-content-center align-items-center border px-4 py-5 bg-light text-ochre gap-2'>
                 <h4 className='d-flex flex-row gap-3'>
-                  <a href={brewery.website_url} className='link-dark' target='_blank' rel='noreferrer'>
-                    <FontAwesomeIcon icon={faGlobe} />
-                  </a>
+                  {brewery.website_url !== null && (
+                    <a href={brewery.website_url} className='link-dark' target='_blank' rel='noreferrer'>
+                      <FontAwesomeIcon icon={faGlobe} />
+                    </a>
+                  )}
                   <a href={facebookLink} className='link-dark' target='_blank' rel='noreferrer'>
                     <FontAwesomeIcon icon={faFacebook} />
                   </a>
@@ -160,6 +162,8 @@ const Brewery = (props) => {
             </div>
             <div className='col-12 col-md-8 d-flex flex-column align-items-center mt-3'>
               <div className='col-11 d-flex flex-row justify-content-start gap-3 py-5 border-bottom border-secondary overflow-scroll overflow-hidden'>
+                <img src='https://placehold.co/150' />
+                <img src='https://placehold.co/150' />
                 <img src='https://placehold.co/150' />
                 <img src='https://placehold.co/150' />
                 <img src='https://placehold.co/150' />

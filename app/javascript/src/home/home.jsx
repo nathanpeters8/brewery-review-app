@@ -23,7 +23,7 @@ const Home = (props) => {
     <Layout currentComponent='home'>
       <div className='container-xl pt-5 d-flex flex-column align-items-center bg-secondary bg-opacity-10 vh-100'>
         <div className='row'>
-          <h4 className='text-center'>Search for breweries using any or all fields below:</h4>
+          <h4 className='text-center text-ochre'>Search for breweries using any or all fields below:</h4>
         </div>
         <form
           id='homeBrewerySearch'
@@ -83,7 +83,7 @@ const Home = (props) => {
             />
           </div>
           <div className='col-8 text-center mt-4'>
-            <button className='btn btn-lg btn-outline-secondary text-dark'>Search</button>
+            <button className='btn btn-lg btn-outline-secondary text-ochre border-0'>Search</button>
           </div>
         </form>
       </div>
