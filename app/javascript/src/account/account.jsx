@@ -4,7 +4,7 @@ import './account.scss';
 
 const Account = (props) => {
   return (
-    <Layout>
+    <Layout currentComponent='account'>
       <div className='container-xl'>
         <div className='row'>
           <div className='col-3 d-flex flex-column justify-content-center align-items-center border vh-100'>

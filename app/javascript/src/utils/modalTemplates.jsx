@@ -5,7 +5,7 @@ import { faStar } from '@fortawesome/free-solid-svg-icons';
 
 export const MapModalTemplate = ({ showMap, toggleShowMap, name, city, state, street }) => {
   return (
-    <Modal show={showMap} onHide={() => toggleShowMap(false)} centered>
+    <Modal show={showMap} onHide={() => toggleShowMap(false)} centered fullscreen={'sm-down'} keyboard>
       <Modal.Header closeButton>
         <Modal.Title>{name}</Modal.Title>
       </Modal.Header>
@@ -98,9 +98,8 @@ export const FormModalTemplate = ({
 
 export const ReviewModal = ({show, setShow, setReview, review}) => {
   return (
-    <Modal show={show} onHide={() => setShow(false)} centered>
-      <Modal.Header closeButton>
-      </Modal.Header>
+    <Modal show={show} onHide={() => setShow(false)} centered fullscreen={'sm-down'} keyboard>
+      <Modal.Header closeButton></Modal.Header>
       <Modal.Body>
         <div className='row d-flex justify-content-center'>
           <div className='col-10 d-flex flex-row justify-content-around align-items-center'>
@@ -136,9 +135,8 @@ export const ReviewModal = ({show, setShow, setReview, review}) => {
 
 export const ImageModal = ({show, setShow, setImage, image}) => {
   return (
-    <Modal show={show} onHide={() => setShow(false)} centered>
-      <Modal.Header closeButton>
-      </Modal.Header>
+    <Modal show={show} onHide={() => setShow(false)} centered fullscreen={'sm-down'} keyboard>
+      <Modal.Header closeButton></Modal.Header>
       <Modal.Body>
         <div className='row d-flex justify-content-center'>
           <div className='col-10'>
