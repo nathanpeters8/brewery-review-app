@@ -27,23 +27,8 @@ export const MapModalTemplate = ({ showMap, toggleShowMap, name, city, state, st
   );
 };
 
-export const FormModalTemplate = ({
-  show,
-  toggleShow,
-  formType,
-  title,
-  setEmail,
-  setPassword,
-  setUsername,
-  setCity,
-  setState,
-  email,
-  password,
-  username,
-  city,
-  state,
-  submitMethod
-}) => {
+export const FormModalTemplate = ({ show, toggleShow, formType, title, handleChange, userInfo, submitMethod }) => {
+  const { email, username, password, city, state } = userInfo;
   return (
     <Modal show={show} onHide={() => toggleShow(false)} fullscreen={'sm-down'} keyboard>
       <Modal.Header closeButton>
@@ -58,7 +43,7 @@ export const FormModalTemplate = ({
               type='text'
               name='email'
               placeholder='name@example.com'
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => handleChange(e.target)}
               value={email}
               required
             />
@@ -74,7 +59,7 @@ export const FormModalTemplate = ({
                 type='text'
                 name='username'
                 placeholder='my_username'
-                onChange={(e) => setUsername(e.target.value)}
+                onChange={(e) => handleChange(e.target)}
                 value={username}
                 required
               />
@@ -90,7 +75,7 @@ export const FormModalTemplate = ({
               type='password'
               name='password'
               placeholder='1234567890'
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => handleChange(e.target)}
               value={password}
               required
             />
@@ -107,7 +92,7 @@ export const FormModalTemplate = ({
                   type='city'
                   name='city'
                   placeholder='Denver'
-                  onChange={(e) => setCity(e.target.value)}
+                  onChange={(e) => handleChange(e.target)}
                   value={city}
                 />
                 <label htmlFor='inputCity' className='form-label'>
@@ -121,7 +106,7 @@ export const FormModalTemplate = ({
                   type='state'
                   name='state'
                   placeholder='Denver'
-                  onChange={(e) => setState(e.target.value)}
+                  onChange={(e) => handleChange(e.target)}
                   value={state}
                 />
                 <label htmlFor='inputState' className='form-label'>
@@ -130,26 +115,24 @@ export const FormModalTemplate = ({
               </div>
             </div>
           )}
-          <div className="col-6 text-center">
-            <button type='submit' className='btn btn-outline-primary text-ochre border-0'>{title}</button>
+          <div className='col-6 text-center'>
+            <button type='submit' className='btn btn-outline-primary text-ochre border-0'>
+              {title}
+            </button>
           </div>
         </form>
       </Modal.Body>
-      <Modal.Footer className='text-center'>
-        {/* <Button variant='outline-primary' className='text-ochre border-0'>
-          {title}
-        </Button> */}
-      </Modal.Footer>
+      <Modal.Footer className='text-center'></Modal.Footer>
     </Modal>
   );
 };
 
-export const ReviewModal = ({show, setShow, setReview, review}) => {
+export const ReviewModal = ({ show, setShow, setReview, review }) => {
   return (
     <Modal show={show} onHide={() => setShow(false)} centered fullscreen={'sm-down'} keyboard>
       <Modal.Header closeButton></Modal.Header>
       <Modal.Body>
-        <div className='row d-flex justify-content-center'>
+        <form className='row d-flex justify-content-center'>
           <div className='col-10 d-flex flex-row justify-content-around align-items-center'>
             <h4 className=''>
               <FontAwesomeIcon icon={faStar} />
@@ -172,7 +155,7 @@ export const ReviewModal = ({show, setShow, setReview, review}) => {
               required
             ></textarea>
           </div>
-        </div>
+        </form>
       </Modal.Body>
       <Modal.Footer className='text-center'>
         <Button variant='outline-primary' className='text-ochre border-0'>
@@ -183,7 +166,7 @@ export const ReviewModal = ({show, setShow, setReview, review}) => {
   );
 };
 
-export const ImageModal = ({show, setShow, setImage, image}) => {
+export const ImageModal = ({ show, setShow, setImage, image }) => {
   return (
     <Modal show={show} onHide={() => setShow(false)} centered fullscreen={'sm-down'} keyboard>
       <Modal.Header closeButton></Modal.Header>
@@ -209,4 +192,4 @@ export const ImageModal = ({show, setShow, setImage, image}) => {
       </Modal.Footer>
     </Modal>
   );
-}
+};

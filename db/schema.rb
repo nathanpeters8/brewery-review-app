@@ -10,7 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_07_16_193518) do
+ActiveRecord::Schema.define(version: 2024_07_16_232647) do
+
+  create_table "reviews", force: :cascade do |t|
+    t.string "brewery_id"
+    t.integer "user_id"
+    t.integer "rating"
+    t.text "content"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id"], name: "index_reviews_on_user_id"
+  end
 
   create_table "sessions", force: :cascade do |t|
     t.string "token"
@@ -30,5 +40,6 @@ ActiveRecord::Schema.define(version: 2024_07_16_193518) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  add_foreign_key "reviews", "users"
   add_foreign_key "sessions", "users"
 end

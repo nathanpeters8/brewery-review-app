@@ -6,6 +6,7 @@ import { Navbar, Nav } from 'react-bootstrap';
 import { Authenticate, UserLogIn, UserSignOut, UserSignUp } from './apiService';
 
 const Layout = (props) => {
+  // state variables
   const [showLogIn, setShowLogIn] = useState(false);
   const [showSignUp, setShowSignUp] = useState(false);
   const [username, setUsername] = useState('');
@@ -16,6 +17,7 @@ const Layout = (props) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [userLoggedIn, setUserLoggedIn] = useState(false);
 
+  // check user authentication, on page load
   useEffect(() => {
     Authenticate((response) => {
       console.log(response);
@@ -23,8 +25,9 @@ const Layout = (props) => {
         setUserLoggedIn(true);
       }
     })
-  }, [email]);
+  }, []);
 
+  // sign up user, then log in
   const handleSignUp = (e) => {
     e.preventDefault();
     UserSignUp(username, email, password, city, state, (response) => {
@@ -33,6 +36,7 @@ const Layout = (props) => {
     })
   }
 
+  // log in user
   const handleLogIn = (e) => {
     e.preventDefault();
     UserLogIn(email, password, (response) => {
@@ -41,6 +45,7 @@ const Layout = (props) => {
     })
   }
 
+  // log out user
   const handleLogOut = (e) => {
     e.preventDefault();
     UserSignOut((response) => {
@@ -50,12 +55,31 @@ const Layout = (props) => {
     })
   }
 
+  // handle navbar search input
   const handleSearch = (event) => {
     event.preventDefault();
     const params = new URLSearchParams();
     if (searchTerm) params.append('query', encodeURIComponent(searchTerm));
     window.location.href = `/results?${params.toString()}`;
   };
+
+  // handle login/signup form input changes
+  const handleChange = (target) => {
+    if (target.name === 'email') {
+      setEmail(target.value);
+    } else if (target.name === 'username') {
+      setUsername(target.value);
+    } else if (target.name === 'password') {
+      setPassword(target.value);
+    } else if (target.name === 'city') {
+      setCity(target.value);
+    } else if (target.name === 'state') {
+      setState(target.value);
+    }
+  }
+
+  const signUpInfo = { username, email, password, city, state };
+  const logInInfo = { email, password };
 
   return (
     <>
@@ -114,36 +138,26 @@ const Layout = (props) => {
         </Navbar.Collapse>
       </Navbar>
       {props.children}
-
+      
+      {/* Log In Modal */}
       <FormModalTemplate
         show={showLogIn}
         toggleShow={setShowLogIn}
         formType='login'
         title='Log In'
-        setEmail={setEmail}
-        setPassword={setPassword}
-        setUsername={setUsername}
-        email={email}
-        password={password}
-        username={username}
+        handleChange={handleChange}
+        userInfo={logInInfo}
         submitMethod={handleLogIn}
-      />
+      /> 
 
+      {/* Sign Up Modal */}
       <FormModalTemplate
         show={showSignUp}
         toggleShow={setShowSignUp}
         formType='signup'
         title='Sign Up'
-        setEmail={setEmail}
-        setPassword={setPassword}
-        setUsername={setUsername}
-        setCity={setCity}
-        setState={setState}
-        email={email}
-        password={password}
-        username={username}
-        city={city}
-        state={state}
+        handleChange={handleChange}
+        userInfo={signUpInfo}
         submitMethod={handleSignUp}
       />
     </>
