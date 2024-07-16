@@ -3,4 +3,12 @@ Rails.application.routes.draw do
   get '/results' => 'static_pages#results'
   get '/brewery/:id' => 'static_pages#brewery'
   get '/account' => 'static_pages#account'
+
+  namespace :api do
+    resources :users, only: [:create]
+    resources :sessions, only: [:create]
+
+    delete '/logout' => 'sessions#destroy'
+    get '/authenticated' => 'sessions#authenticated'
+  end
 end
