@@ -35,9 +35,14 @@ export const FormModalTemplate = ({
   setEmail,
   setPassword,
   setUsername,
+  setCity,
+  setState,
   email,
   password,
   username,
+  city,
+  state,
+  submitMethod
 }) => {
   return (
     <Modal show={show} onHide={() => toggleShow(false)} fullscreen={'sm-down'} keyboard>
@@ -45,7 +50,7 @@ export const FormModalTemplate = ({
         <Modal.Title>{title}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <form className='row d-flex justify-content-center gap-3'>
+        <form className='row d-flex justify-content-center gap-3' onSubmit={submitMethod}>
           <div className='col-8 form-floating'>
             <input
               id='inputEmail'
@@ -55,6 +60,7 @@ export const FormModalTemplate = ({
               placeholder='name@example.com'
               onChange={(e) => setEmail(e.target.value)}
               value={email}
+              required
             />
             <label htmlFor='inputEmail' className='form-label'>
               Email
@@ -70,6 +76,7 @@ export const FormModalTemplate = ({
                 placeholder='my_username'
                 onChange={(e) => setUsername(e.target.value)}
                 value={username}
+                required
               />
               <label htmlFor='inputUsername' className='form-label'>
                 Username
@@ -85,15 +92,53 @@ export const FormModalTemplate = ({
               placeholder='1234567890'
               onChange={(e) => setPassword(e.target.value)}
               value={password}
+              required
             />
             <label htmlFor='inputPassword' className='form-label'>
               Password
             </label>
           </div>
+          {formType !== 'login' && (
+            <div className='col-10 d-flex flex-row justify-content-center gap-3'>
+              <div className='col-5 text-center form-floating'>
+                <input
+                  id='inputCity'
+                  className='form-control'
+                  type='city'
+                  name='city'
+                  placeholder='Denver'
+                  onChange={(e) => setCity(e.target.value)}
+                  value={city}
+                />
+                <label htmlFor='inputCity' className='form-label'>
+                  City
+                </label>
+              </div>
+              <div className='col-5 text-center form-floating'>
+                <input
+                  id='inputState'
+                  className='form-control'
+                  type='state'
+                  name='state'
+                  placeholder='Denver'
+                  onChange={(e) => setState(e.target.value)}
+                  value={state}
+                />
+                <label htmlFor='inputState' className='form-label'>
+                  State
+                </label>
+              </div>
+            </div>
+          )}
+          <div className="col-6 text-center">
+            <button type='submit' className='btn btn-outline-primary text-ochre border-0'>{title}</button>
+          </div>
         </form>
       </Modal.Body>
       <Modal.Footer className='text-center'>
-        <Button variant='outline-primary' className='text-ochre border-0'>{title}</Button>
+        {/* <Button variant='outline-primary' className='text-ochre border-0'>
+          {title}
+        </Button> */}
       </Modal.Footer>
     </Modal>
   );

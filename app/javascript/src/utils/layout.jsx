@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Button } from 'react-bootstrap';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { FormModalTemplate } from './modalTemplates';
-import { GetBreweriesBySearchTerm } from './breweryDBRequests';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Navbar, Nav } from 'react-bootstrap';
+import { Authenticate, UserLogIn, UserSignOut, UserSignUp } from './apiService';
 
 const Layout = (props) => {
   const [showLogIn, setShowLogIn] = useState(false);
@@ -12,7 +11,44 @@ const Layout = (props) => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [city, setCity] = useState('');
+  const [state, setState] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [userLoggedIn, setUserLoggedIn] = useState(false);
+
+  useEffect(() => {
+    Authenticate((response) => {
+      console.log(response);
+      if(response.authenticated) {
+        setUserLoggedIn(true);
+      }
+    })
+  }, [email]);
+
+  const handleSignUp = (e) => {
+    e.preventDefault();
+    UserSignUp(username, email, password, city, state, (response) => {
+      console.log(response);
+      handleLogIn(e);
+    })
+  }
+
+  const handleLogIn = (e) => {
+    e.preventDefault();
+    UserLogIn(email, password, (response) => {
+      console.log(response);
+      window.location.href = window.location.search;
+    })
+  }
+
+  const handleLogOut = (e) => {
+    e.preventDefault();
+    UserSignOut((response) => {
+      console.log(response);
+      setUserLoggedIn(false);
+      window.location.href = window.location.search;
+    })
+  }
 
   const handleSearch = (event) => {
     event.preventDefault();
@@ -46,21 +82,34 @@ const Layout = (props) => {
                 </button>
               </form>
             )}
-            <Nav.Item>
-              <button className='btn text-ochre' onClick={(e) => (window.location.href = '/account')}>
-                My Account
-              </button>
-            </Nav.Item>
-            <Nav.Item>
-              <button className='btn text-ochre' onClick={(e) => setShowLogIn(true)}>
-                Log in
-              </button>
-            </Nav.Item>
-            <Nav.Item>
-              <button className='btn text-ochre' onClick={(e) => setShowSignUp(true)}>
-                Sign up
-              </button>
-            </Nav.Item>
+            {userLoggedIn && (
+              <>
+                <Nav.Item>
+                  <button className='btn text-ochre' onClick={(e) => (window.location.href = '/account')}>
+                    My Account
+                  </button>
+                </Nav.Item>
+                <Nav.Item>
+                  <button className='btn text-ochre' onClick={(e) => handleLogOut(e)}>
+                    Log Out
+                  </button>
+                </Nav.Item>
+              </>
+            )}
+            {!userLoggedIn && (
+              <>
+                <Nav.Item>
+                  <button className='btn text-ochre' onClick={(e) => setShowLogIn(true)}>
+                    Log in
+                  </button>
+                </Nav.Item>
+                <Nav.Item>
+                  <button className='btn text-ochre' onClick={(e) => setShowSignUp(true)}>
+                    Sign up
+                  </button>
+                </Nav.Item>
+              </>
+            )}
           </Nav>
         </Navbar.Collapse>
       </Navbar>
@@ -77,6 +126,7 @@ const Layout = (props) => {
         email={email}
         password={password}
         username={username}
+        submitMethod={handleLogIn}
       />
 
       <FormModalTemplate
@@ -87,9 +137,14 @@ const Layout = (props) => {
         setEmail={setEmail}
         setPassword={setPassword}
         setUsername={setUsername}
+        setCity={setCity}
+        setState={setState}
         email={email}
         password={password}
         username={username}
+        city={city}
+        state={state}
+        submitMethod={handleSignUp}
       />
     </>
   );

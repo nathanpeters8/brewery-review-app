@@ -1,4 +1,4 @@
-import { safeCredentials, safeCredentialsFormData, handleErrors } from './fetchHelper';
+import { handleErrors } from './fetchHelper';
 
 export const GetBreweries = (query, page, per_page, callback) => {
   let params = '';

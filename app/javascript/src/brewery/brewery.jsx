@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar, faGlobe } from '@fortawesome/free-solid-svg-icons';
 import { faFacebook, faInstagram } from '@fortawesome/free-brands-svg-icons';
 import Layout from '@utils/layout';
-import { GetBreweriesById } from '@utils/breweryDBRequests';
+import { GetBreweriesById } from '@utils/openBreweryDBRequests';
 import { SocialMediaSearch } from '@utils/googleRequests';
 import { MapModalTemplate, ReviewModal, ImageModal } from '@utils/modalTemplates';
 import './brewery.scss';
