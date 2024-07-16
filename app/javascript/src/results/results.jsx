@@ -15,8 +15,8 @@ const Results = ({ queryParams }) => {
   const [clickedBrewery, setClickedBrewery] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [pagesArray, setPagesArray] = useState([1, 2]);
-  // const [metadata, setMetadata] = useState({});
   const [total, setTotal] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   const itemsPerPage = 10;
 
@@ -35,12 +35,14 @@ const Results = ({ queryParams }) => {
           console.log(response);
           setResults(response.breweries);
           setTotal(parseInt(response.metadata.total));
+          setLoading(false);
         });
       } else {
         GetBreweries(query, currentPage, itemsPerPage, (response) => {
           console.log(response);
           setResults(response.breweries);
           setTotal(parseInt(response.metadata.total));
+          setLoading(false);
         });
       }
     }
@@ -115,7 +117,10 @@ const Results = ({ queryParams }) => {
             />
           )}
           {(() => {
-            if (results.length == 0) {
+            if(loading) {
+              return <h4 className='text-center'>Loading...</h4>
+            }
+            if (!loading && results.length == 0) {
               return (
                 <div className='col-12 d-flex flex-column gap-3'>
                   <h3 className='text-center'>{buildQueryString(query, total)}</h3>
