@@ -27,7 +27,7 @@ const Home = (props) => {
         </div>
         <form
           id='homeBrewerySearch'
-          className='row d-flex justify-content-center mt-4 border bg-secondary bg-opacity-25 py-3'
+          className='row d-flex justify-content-center mt-4 border bg-secondary bg-opacity-25 py-5'
           onSubmit={handleSearch}
         >
           <div className='col-8 text-center text-dark'>
@@ -69,7 +69,7 @@ const Home = (props) => {
               value={state}
             />
           </div>
-          <div className='col-5 text-center mt-3 text-dark'>
+          {/* <div className='col-5 text-center mt-3 text-dark'>
             <label htmlFor='zipCode' className='form-label'>
               Zip Code
             </label>
@@ -81,8 +81,8 @@ const Home = (props) => {
               onChange={(event) => setPostal(event.target.value)}
               value={postal}
             />
-          </div>
-          <div className='col-8 text-center mt-4'>
+          </div> */}
+          <div className='col-8 text-center mt-5'>
             <button className='btn btn-lg btn-outline-secondary text-ochre border-0'>Search</button>
           </div>
         </form>

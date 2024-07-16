@@ -14,7 +14,9 @@ const Results = ({ queryParams }) => {
   const [showMap, setShowMap] = useState(false);
   const [clickedBrewery, setClickedBrewery] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [pagesArray, setPagesArray] = useState([1, 2, 3]);
+  const [pagesArray, setPagesArray] = useState([1, 2]);
+  // const [metadata, setMetadata] = useState({});
+  const [total, setTotal] = useState(0);
 
   const itemsPerPage = 10;
 
@@ -31,12 +33,14 @@ const Results = ({ queryParams }) => {
       if (query.hasOwnProperty('query')) {
         GetBreweriesBySearchTerm(query, currentPage, itemsPerPage, (response) => {
           console.log(response);
-          setResults(response);
+          setResults(response.breweries);
+          setTotal(parseInt(response.metadata.total));
         });
       } else {
         GetBreweries(query, currentPage, itemsPerPage, (response) => {
           console.log(response);
-          setResults(response);
+          setResults(response.breweries);
+          setTotal(parseInt(response.metadata.total));
         });
       }
     }
@@ -44,16 +48,17 @@ const Results = ({ queryParams }) => {
 
   // update pagesArray when currentPage changes
   useEffect(() => {
-    if (currentPage > 1) {
-      if (results.length < itemsPerPage) {
-        setPagesArray([currentPage - 1, currentPage]);
-      } else {
-        setPagesArray([currentPage - 1, currentPage, currentPage + 1]);
+    const totalPages = Math.ceil(total / itemsPerPage);
+    if (totalPages > 1) {
+      if (currentPage > 1) {
+        if (currentPage === totalPages) {
+          setPagesArray([currentPage - 1, currentPage]);
+        } else {
+          setPagesArray([currentPage - 1, currentPage, currentPage + 1]);
+        }
       }
-    } else if (currentPage === 1) {
-      setPagesArray([1, 2]);
     }
-  }, [results, currentPage]);
+  }, [results]);
 
   // show map modal when clickedBrewery changes
   useEffect(() => {
@@ -79,16 +84,46 @@ const Results = ({ queryParams }) => {
   // format phone number
   const formatPhoneNumber = (num) => `(${num.slice(0, 3)}) ${num.slice(3, 6)}-${num.slice(6)}`;
 
+  const buildQueryString = (query, total) => {
+    let string = `${total} brewery results`;
+    if (query) {
+      if (query.name) string += ` for "${query.name.replace('_', ' ')}"`;
+      if (query.query) string += ` for "${decodeURIComponent(query.query)}"`;
+      if (query.city && !query.state) string += ` in "${query.city}"`;
+      if (query.state && !query.city) string += ` in "${query.state}"`;
+      if (query.state && query.city) string += ` in "${query.city}, ${query.state}"`;
+    }
+    return string;
+  };
+
   return (
     <Layout currentComponent='results'>
       <div id='resultsContainer' className='container-xl pt-5 bg-secondary bg-opacity-10'>
         <div id='breweryResults' className='row'>
-          {(currentPage > 1 || results.length >= itemsPerPage) && (
-            <PaginationButtons handlePageChange={handlePageChange} currentPage={currentPage} pagesArray={pagesArray} />
+          {total > 0 && (
+            <p className='text-capitalize fst-italic text-center text-sm-start mb-4 ms-0 ms-sm-3'>
+              {buildQueryString(query, total)}
+            </p>
+          )}
+          {total > itemsPerPage && (
+            <PaginationButtons
+              handlePageChange={handlePageChange}
+              currentPage={currentPage}
+              pagesArray={pagesArray}
+              total={total}
+              itemsPerPage={itemsPerPage}
+            />
           )}
           {(() => {
             if (results.length == 0) {
-              return null;
+              return (
+                <div className='col-12 d-flex flex-column gap-3'>
+                  <h3 className='text-center'>{buildQueryString(query, total)}</h3>
+                  <a className='text-center' href='/'>
+                    Go Back to Home Page
+                  </a>
+                </div>
+              );
             }
             return results.map((brewery, index) => {
               return (
@@ -136,8 +171,14 @@ const Results = ({ queryParams }) => {
               );
             });
           })()}
-          {(currentPage > 1 || results.length >= itemsPerPage) && (
-            <PaginationButtons handlePageChange={handlePageChange} currentPage={currentPage} pagesArray={pagesArray} />
+          {total > itemsPerPage && (
+            <PaginationButtons
+              handlePageChange={handlePageChange}
+              currentPage={currentPage}
+              pagesArray={pagesArray}
+              total={total}
+              itemsPerPage={itemsPerPage}
+            />
           )}
         </div>
       </div>
