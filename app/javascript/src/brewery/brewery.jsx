@@ -18,6 +18,7 @@ const Brewery = (props) => {
   const [instagramLink, setInstagramLink] = useState('');
   const [isFixed, setIsFixed] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const column = document.querySelector('#leftColumn');
@@ -50,6 +51,7 @@ const Brewery = (props) => {
     if (id) {
       GetBreweriesById(id, (response) => {
         setBrewery(response);
+        setLoading(false);
       });
     }
   }, [id]);
@@ -88,6 +90,7 @@ const Brewery = (props) => {
     <Layout currentComponent='brewery'>
       <div className='container-xl pt-5 bg-secondary bg-opacity-10'>
         <div className='row'>
+          {loading && <h4 className='text-center'>Loading...</h4>}
           <div className='col-12 col-md-8 mb-2 d-flex flex-column flex-sm-row py-2 justify-content-around align-items-center align-items-sm-start'>
             <img src='https://placehold.co/200' className='ms-0 ms-md-5' />
             <div className='col-md-6 d-flex flex-column text-ochre text-center text-md-start ms-0 ms-md-5 mt-3 mt-md-0 justify-content-around'>
