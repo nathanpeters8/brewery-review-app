@@ -90,7 +90,7 @@ const Brewery = (props) => {
       SubmitReview(formData, (response) => {
         console.log(response);
         setShowReviewModal(false);
-        // window.location.reload();
+        window.location.reload();
       });
     }
   };
@@ -113,6 +113,16 @@ const Brewery = (props) => {
     setInstagramLink(instagramLink);
   };
 
+  const getAverageRating = () => {
+    let total = 0;
+    breweryReviews.forEach((review) => {
+      total += review.rating;
+    });
+    let average = total / breweryReviews.length;
+    if(isNaN(average)) return 0;
+    return average;
+  };
+
   const formatPhoneNumber = (num) => `(${num.slice(0, 3)}) ${num.slice(3, 6)}-${num.slice(6)}`;
 
   return (
@@ -128,13 +138,18 @@ const Brewery = (props) => {
               <h6 className='lead fs-6 fw-normal'>
                 {brewery.city}, {brewery.state}
               </h6>
-              <h5 className='text-dark mt-3'>
-                <FontAwesomeIcon icon={faStar} />
-                <FontAwesomeIcon icon={faStar} />
-                <FontAwesomeIcon icon={faStar} />
-                <FontAwesomeIcon icon={faStar} />
-                <FontAwesomeIcon icon={faStar} />
-                <small className='fs-6 ms-1'>5.0 (5 reviews)</small>
+              <h5 className='text-dark mt-2'>
+                {[...Array(5)].map((star, i) => {
+                  return (
+                    <FontAwesomeIcon
+                      key={i}
+                      icon={i < Math.ceil(getAverageRating(breweryReviews)) ? faStar : faStarEmpty}
+                      size='lg'
+                      style={{ color: '#C06014' }}
+                    />
+                  );
+                })}
+                <small className='fs-6 ms-2'>{`${getAverageRating().toFixed(1)} (${breweryReviews.length} reviews)`}</small>
               </h5>
             </div>
           </div>

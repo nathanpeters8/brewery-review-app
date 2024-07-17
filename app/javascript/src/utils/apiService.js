@@ -99,7 +99,7 @@ export const GetReviewsByBrewery = (breweryId, callback) => {
   )
     .then(handleErrors)
     .then((response) => {
-      console.log('Reviews:', response);
+      // console.log('Reviews:', response);
       return callback(response.reviews);
     });
 }

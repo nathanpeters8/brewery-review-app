@@ -15,7 +15,7 @@ module Api
     end
 
     def index_by_brewery
-      @reviews = Review.where(brewery_id: params[:brewery_id])
+      @reviews = Review.where(brewery_id: params[:brewery_id]).order(created_at: :desc)
       render 'api/reviews/index'
     end
 
