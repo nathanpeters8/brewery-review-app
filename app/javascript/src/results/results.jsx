@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar } from '@fortawesome/free-solid-svg-icons';
-import { GetBreweries, GetBreweriesBySearchTerm } from '@utils/breweryDBRequests';
+import { GetBreweries, GetBreweriesBySearchTerm } from '@utils/openBreweryDBRequests';
 import { MapModalTemplate } from '@utils/modalTemplates';
 import Layout from '@utils/layout';
 import PaginationButtons from './paginationButtons';
@@ -117,8 +117,8 @@ const Results = ({ queryParams }) => {
             />
           )}
           {(() => {
-            if(loading) {
-              return <h4 className='text-center'>Loading...</h4>
+            if (loading) {
+              return <h4 className='text-center'>Loading...</h4>;
             }
             if (!loading && results.length == 0) {
               return (

@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar, faGlobe } from '@fortawesome/free-solid-svg-icons';
+import { faStar as faStarEmpty } from '@fortawesome/free-regular-svg-icons';
 import { faFacebook, faInstagram } from '@fortawesome/free-brands-svg-icons';
 import Layout from '@utils/layout';
-import { GetBreweriesById } from '@utils/breweryDBRequests';
+import { GetBreweriesById } from '@utils/openBreweryDBRequests';
 import { SocialMediaSearch } from '@utils/googleRequests';
 import { MapModalTemplate, ReviewModal, ImageModal } from '@utils/modalTemplates';
+import { SubmitReview, GetReviewsByBrewery } from '../utils/apiService';
 import './brewery.scss';
 
 const Brewery = (props) => {
   const [id, setId] = useState('');
   const [brewery, setBrewery] = useState({});
+  const [breweryReviews, setBreweryReviews] = useState([]);
   const [showMap, setShowMap] = useState(false);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [showImageModal, setShowImageModal] = useState(false);
@@ -19,6 +22,9 @@ const Brewery = (props) => {
   const [isFixed, setIsFixed] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [loading, setLoading] = useState(true);
+  const [rating, setRating] = useState(0);
+  const [ratingHover, setRatingHover] = useState(0);
+  const [review, setReview] = useState('');
 
   useEffect(() => {
     const column = document.querySelector('#leftColumn');
@@ -52,6 +58,10 @@ const Brewery = (props) => {
       GetBreweriesById(id, (response) => {
         setBrewery(response);
         setLoading(false);
+        GetReviewsByBrewery(id, (reviews) => {
+          console.log(reviews);
+          setBreweryReviews(reviews);
+        });
       });
     }
   }, [id]);
@@ -65,6 +75,25 @@ const Brewery = (props) => {
       // });
     }
   }, [brewery]);
+  
+  const handleReviewSubmit = (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+
+    if (rating === 0 || review === '') {
+      alert('Please provide a rating and review');
+    } else {
+      formData.append('review[rating]', rating);
+      formData.append('review[content]', review);
+      formData.append('review[brewery_id]', id);
+
+      SubmitReview(formData, (response) => {
+        console.log(response);
+        setShowReviewModal(false);
+        // window.location.reload();
+      });
+    }
+  };
 
   const getSocialLinks = (results) => {
     let facebookLink = null;
@@ -172,61 +201,32 @@ const Brewery = (props) => {
                 <img src='https://placehold.co/150' />
                 <img src='https://placehold.co/150' />
               </div>
-              <div className='col-8 col-md-6 d-flex align-items-center flex-column'>
-                <div className='brewery border-bottom pb-3 mt-5'>
-                  <div className='d-flex flex-row justify-content-between'>
-                    <h5>Username</h5>
-                    <h6 className='lead fs-6'>MM/DD/YYYY</h6>
-                  </div>
-                  <h6>
-                    <FontAwesomeIcon icon={faStar} />
-                    <FontAwesomeIcon icon={faStar} />
-                    <FontAwesomeIcon icon={faStar} />
-                    <FontAwesomeIcon icon={faStar} />
-                    <FontAwesomeIcon icon={faStar} />
-                  </h6>
-                  <h6 className='text-center mt-3'>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Nesciunt maxime sunt natus quod placeat!
-                    Reiciendis similique illo odio quas voluptas eaque repellendus fuga, provident sed quod amet quaerat
-                    libero cupiditate!
-                  </h6>
-                </div>
-                <div className='brewery border-bottom pb-3 mt-5'>
-                  <div className='d-flex flex-row justify-content-between'>
-                    <h5>Username</h5>
-                    <h6 className='lead fs-6'>MM/DD/YYYY</h6>
-                  </div>
-                  <h6>
-                    <FontAwesomeIcon icon={faStar} />
-                    <FontAwesomeIcon icon={faStar} />
-                    <FontAwesomeIcon icon={faStar} />
-                    <FontAwesomeIcon icon={faStar} />
-                    <FontAwesomeIcon icon={faStar} />
-                  </h6>
-                  <h6 className='text-center mt-3'>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Nesciunt maxime sunt natus quod placeat!
-                    Reiciendis similique illo odio quas voluptas eaque repellendus fuga, provident sed quod amet quaerat
-                    libero cupiditate!
-                  </h6>
-                </div>
-                <div className='brewery border-bottom pb-3 mt-5'>
-                  <div className='d-flex flex-row justify-content-between'>
-                    <h5>Username</h5>
-                    <h6 className='lead fs-6'>MM/DD/YYYY</h6>
-                  </div>
-                  <h6>
-                    <FontAwesomeIcon icon={faStar} />
-                    <FontAwesomeIcon icon={faStar} />
-                    <FontAwesomeIcon icon={faStar} />
-                    <FontAwesomeIcon icon={faStar} />
-                    <FontAwesomeIcon icon={faStar} />
-                  </h6>
-                  <h6 className='text-center mt-3'>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Nesciunt maxime sunt natus quod placeat!
-                    Reiciendis similique illo odio quas voluptas eaque repellendus fuga, provident sed quod amet quaerat
-                    libero cupiditate!
-                  </h6>
-                </div>
+              <div className='col-8 col-md-6 d-flex align-items-center flex-column pb-5'>
+                {breweryReviews.length > 0 ? (
+                  breweryReviews.map((review, index) => (
+                    <div className='brewery border-bottom pb-3 mt-5 w-100' key={index}>
+                      <div className='d-flex flex-row justify-content-between'>
+                        <h5>{review.user.username}</h5>
+                        <h6 className='lead fs-6'>{review.created_at.split('T')[0]}</h6>
+                      </div>
+                      <h6>
+                        {[...Array(5)].map((star, i) => {
+                          return (
+                            <FontAwesomeIcon
+                              key={i}
+                              icon={i < review.rating ? faStar : faStarEmpty}
+                              size='lg'
+                              style={{ color: '#C06014' }}
+                            />
+                          );
+                        })}
+                      </h6>
+                      <h6 className='mt-3'>{review.content}</h6>
+                    </div>
+                  ))
+                ) : (
+                  <h4 className='mt-5 text-center'>No Reviews Yet</h4>
+                )}
               </div>
             </div>
           </div>
@@ -241,7 +241,17 @@ const Brewery = (props) => {
         street={brewery.street}
       />
 
-      <ReviewModal show={showReviewModal} setShow={setShowReviewModal} />
+      <ReviewModal
+        show={showReviewModal}
+        setShow={setShowReviewModal}
+        review={review}
+        setReview={setReview}
+        rating={rating}
+        setRating={setRating}
+        hover={ratingHover}
+        setHover={setRatingHover}
+        handleSubmit={handleReviewSubmit}
+      />
 
       <ImageModal show={showImageModal} setShow={setShowImageModal} />
     </Layout>

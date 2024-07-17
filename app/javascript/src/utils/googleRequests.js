@@ -1,5 +1,6 @@
-import { safeCredentials, safeCredentialsFormData, handleErrors } from './fetchHelper';
+import { handleErrors } from './fetchHelper';
 
+// get request to search for social media profiles
 export const SocialMediaSearch = (name, callback) => {
   let query = `${name} site:facebook.com OR site:instagram.com`;
   fetch(
