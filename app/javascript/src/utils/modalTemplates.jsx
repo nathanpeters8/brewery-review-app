@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar } from '@fortawesome/free-solid-svg-icons';
+import { faStar as faStarEmpty } from '@fortawesome/free-regular-svg-icons';
 
 export const MapModalTemplate = ({ showMap, toggleShowMap, name, city, state, street }) => {
   return (
@@ -105,7 +106,7 @@ export const FormModalTemplate = ({ show, toggleShow, formType, title, handleCha
                   className='form-control'
                   type='state'
                   name='state'
-                  placeholder='Denver'
+                  placeholder='Colorado'
                   onChange={(e) => handleChange(e.target)}
                   value={state}
                 />
@@ -127,20 +128,34 @@ export const FormModalTemplate = ({ show, toggleShow, formType, title, handleCha
   );
 };
 
-export const ReviewModal = ({ show, setShow, setReview, review }) => {
+export const ReviewModal = ({ show, setShow, review, setReview, rating, setRating, hover, setHover, handleSubmit }) => {
   return (
     <Modal show={show} onHide={() => setShow(false)} centered fullscreen={'sm-down'} keyboard>
       <Modal.Header closeButton></Modal.Header>
       <Modal.Body>
-        <form className='row d-flex justify-content-center'>
+        <form className='row d-flex justify-content-center' onSubmit={handleSubmit}>
           <div className='col-10 d-flex flex-row justify-content-around align-items-center'>
-            <h4 className=''>
-              <FontAwesomeIcon icon={faStar} />
-              <FontAwesomeIcon icon={faStar} />
-              <FontAwesomeIcon icon={faStar} />
-              <FontAwesomeIcon icon={faStar} />
-              <FontAwesomeIcon icon={faStar} />
-            </h4>
+            <div className='d-flex flex-row'>
+              {[...Array(5)].map((star, i) => {
+                const ratingValue = i + 1;
+                return (
+                  <button
+                    type='button'
+                    key={i}
+                    className='btn btn-lg p-0 mx-0 border-0'
+                    onClick={(e) => setRating(ratingValue)}
+                    onMouseEnter={() => setHover(ratingValue)}
+                    onMouseLeave={() => setHover(0)}
+                  >
+                    <FontAwesomeIcon
+                      icon={ratingValue <= (hover || rating) ? faStar : faStarEmpty}
+                      size='lg'
+                      style={{ color: '#C06014' }}
+                    />
+                  </button>
+                );
+              })}
+            </div>
             <p className='fs-6 font-monospace my-0'>Select your Rating</p>
           </div>
           <hr className='my-2 invisible' />
@@ -150,17 +165,21 @@ export const ReviewModal = ({ show, setShow, setReview, review }) => {
               id='reviewInput'
               className='form-control'
               placeholder='Leave your review...'
-              onChange={setReview}
-              value={review}
+              onChange={(e) => setReview(e.target.value)}
               required
             ></textarea>
+          </div>
+          <div className='col-6 text-center mt-3'>
+            <button type='submit' className='btn btn-outline-primary text-ochre border-0'>
+             Submit
+            </button>
           </div>
         </form>
       </Modal.Body>
       <Modal.Footer className='text-center'>
-        <Button variant='outline-primary' className='text-ochre border-0'>
+        {/* <Button variant='outline-primary' className='text-ochre border-0'>
           Submit
-        </Button>
+        </Button> */}
       </Modal.Footer>
     </Modal>
   );

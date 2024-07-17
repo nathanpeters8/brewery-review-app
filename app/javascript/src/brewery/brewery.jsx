@@ -7,6 +7,7 @@ import { GetBreweriesById } from '@utils/openBreweryDBRequests';
 import { SocialMediaSearch } from '@utils/googleRequests';
 import { MapModalTemplate, ReviewModal, ImageModal } from '@utils/modalTemplates';
 import './brewery.scss';
+import { SubmitReview } from '../utils/apiService';
 
 const Brewery = (props) => {
   const [id, setId] = useState('');
@@ -19,6 +20,9 @@ const Brewery = (props) => {
   const [isFixed, setIsFixed] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [loading, setLoading] = useState(true);
+  const [rating, setRating] = useState(0);
+  const [ratingHover, setRatingHover] = useState(0);
+  const [review, setReview] = useState('');
 
   useEffect(() => {
     const column = document.querySelector('#leftColumn');
@@ -65,6 +69,25 @@ const Brewery = (props) => {
       // });
     }
   }, [brewery]);
+  
+  const handleReviewSubmit = (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+
+    if (rating === 0 || review === '') {
+      alert('Please provide a rating and review');
+    } else {
+      formData.append('review[rating]', rating);
+      formData.append('review[content]', review);
+      formData.append('review[brewery_id]', id);
+
+      SubmitReview(formData, (response) => {
+        console.log(response);
+        setShowReviewModal(false);
+        // window.location.reload();
+      });
+    }
+  };
 
   const getSocialLinks = (results) => {
     let facebookLink = null;
@@ -241,7 +264,17 @@ const Brewery = (props) => {
         street={brewery.street}
       />
 
-      <ReviewModal show={showReviewModal} setShow={setShowReviewModal} />
+      <ReviewModal
+        show={showReviewModal}
+        setShow={setShowReviewModal}
+        review={review}
+        setReview={setReview}
+        rating={rating}
+        setRating={setRating}
+        hover={ratingHover}
+        setHover={setRatingHover}
+        handleSubmit={handleReviewSubmit}
+      />
 
       <ImageModal show={showImageModal} setShow={setShowImageModal} />
     </Layout>

@@ -1,4 +1,4 @@
-import { safeCredentials, safeCredentialsFormData, handleErrors } from './fetchHelper';
+import { safeCredentials, safeCredentialsForm, handleErrors } from './fetchHelper';
 
 // get request to check if user is authenticated
 export const Authenticate = (callback) => {
@@ -74,3 +74,18 @@ export const UserSignOut = (callback) => {
       return callback(response);
     });
 };
+
+export const SubmitReview = (formData, callback) => {
+  fetch(
+    '/api/reviews',
+    safeCredentialsForm({
+      method: 'POST',
+      body: formData,
+    })
+  )
+    .then(handleErrors)
+    .then((response) => {
+      console.log('Review submitted:', response);
+      return callback(response);
+    });
+}
