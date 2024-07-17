@@ -89,3 +89,17 @@ export const SubmitReview = (formData, callback) => {
       return callback(response);
     });
 }
+
+export const GetReviewsByBrewery = (breweryId, callback) => {
+  fetch(
+    `/api/${breweryId}/reviews`,
+    safeCredentials({
+      method: 'GET',
+    })
+  )
+    .then(handleErrors)
+    .then((response) => {
+      console.log('Reviews:', response);
+      return callback(response.reviews);
+    });
+}

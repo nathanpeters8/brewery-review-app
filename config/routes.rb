@@ -11,5 +11,6 @@ Rails.application.routes.draw do
 
     delete '/logout' => 'sessions#destroy'
     get '/authenticated' => 'sessions#authenticated'
+    get '/:brewery_id/reviews' => 'reviews#index_by_brewery'
   end
 end

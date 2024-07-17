@@ -14,6 +14,11 @@ module Api
       end
     end
 
+    def index_by_brewery
+      @reviews = Review.where(brewery_id: params[:brewery_id])
+      render 'api/reviews/index'
+    end
+
     private
 
     def review_params
