@@ -7,7 +7,7 @@ import Layout from '@utils/layout';
 import { GetBreweriesById } from '@utils/openBreweryDBRequests';
 import { SocialMediaSearch } from '@utils/googleRequests';
 import { MapModalTemplate, ReviewModal, ImageModal } from '@utils/modalTemplates';
-import { SubmitReview, GetReviewsByBrewery } from '../utils/apiService';
+import { SubmitReview, GetReviewsByBrewery, UploadImage, GetImagesByBrewery } from '@utils/apiService';
 import './brewery.scss';
 
 const Brewery = (props) => {
@@ -25,6 +25,8 @@ const Brewery = (props) => {
   const [rating, setRating] = useState(0);
   const [ratingHover, setRatingHover] = useState(0);
   const [review, setReview] = useState('');
+  const [image, setImage] = useState(null);
+  const [caption, setCaption] = useState('');
 
   useEffect(() => {
     const column = document.querySelector('#leftColumn');
@@ -75,7 +77,30 @@ const Brewery = (props) => {
       // });
     }
   }, [brewery]);
-  
+
+  useEffect(() => {
+    console.log(image);
+  }, [image]);
+
+  const handleImageUpload = (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+
+    if (image === null) {
+      alert('Must provide an image');
+    } else {
+      formData.append('image[upload]', image);
+      formData.append('image[caption]', caption);
+      formData.append('image[brewery_id]', id);
+
+      UploadImage(formData, (response) => {
+        console.log(response);
+        setShowImageModal(false);
+        //window.location.reload();
+      });
+    }
+  };
+
   const handleReviewSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData();
@@ -119,7 +144,7 @@ const Brewery = (props) => {
       total += review.rating;
     });
     let average = total / breweryReviews.length;
-    if(isNaN(average)) return 0;
+    if (isNaN(average)) return 0;
     return average;
   };
 
@@ -149,7 +174,9 @@ const Brewery = (props) => {
                     />
                   );
                 })}
-                <small className='fs-6 ms-2'>{`${getAverageRating().toFixed(1)} (${breweryReviews.length} reviews)`}</small>
+                <small className='fs-6 ms-2'>{`${getAverageRating().toFixed(1)} (${
+                  breweryReviews.length
+                } reviews)`}</small>
               </h5>
             </div>
           </div>
@@ -268,7 +295,15 @@ const Brewery = (props) => {
         handleSubmit={handleReviewSubmit}
       />
 
-      <ImageModal show={showImageModal} setShow={setShowImageModal} />
+      <ImageModal
+        show={showImageModal}
+        setShow={setShowImageModal}
+        setImage={setImage}
+        image={image}
+        setCaption={setCaption}
+        caption={caption}
+        handleSubmit={handleImageUpload}
+      />
     </Layout>
   );
 };

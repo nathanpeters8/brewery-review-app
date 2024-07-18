@@ -185,29 +185,41 @@ export const ReviewModal = ({ show, setShow, review, setReview, rating, setRatin
   );
 };
 
-export const ImageModal = ({ show, setShow, setImage, image }) => {
+export const ImageModal = ({ show, setShow, setImage, image, setCaption, caption, handleSubmit }) => {
   return (
     <Modal show={show} onHide={() => setShow(false)} centered fullscreen={'sm-down'} keyboard>
       <Modal.Header closeButton></Modal.Header>
       <Modal.Body>
-        <div className='row d-flex justify-content-center'>
+        <form className='row d-flex justify-content-center' onSubmit={handleSubmit}>
           <div className='col-10'>
             <input
               type='file'
-              name='image'
+              name='upload'
+              accept='image/*'
               id='imageInput'
               className='form-control'
-              onChange={setImage}
-              value={image}
+              onChange={(e) => setImage(e.target.files[0])}
               required
             />
           </div>
-        </div>
+          <div className='col-10'>
+            <textarea
+              name='caption'
+              id='captionInput'
+              className='form-control'
+              placeholder='Leave your caption...'
+              onChange={(e) => setCaption(e.target.value)}
+              required
+            ></textarea>
+          </div>
+          <div className='col-6 text-center mt-3'>
+            <button type='submit' className='btn btn-outline-primary text-ochre border-0'>
+              Upload
+            </button>
+          </div>
+        </form>
       </Modal.Body>
       <Modal.Footer className='text-center'>
-        <Button variant='outline-primary' className='text-ochre border-0'>
-          Submit
-        </Button>
       </Modal.Footer>
     </Modal>
   );

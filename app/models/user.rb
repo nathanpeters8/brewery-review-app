@@ -1,6 +1,7 @@
 class User < ApplicationRecord
   has_many :sessions
   has_many :reviews
+  has_many :images
 
   validates :username, presence: true, length: { minimum: 3, maximum: 20 }
   validates :password, presence: true, length: { minimum: 8, maximum: 20 }

@@ -27,7 +27,7 @@ export const UserSignUp = (username, email, password, city, state, callback) => 
           email: email,
           password: password,
           city: city,
-          state: state
+          state: state,
         },
       }),
     })
@@ -88,7 +88,7 @@ export const SubmitReview = (formData, callback) => {
       console.log('Review submitted:', response);
       return callback(response);
     });
-}
+};
 
 export const GetReviewsByBrewery = (breweryId, callback) => {
   fetch(
@@ -102,4 +102,32 @@ export const GetReviewsByBrewery = (breweryId, callback) => {
       // console.log('Reviews:', response);
       return callback(response.reviews);
     });
-}
+};
+
+export const UploadImage = (formData, callback) => {
+  fetch(
+    '/api/images',
+    safeCredentialsForm({
+      method: 'POST',
+      body: formData,
+    })
+  )
+    .then(handleErrors)
+    .then((response) => {
+      console.log('Image uploaded:', response);
+      return callback(response);
+    });
+};
+
+export const GetImagesByBrewery = (breweryId, callback) => {
+  fetch(
+    `/api/${breweryId}/images`,
+    safeCredentials({
+      method: 'GET',
+    })
+  )
+    .then(handleErrors)
+    .then((response) => {
+      return callback(response.images);
+    });
+};
