@@ -7,13 +7,14 @@ import Layout from '@utils/layout';
 import { GetBreweriesById } from '@utils/openBreweryDBRequests';
 import { SocialMediaSearch } from '@utils/googleRequests';
 import { MapModalTemplate, ReviewModal, ImageModal } from '@utils/modalTemplates';
-import { SubmitReview, GetReviewsByBrewery } from '../utils/apiService';
+import { SubmitReview, GetReviewsByBrewery, UploadImage, GetImagesByBrewery } from '@utils/apiService';
 import './brewery.scss';
 
 const Brewery = (props) => {
   const [id, setId] = useState('');
   const [brewery, setBrewery] = useState({});
   const [breweryReviews, setBreweryReviews] = useState([]);
+  const [breweryImages, setBreweryImages] = useState([]);
   const [showMap, setShowMap] = useState(false);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [showImageModal, setShowImageModal] = useState(false);
@@ -25,7 +26,10 @@ const Brewery = (props) => {
   const [rating, setRating] = useState(0);
   const [ratingHover, setRatingHover] = useState(0);
   const [review, setReview] = useState('');
+  const [image, setImage] = useState(null);
+  const [caption, setCaption] = useState('');
 
+  // Fix left column on scroll
   useEffect(() => {
     const column = document.querySelector('#leftColumn');
     const columnOffsetTop = column.offsetTop;
@@ -49,10 +53,12 @@ const Brewery = (props) => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // Update id state when props.data.id changes
   useEffect(() => {
     setId(props.data.id);
   }, [props.data.id]);
 
+  // Fetch brewery data when id changes
   useEffect(() => {
     if (id) {
       GetBreweriesById(id, (response) => {
@@ -62,10 +68,15 @@ const Brewery = (props) => {
           console.log(reviews);
           setBreweryReviews(reviews);
         });
+        GetImagesByBrewery(id, (images) => {
+          console.log(images);
+          setBreweryImages(images);
+        });
       });
     }
   }, [id]);
 
+  // Search for social media links when brewery changes
   useEffect(() => {
     if (Object.keys(brewery).length > 0) {
       console.log('social media search for ' + brewery.name);
@@ -75,7 +86,29 @@ const Brewery = (props) => {
       // });
     }
   }, [brewery]);
-  
+
+  // Handle image upload
+  const handleImageUpload = (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+
+    if (image === null) {
+      alert('Must provide an image');
+    } else {
+      formData.append('image[upload]', image);
+      formData.append('image[caption]', caption);
+      formData.append('image[brewery_id]', id);
+      formData.append('image[brewery_name]', brewery.name);
+
+      UploadImage(formData, (response) => {
+        console.log(response);
+        setShowImageModal(false);
+        window.location.reload();
+      });
+    }
+  };
+
+  // Handle review submission
   const handleReviewSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData();
@@ -86,15 +119,17 @@ const Brewery = (props) => {
       formData.append('review[rating]', rating);
       formData.append('review[content]', review);
       formData.append('review[brewery_id]', id);
+      formData.append('review[brewery_name]', brewery.name);
 
       SubmitReview(formData, (response) => {
         console.log(response);
         setShowReviewModal(false);
-        // window.location.reload();
+        window.location.reload();
       });
     }
   };
 
+  // Get social media links from search results
   const getSocialLinks = (results) => {
     let facebookLink = null;
     let instagramLink = null;
@@ -113,6 +148,18 @@ const Brewery = (props) => {
     setInstagramLink(instagramLink);
   };
 
+  // Get average rating from reviews
+  const getAverageRating = () => {
+    let total = 0;
+    breweryReviews.forEach((review) => {
+      total += review.rating;
+    });
+    let average = total / breweryReviews.length;
+    if (isNaN(average)) return 0;
+    return average;
+  };
+
+  // Format phone number
   const formatPhoneNumber = (num) => `(${num.slice(0, 3)}) ${num.slice(3, 6)}-${num.slice(6)}`;
 
   return (
@@ -121,20 +168,37 @@ const Brewery = (props) => {
         <div className='row'>
           {loading && <h4 className='text-center'>Loading...</h4>}
           <div className='col-12 col-md-8 mb-2 d-flex flex-column flex-sm-row py-2 justify-content-around align-items-center align-items-sm-start'>
-            <img src='https://placehold.co/200' className='ms-0 ms-md-5' />
+            {breweryImages.length > 0 ? (
+              <div
+                className='col-7 col-sm-5 col-lg-4 brewery-main-img border'
+                style={{ backgroundImage: `url(${breweryImages[breweryImages.length - 1].upload})` }}
+              ></div>
+            ) : (
+              <div
+                className='col-7 col-sm-5 col-lg-4 brewery-main-img border'
+                style={{ backgroundImage: `url(https://placehold.co/200)` }}
+              ></div>
+            )}
             <div className='col-md-6 d-flex flex-column text-ochre text-center text-md-start ms-0 ms-md-5 mt-3 mt-md-0 justify-content-around'>
               <h4 className=''>{brewery.name}</h4>
               <h6 className='lead fs-6 fw-normal text-capitalize'>{brewery.brewery_type}</h6>
               <h6 className='lead fs-6 fw-normal'>
                 {brewery.city}, {brewery.state}
               </h6>
-              <h5 className='text-dark mt-3'>
-                <FontAwesomeIcon icon={faStar} />
-                <FontAwesomeIcon icon={faStar} />
-                <FontAwesomeIcon icon={faStar} />
-                <FontAwesomeIcon icon={faStar} />
-                <FontAwesomeIcon icon={faStar} />
-                <small className='fs-6 ms-1'>5.0 (5 reviews)</small>
+              <h5 className='text-dark mt-2'>
+                {[...Array(5)].map((star, i) => {
+                  return (
+                    <FontAwesomeIcon
+                      key={i}
+                      icon={i < Math.ceil(getAverageRating(breweryReviews)) ? faStar : faStarEmpty}
+                      size='lg'
+                      style={{ color: '#C06014' }}
+                    />
+                  );
+                })}
+                <small className='fs-6 ms-2'>{`${getAverageRating().toFixed(1)} (${
+                  breweryReviews.length
+                } reviews)`}</small>
               </h5>
             </div>
           </div>
@@ -193,13 +257,21 @@ const Brewery = (props) => {
               </div>
             </div>
             <div className='col-12 col-md-8 d-flex flex-column align-items-center mt-3'>
-              <div className='col-11 d-flex flex-row justify-content-start gap-3 py-5 border-bottom border-secondary overflow-scroll overflow-hidden'>
-                <img src='https://placehold.co/150' />
-                <img src='https://placehold.co/150' />
-                <img src='https://placehold.co/150' />
-                <img src='https://placehold.co/150' />
-                <img src='https://placehold.co/150' />
-                <img src='https://placehold.co/150' />
+              <div
+                className={`col-11 d-flex flex-row border-bottom border-secondary overflow-scroll overflow-hidden py-5 ${
+                  breweryImages.length > 0 ? 'justify-content-start gap-3' : 'justify-content-center'
+                }`}
+              >
+                {breweryImages.length > 0 ? (
+                  breweryImages.map((image, index) => (
+                    <div className='col-7 col-sm-5 col-lg-4 d-flex flex-column' key={index}>
+                      <div className='user-image border' style={{ backgroundImage: `url(${image.upload})` }}></div>
+                      <p className='small'>{image.caption}</p>
+                    </div>
+                  ))
+                ) : (
+                  <h4 className='mt-5 text-center'>No Images Yet</h4>
+                )}
               </div>
               <div className='col-8 col-md-6 d-flex align-items-center flex-column pb-5'>
                 {breweryReviews.length > 0 ? (
@@ -253,7 +325,15 @@ const Brewery = (props) => {
         handleSubmit={handleReviewSubmit}
       />
 
-      <ImageModal show={showImageModal} setShow={setShowImageModal} />
+      <ImageModal
+        show={showImageModal}
+        setShow={setShowImageModal}
+        setImage={setImage}
+        image={image}
+        setCaption={setCaption}
+        caption={caption}
+        handleSubmit={handleImageUpload}
+      />
     </Layout>
   );
 };

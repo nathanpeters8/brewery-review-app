@@ -1,7 +1,14 @@
 #reviewCell {
   textarea {
     font-size: 13px;
-    height: 100px;
-    resize: none;
+    // height: 100px;
   }
+}
+
+.user-image {
+  // padding-top: calc(1 / 5 * 100%);
+  background-size: cover;
+  background-position: center;
+  width: 150px;
+  height: 125px;
 }

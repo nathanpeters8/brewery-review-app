@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar } from '@fortawesome/free-solid-svg-icons';
+import { faStar as faStarEmpty } from '@fortawesome/free-regular-svg-icons';
 import { GetBreweries, GetBreweriesBySearchTerm } from '@utils/openBreweryDBRequests';
+import { GetReviewsByBrewery, GetImagesByBrewery } from '@utils/apiService';
 import { MapModalTemplate } from '@utils/modalTemplates';
 import Layout from '@utils/layout';
 import PaginationButtons from './paginationButtons';
@@ -17,6 +19,8 @@ const Results = ({ queryParams }) => {
   const [pagesArray, setPagesArray] = useState([1, 2]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [breweryRatings, setBreweryRatings] = useState([]);
+  const [breweryImages, setBreweryImages] = useState([]);
 
   const itemsPerPage = 10;
 
@@ -29,7 +33,7 @@ const Results = ({ queryParams }) => {
   // fetch breweries when query or currentPage changes
   useEffect(() => {
     if (query) {
-      console.log(query);
+      setBreweryRatings([]);
       if (query.hasOwnProperty('query')) {
         GetBreweriesBySearchTerm(query, currentPage, itemsPerPage, (response) => {
           console.log(response);
@@ -62,6 +66,41 @@ const Results = ({ queryParams }) => {
     }
   }, [results]);
 
+  // get average ratings and main image for each brewery
+  useEffect(() => {
+    if (results.length > 0) {
+      const ratingPromises = results.map(
+        (brewery) =>
+          new Promise((resolve) => {
+            GetReviewsByBrewery(brewery.id, (response) => {
+              resolve({
+                rating: getAverageRating(response).toFixed(1),
+                total: response.length,
+                brewery_id: brewery.id,
+              });
+            });
+          })
+      );
+      const imagePromises = results.map(
+        (brewery) =>
+          new Promise((resolve) => {
+            GetImagesByBrewery(brewery.id, (images) => {
+              resolve({
+                upload: images[images.length - 1] ? images[images.length - 1].upload : '',
+              });
+            });
+          })
+      );
+
+      Promise.all(ratingPromises).then((breweryRatings) => {
+        setBreweryRatings(breweryRatings);
+      });
+      Promise.all(imagePromises).then((breweryImages) => {
+        setBreweryImages(breweryImages);
+      });
+    }
+  }, [results]);
+
   // show map modal when clickedBrewery changes
   useEffect(() => {
     if (clickedBrewery) {
@@ -70,6 +109,16 @@ const Results = ({ queryParams }) => {
       setShowMap(false);
     }
   }, [clickedBrewery]);
+
+  const getAverageRating = (reviews) => {
+    let total = 0;
+    reviews.forEach((review) => {
+      total += review.rating;
+    });
+    let average = total / reviews.length;
+    if (isNaN(average)) return 0;
+    return parseFloat(average);
+  };
 
   // handle brewery click
   const handleBreweryClick = (e, id) => {
@@ -107,7 +156,7 @@ const Results = ({ queryParams }) => {
               {buildQueryString(query, total)}
             </p>
           )}
-          {total > itemsPerPage && (
+          {total > itemsPerPage && !loading && (
             <PaginationButtons
               handlePageChange={handlePageChange}
               currentPage={currentPage}
@@ -117,7 +166,7 @@ const Results = ({ queryParams }) => {
             />
           )}
           {(() => {
-            if (loading) {
+            if (loading || breweryRatings.length < results.length || breweryImages.length < results.length) {
               return <h4 className='text-center'>Loading...</h4>;
             }
             if (!loading && results.length == 0) {
@@ -136,26 +185,34 @@ const Results = ({ queryParams }) => {
                   key={index}
                   className='col-12 mb-3 d-flex border-bottom pb-3 align-items-center flex-column flex-sm-row'
                 >
-                  <img
-                    src='https://placehold.co/150'
-                    className='btn btn-lg'
-                    onClick={(e) => handleBreweryClick(e, brewery.id)}
-                  />
+                  {breweryImages[index].upload !== '' ? (
+                    <div
+                      className='col-6 col-sm-5 col-md-3 brewery-main-img mb-3'
+                      style={{ backgroundImage: `url(${breweryImages[index].upload})` }}
+                    ></div>
+                  ) : (
+                    <div
+                      className='col-6 col-sm-5 col-md-3 brewery-main-img mb-3'
+                      style={{ backgroundImage: `url(https://placehold.co/200)` }}
+                    ></div>
+                  )}
                   <div className='d-flex flex-column ms-1 ms-sm-5 text-center text-sm-start'>
                     <h4 className='ps-0 pb-0 text-dark mb-3 h4' onClick={(e) => handleBreweryClick(e, brewery.id)}>
                       <a href='#' className='link-primary text-ochre'>
                         {brewery.name}
                       </a>
                     </h4>
-                    <h4 className='d-flex flex-column flex-sm-row gap-sm-2 align-items-sm-center'>
-                      <div>
-                        <FontAwesomeIcon icon={faStar} />
-                        <FontAwesomeIcon icon={faStar} />
-                        <FontAwesomeIcon icon={faStar} />
-                        <FontAwesomeIcon icon={faStar} />
-                        <FontAwesomeIcon icon={faStar} />
-                      </div>
-                      <small className='fs-6 fst-italic'>{brewery.rating} (0 reviews)</small>
+                    <h4 className='mb-2'>
+                      {[...Array(5)].map((star, i) => {
+                        return (
+                          <FontAwesomeIcon
+                            key={i}
+                            icon={i < breweryRatings[index].rating ? faStar : faStarEmpty}
+                            style={{ color: '#C06014' }}
+                          />
+                        );
+                      })}
+                      <small className='fs-6 ms-2'>{`${breweryRatings[index].rating} (${breweryRatings[index].total} reviews)`}</small>
                     </h4>
                     {(() => {
                       if (!brewery.phone) {
@@ -176,7 +233,7 @@ const Results = ({ queryParams }) => {
               );
             });
           })()}
-          {total > itemsPerPage && (
+          {total > itemsPerPage && !loading && (
             <PaginationButtons
               handlePageChange={handlePageChange}
               currentPage={currentPage}

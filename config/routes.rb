@@ -8,9 +8,13 @@ Rails.application.routes.draw do
     resources :users, only: [:create]
     resources :sessions, only: [:create]
     resources :reviews, only: [:create]
+    resources :images, only: [:create]
 
     delete '/logout' => 'sessions#destroy'
     get '/authenticated' => 'sessions#authenticated'
-    get '/:brewery_id/reviews' => 'reviews#index_by_brewery'
+    get '/:brewery_id/brewery_reviews' => 'reviews#index_by_brewery'
+    get '/:brewery_id/brewery_images' => 'images#index_by_brewery'
+    get '/:user_id/user_reviews' => 'reviews#index_by_user'
+    get '/:user_id/user_images' => 'images#index_by_user'
   end
 end

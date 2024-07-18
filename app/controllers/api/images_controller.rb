@@ -1,39 +1,39 @@
 module Api
-  class ReviewsController < ApplicationController
+  class ImagesController < ApplicationController
     def create
       token = cookies.signed[:brewery_session_token]
       session = Session.find_by(token: token)
       user = session.user 
 
-      @review = user.reviews.new(review_params)
+      @image = user.images.new(image_params)
 
-      if @review.save
-        render 'api/reviews/create', status: :created
+      if @image.save
+        render 'api/images/create', status: :created
       else
         render json: {success: false}, status: :bad_request
       end
     end
 
     def index_by_brewery
-      @reviews = Review.where(brewery_id: params[:brewery_id]).order(created_at: :desc)
-      render 'api/reviews/index'
+      @images = Image.where(brewery_id: params[:brewery_id]).order(created_at: :desc)
+      render 'api/images/index'
     end
 
     def index_by_user
       token = cookies.signed[:brewery_session_token]
       session = Session.find_by(token: token)
-      user = session.user 
+      user = session.user
 
       return render json: {error: 'user not logged in'}, status: :unauthorized if !session
 
-      @reviews = user.reviews.order(created_at: :desc)
-      render 'api/reviews/index'
+      @images = user.images.order(created_at: :desc)
+      render 'api/images/index'
     end
 
     private
 
-    def review_params
-      params.require(:review).permit(:rating, :content, :brewery_id, :brewery_name)
+    def image_params
+      params.require(:image).permit(:upload, :caption, :brewery_id, :brewery_name)
     end
   end
 end
