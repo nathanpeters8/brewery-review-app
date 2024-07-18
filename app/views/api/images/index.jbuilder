@@ -1,4 +1,4 @@
-json.images
+json.images do
   json.array! @images do |image|
     json.id image.id
     json.brewery_id image.brewery_id
