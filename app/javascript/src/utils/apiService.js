@@ -92,7 +92,7 @@ export const SubmitReview = (formData, callback) => {
 
 export const GetReviewsByBrewery = (breweryId, callback) => {
   fetch(
-    `/api/${breweryId}/reviews`,
+    `/api/${breweryId}/brewery_reviews`,
     safeCredentials({
       method: 'GET',
     })
@@ -121,7 +121,7 @@ export const UploadImage = (formData, callback) => {
 
 export const GetImagesByBrewery = (breweryId, callback) => {
   fetch(
-    `/api/${breweryId}/images`,
+    `/api/${breweryId}/brewery_images`,
     safeCredentials({
       method: 'GET',
     })
@@ -129,5 +129,37 @@ export const GetImagesByBrewery = (breweryId, callback) => {
     .then(handleErrors)
     .then((response) => {
       return callback(response.images);
+    });
+};
+
+export const GetReviewsByUser = (userId, callback) => {
+  fetch(
+    `/api/${userId}/user_reviews`,
+    safeCredentials({
+      method: 'GET',
+    })
+  )
+    .then(handleErrors)
+    .then((response) => {
+      return callback(response.reviews);
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+};
+
+export const GetImagesByUser = (userId, callback) => {
+  fetch(
+    `/api/${userId}/user_images`,
+    safeCredentials({
+      method: 'GET',
+    })
+  )
+    .then(handleErrors)
+    .then((response) => {
+      return callback(response.images);
+    })
+    .catch((error) => {
+      console.error('Error:', error);
     });
 };

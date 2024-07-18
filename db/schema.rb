@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_07_17_232839) do
+ActiveRecord::Schema.define(version: 2024_07_18_191410) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -46,6 +46,7 @@ ActiveRecord::Schema.define(version: 2024_07_17_232839) do
     t.text "caption"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "brewery_name"
     t.index ["user_id"], name: "index_images_on_user_id"
   end
 
@@ -56,6 +57,7 @@ ActiveRecord::Schema.define(version: 2024_07_17_232839) do
     t.text "content"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "brewery_name"
     t.index ["user_id"], name: "index_reviews_on_user_id"
   end
 

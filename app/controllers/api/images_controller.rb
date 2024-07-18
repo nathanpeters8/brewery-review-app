@@ -19,10 +19,21 @@ module Api
       render 'api/images/index'
     end
 
+    def index_by_user
+      token = cookies.signed[:brewery_session_token]
+      session = Session.find_by(token: token)
+      user = session.user
+
+      return render json: {error: 'user not logged in'}, status: :unauthorized if !session
+
+      @images = user.images.order(created_at: :desc)
+      render 'api/images/index'
+    end
+
     private
 
     def image_params
-      params.require(:image).permit(:upload, :caption, :brewery_id)
+      params.require(:image).permit(:upload, :caption, :brewery_id, :brewery_name)
     end
   end
 end

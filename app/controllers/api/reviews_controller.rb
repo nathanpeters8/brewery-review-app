@@ -19,10 +19,21 @@ module Api
       render 'api/reviews/index'
     end
 
+    def index_by_user
+      token = cookies.signed[:brewery_session_token]
+      session = Session.find_by(token: token)
+      user = session.user 
+
+      return render json: {error: 'user not logged in'}, status: :unauthorized if !session
+
+      @reviews = user.reviews.order(created_at: :desc)
+      render 'api/reviews/index'
+    end
+
     private
 
     def review_params
-      params.require(:review).permit(:rating, :content, :brewery_id)
+      params.require(:review).permit(:rating, :content, :brewery_id, :brewery_name)
     end
   end
 end

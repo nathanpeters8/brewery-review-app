@@ -29,6 +29,7 @@ const Brewery = (props) => {
   const [image, setImage] = useState(null);
   const [caption, setCaption] = useState('');
 
+  // Fix left column on scroll
   useEffect(() => {
     const column = document.querySelector('#leftColumn');
     const columnOffsetTop = column.offsetTop;
@@ -52,10 +53,12 @@ const Brewery = (props) => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // Update id state when props.data.id changes
   useEffect(() => {
     setId(props.data.id);
   }, [props.data.id]);
 
+  // Fetch brewery data when id changes
   useEffect(() => {
     if (id) {
       GetBreweriesById(id, (response) => {
@@ -68,11 +71,12 @@ const Brewery = (props) => {
         GetImagesByBrewery(id, (images) => {
           console.log(images);
           setBreweryImages(images);
-        })
+        });
       });
     }
   }, [id]);
 
+  // Search for social media links when brewery changes
   useEffect(() => {
     if (Object.keys(brewery).length > 0) {
       console.log('social media search for ' + brewery.name);
@@ -83,6 +87,7 @@ const Brewery = (props) => {
     }
   }, [brewery]);
 
+  // Handle image upload
   const handleImageUpload = (e) => {
     e.preventDefault();
     const formData = new FormData();
@@ -93,6 +98,7 @@ const Brewery = (props) => {
       formData.append('image[upload]', image);
       formData.append('image[caption]', caption);
       formData.append('image[brewery_id]', id);
+      formData.append('image[brewery_name]', brewery.name);
 
       UploadImage(formData, (response) => {
         console.log(response);
@@ -102,6 +108,7 @@ const Brewery = (props) => {
     }
   };
 
+  // Handle review submission
   const handleReviewSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData();
@@ -112,6 +119,7 @@ const Brewery = (props) => {
       formData.append('review[rating]', rating);
       formData.append('review[content]', review);
       formData.append('review[brewery_id]', id);
+      formData.append('review[brewery_name]', brewery.name);
 
       SubmitReview(formData, (response) => {
         console.log(response);
@@ -121,6 +129,7 @@ const Brewery = (props) => {
     }
   };
 
+  // Get social media links from search results
   const getSocialLinks = (results) => {
     let facebookLink = null;
     let instagramLink = null;
@@ -139,6 +148,7 @@ const Brewery = (props) => {
     setInstagramLink(instagramLink);
   };
 
+  // Get average rating from reviews
   const getAverageRating = () => {
     let total = 0;
     breweryReviews.forEach((review) => {
@@ -149,6 +159,7 @@ const Brewery = (props) => {
     return average;
   };
 
+  // Format phone number
   const formatPhoneNumber = (num) => `(${num.slice(0, 3)}) ${num.slice(3, 6)}-${num.slice(6)}`;
 
   return (

@@ -1,15 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '@utils/layout';
+import { GetImagesByUser, GetReviewsByUser, Authenticate } from '@utils/apiService';
 import './account.scss';
 
 const Account = (props) => {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [userReviews, setUserReviews] = useState([]);
+  const [userImages, setUserImages] = useState([]);
 
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  // check user authentication, on page load
+  useEffect(() => {
+    Authenticate((response) => {
+      console.log(response);
+      GetReviewsByUser(response.id, (reviews) => setUserReviews(reviews));
+      GetImagesByUser(response.id, (images) => setUserImages(images));
+    });
+  }, []);
+
+  useEffect(() => {
+    if(userReviews.length > 0) console.log(userReviews);
+    if(userImages.length > 0) console.log(userImages);
+
+  }, [userReviews, userImages]);
 
   return (
     <Layout currentComponent='account'>
@@ -43,26 +61,24 @@ const Account = (props) => {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr className='align-middle text-center'>
-                    <td>
-                      <img src='https://placehold.co/75' alt='' />
-                    </td>
-                    <td>Brewery Name</td>
-                    <td>MM/DD/YYYY</td>
-                    <td>
-                      <button className='btn btn-sm btn-outline-danger border-0'>Delete</button>
-                    </td>
-                  </tr>
-                  <tr className='align-middle text-center'>
-                    <td>
-                      <img src='https://placehold.co/75' alt='' />
-                    </td>
-                    <td>Brewery Name</td>
-                    <td>MM/DD/YYYY</td>
-                    <td>
-                      <button className='btn btn-sm btn-outline-danger border-0'>Delete</button>
-                    </td>
-                  </tr>
+                  {userImages.length > 0 ? (
+                    userImages.map((image, index) => (
+                      <tr key={index} className='align-middle text-center'>
+                        <td className='d-flex justify-content-center'>
+                          <div className='user-image border' style={{ backgroundImage: `url(${image.upload})` }}></div>
+                        </td>
+                        <td>{image.brewery_name}</td>
+                        <td>{image.created_at.split('T')[0]}</td>
+                        <td>
+                          <button className='btn btn-sm btn-outline-danger border-0'>Delete</button>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr className='align-middle text-center'>
+                      <td>No Images Yet</td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
@@ -78,7 +94,27 @@ const Account = (props) => {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr className='align-middle text-center'>
+                  {userReviews.length > 0 ? (
+                    userReviews.map((review, index) => (
+                      <tr key={index} className='align-middle text-center'>
+                        <td>{review.brewery_name}</td>
+                        <td id='reviewCell'>
+                          <textarea name='review' className='form-control-plaintext lh-sm small' value={review.content} readOnly>
+                          </textarea>
+                        </td>
+                        <td>{review.created_at.split('T')[0]}</td>
+                        <td>
+                          <button className='btn btn-sm btn-outline-danger border-0'>Delete</button>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr className='align-middle text-center'>
+                      <td className='w-25'>No Reviews Yet</td>
+                    </tr>
+                  )}
+                  
+                  {/* <tr className='align-middle text-center'>
                     <td className='w-25'>Brewery Name</td>
                     <td id='reviewCell'>
                       <textarea name='review' className='form-control-plaintext lh-sm small' readOnly>
@@ -91,21 +127,7 @@ const Account = (props) => {
                     <td className='w-25'>
                       <button className='btn btn-sm btn-outline-danger border-0'>Delete</button>
                     </td>
-                  </tr>
-                  <tr className='align-middle text-center'>
-                    <td className='w-25'>Brewery Name</td>
-                    <td id='reviewCell'>
-                      <textarea name='review' className='form-control-plaintext lh-sm small' readOnly>
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cupiditate dignissimos minima tempora
-                        accusamus nam culpa assumenda eveniet, repudiandae perferendis, accusantium tenetur beatae
-                        recusandae reiciendis quibusdam, libero unde nulla ratione sed!
-                      </textarea>
-                    </td>
-                    <td className='w-25'>MM/DD/YYYY</td>
-                    <td className='w-25'>
-                      <button className='btn btn-sm btn-outline-danger border-0'>Delete</button>
-                    </td>
-                  </tr>
+                  </tr> */}
                 </tbody>
               </table>
             </div>

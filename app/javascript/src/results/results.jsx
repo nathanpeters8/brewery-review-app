@@ -66,7 +66,7 @@ const Results = ({ queryParams }) => {
     }
   }, [results]);
 
-  // fetch reviews and get average rating for each brewery
+  // get average ratings and main image for each brewery
   useEffect(() => {
     if (results.length > 0) {
       const ratingPromises = results.map(
@@ -100,10 +100,6 @@ const Results = ({ queryParams }) => {
       });
     }
   }, [results]);
-
-  useEffect(() => {
-    console.log(breweryImages);
-  }, [breweryImages]);
 
   // show map modal when clickedBrewery changes
   useEffect(() => {
