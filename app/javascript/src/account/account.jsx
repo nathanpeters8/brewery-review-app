@@ -8,13 +8,14 @@ const Account = (props) => {
   const [userReviews, setUserReviews] = useState([]);
   const [userImages, setUserImages] = useState([]);
 
+  // update window width on resize
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // check user authentication, on page load
+  // check user authentication and get user reviews and images
   useEffect(() => {
     Authenticate((response) => {
       console.log(response);
@@ -22,12 +23,6 @@ const Account = (props) => {
       GetImagesByUser(response.id, (images) => setUserImages(images));
     });
   }, []);
-
-  useEffect(() => {
-    if(userReviews.length > 0) console.log(userReviews);
-    if(userImages.length > 0) console.log(userImages);
-
-  }, [userReviews, userImages]);
 
   return (
     <Layout currentComponent='account'>
@@ -99,8 +94,12 @@ const Account = (props) => {
                       <tr key={index} className='align-middle text-center'>
                         <td>{review.brewery_name}</td>
                         <td id='reviewCell'>
-                          <textarea name='review' className='form-control-plaintext lh-sm small' value={review.content} readOnly>
-                          </textarea>
+                          <textarea
+                            name='review'
+                            className='form-control-plaintext lh-sm small'
+                            value={review.content}
+                            readOnly
+                          ></textarea>
                         </td>
                         <td>{review.created_at.split('T')[0]}</td>
                         <td>
@@ -113,21 +112,6 @@ const Account = (props) => {
                       <td className='w-25'>No Reviews Yet</td>
                     </tr>
                   )}
-                  
-                  {/* <tr className='align-middle text-center'>
-                    <td className='w-25'>Brewery Name</td>
-                    <td id='reviewCell'>
-                      <textarea name='review' className='form-control-plaintext lh-sm small' readOnly>
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cupiditate dignissimos minima tempora
-                        accusamus nam culpa assumenda eveniet, repudiandae perferendis, accusantium tenetur beatae
-                        recusandae reiciendis quibusdam, libero unde nulla ratione sed!
-                      </textarea>
-                    </td>
-                    <td className='w-25'>MM/DD/YYYY</td>
-                    <td className='w-25'>
-                      <button className='btn btn-sm btn-outline-danger border-0'>Delete</button>
-                    </td>
-                  </tr> */}
                 </tbody>
               </table>
             </div>

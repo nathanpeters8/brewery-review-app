@@ -86,8 +86,8 @@ const Results = ({ queryParams }) => {
           new Promise((resolve) => {
             GetImagesByBrewery(brewery.id, (images) => {
               resolve({
-                upload: images[images.length-1] ? images[images.length-1].upload : '',
-              })
+                upload: images[images.length - 1] ? images[images.length - 1].upload : '',
+              });
             });
           })
       );
@@ -188,7 +188,7 @@ const Results = ({ queryParams }) => {
                   {breweryImages[index].upload !== '' ? (
                     <div
                       className='col-6 col-sm-5 col-md-3 brewery-main-img mb-3'
-                      style={{ backgroundImage: `url(${breweryImages[breweryImages.length - 1].upload})` }}
+                      style={{ backgroundImage: `url(${breweryImages[index].upload})` }}
                     ></div>
                   ) : (
                     <div
