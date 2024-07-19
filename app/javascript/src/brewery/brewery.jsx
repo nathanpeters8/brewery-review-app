@@ -180,11 +180,11 @@ const Brewery = (props) => {
               ></div>
             )}
             <div className='col-md-6 d-flex flex-column text-ochre text-center text-md-start ms-0 ms-md-5 mt-3 mt-md-0 justify-content-around'>
-              <h4 className=''>{brewery.name}</h4>
-              <h6 className='lead fs-6 fw-normal text-capitalize'>{brewery.brewery_type}</h6>
-              <h6 className='lead fs-6 fw-normal'>
+              <h3 className=''>{brewery.name}</h3>
+              <h5 className='lead fs-6 fw-normal text-capitalize'>{brewery.brewery_type}</h5>
+              <h5 className='lead fs-6 fw-normal'>
                 {brewery.city}, {brewery.state}
-              </h6>
+              </h5>
               <h5 className='text-dark mt-2'>
                 {[...Array(5)].map((star, i) => {
                   return (
@@ -213,8 +213,8 @@ const Brewery = (props) => {
               } ${isFixed && windowWidth >= 768 ? 'position-sticky top-0 vh-100 justify-content-center' : ''}`}
             >
               <div className='col-6 col-sm-5 col-md-10 d-flex flex-column justify-content-center align-items-center border px-4 py-5 bg-light text-ochre gap-2'>
-                <h4 className='d-flex flex-row gap-3'>
-                  {brewery.website_url !== null && (
+                <h3 className='d-flex flex-row gap-3'>
+                  {brewery.website_url && (
                     <a href={brewery.website_url} className='link-dark' target='_blank' rel='noreferrer'>
                       <FontAwesomeIcon icon={faGlobe} />
                     </a>
@@ -225,15 +225,9 @@ const Brewery = (props) => {
                   <a href={instagramLink} className='link-dark' target='_blank' rel='noreferrer'>
                     <FontAwesomeIcon icon={faInstagram} />
                   </a>
-                </h4>
-                {(() => {
-                  if (!brewery.phone) {
-                    return null;
-                  }
-                  return <h6>{formatPhoneNumber(brewery.phone)}</h6>;
-                })()}
+                </h3>
+                {brewery.phone && <h6>{formatPhoneNumber(brewery.phone)}</h6>}
                 <h6>{brewery.street}</h6>
-                {/* <h6>Open Until 11:00pm</h6> */}
               </div>
               <div id='breweryButtonDiv' className='d-flex flex-column'>
                 <button
@@ -276,7 +270,7 @@ const Brewery = (props) => {
               <div className='col-8 col-md-6 d-flex align-items-center flex-column pb-5'>
                 {breweryReviews.length > 0 ? (
                   breweryReviews.map((review, index) => (
-                    <div className='brewery border-bottom pb-3 mt-5 w-100' key={index}>
+                    <div className='border-bottom pb-3 mt-5 w-100' key={index}>
                       <div className='d-flex flex-row justify-content-between'>
                         <h5>{review.user.username}</h5>
                         <h6 className='lead fs-6'>{review.created_at.split('T')[0]}</h6>

@@ -7,6 +7,7 @@ import { GetReviewsByBrewery, GetImagesByBrewery } from '@utils/apiService';
 import { MapModalTemplate } from '@utils/modalTemplates';
 import Layout from '@utils/layout';
 import PaginationButtons from './paginationButtons';
+import LoadingPlaceholder from './loadingPlaceholder';
 import './results.scss';
 
 const Results = ({ queryParams }) => {
@@ -167,7 +168,12 @@ const Results = ({ queryParams }) => {
           )}
           {(() => {
             if (loading || breweryRatings.length < results.length || breweryImages.length < results.length) {
-              return <h4 className='text-center'>Loading...</h4>;
+              return (
+                <>
+                  <LoadingPlaceholder />
+                  <LoadingPlaceholder />
+                </>
+              );
             }
             if (!loading && results.length == 0) {
               return (
@@ -183,17 +189,19 @@ const Results = ({ queryParams }) => {
               return (
                 <div
                   key={index}
-                  className='col-12 mb-3 d-flex border-bottom pb-3 align-items-center flex-column flex-sm-row'
+                  className='brewery col-12 d-flex border-bottom py-5 align-items-center flex-column flex-sm-row'
                 >
                   {breweryImages[index].upload !== '' ? (
                     <div
-                      className='col-6 col-sm-5 col-md-3 brewery-main-img mb-3'
+                      className='col-6 col-sm-5 col-md-3 brewery-main-img mb-3 rounded-2'
                       style={{ backgroundImage: `url(${breweryImages[index].upload})` }}
+                      onClick={(e) => handleBreweryClick(e, brewery.id)}
                     ></div>
                   ) : (
                     <div
-                      className='col-6 col-sm-5 col-md-3 brewery-main-img mb-3'
+                      className='col-6 col-sm-5 col-md-3 brewery-main-img mb-3 rounded-2'
                       style={{ backgroundImage: `url(https://placehold.co/200)` }}
+                      onClick={(e) => handleBreweryClick(e, brewery.id)}
                     ></div>
                   )}
                   <div className='d-flex flex-column ms-1 ms-sm-5 text-center text-sm-start'>
