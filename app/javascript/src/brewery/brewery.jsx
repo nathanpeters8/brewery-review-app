@@ -1,33 +1,43 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faStar, faGlobe } from '@fortawesome/free-solid-svg-icons';
+import { faStar, faGlobe, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { faStar as faStarEmpty } from '@fortawesome/free-regular-svg-icons';
 import { faFacebook, faInstagram } from '@fortawesome/free-brands-svg-icons';
-import Layout from '@utils/layout';
 import { GetBreweriesById } from '@utils/openBreweryDBRequests';
 import { SocialMediaSearch } from '@utils/googleRequests';
-import { MapModalTemplate, ReviewModal, ImageModal } from '@utils/modalTemplates';
-import { SubmitReview, GetReviewsByBrewery, UploadImage, GetImagesByBrewery } from '@utils/apiService';
+import { MapModalTemplate, ReviewModal, ImageModal, ConfirmModal } from '@utils/modalTemplates';
+import {
+  SubmitReview,
+  GetReviewsByBrewery,
+  UploadImage,
+  GetImagesByBrewery,
+  Authenticate,
+  DeleteReview,
+} from '@utils/apiService';
+import Layout from '@utils/layout';
 import './brewery.scss';
 
 const Brewery = (props) => {
   const [id, setId] = useState('');
+  const [currentUser, setCurrentUser] = useState(null);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [isFixed, setIsFixed] = useState(false);
+  const [showMap, setShowMap] = useState(false);
   const [brewery, setBrewery] = useState({});
   const [breweryReviews, setBreweryReviews] = useState([]);
   const [breweryImages, setBreweryImages] = useState([]);
-  const [showMap, setShowMap] = useState(false);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [showImageModal, setShowImageModal] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [facebookLink, setFacebookLink] = useState('');
   const [instagramLink, setInstagramLink] = useState('');
-  const [isFixed, setIsFixed] = useState(false);
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [loading, setLoading] = useState(true);
   const [rating, setRating] = useState(0);
   const [ratingHover, setRatingHover] = useState(0);
   const [review, setReview] = useState('');
   const [image, setImage] = useState(null);
   const [caption, setCaption] = useState('');
+  const [selectedReview, setSelectedReview] = useState(null);
 
   // Fix left column on scroll
   useEffect(() => {
@@ -51,6 +61,12 @@ const Brewery = (props) => {
     const handleResize = () => setWindowWidth(window.innerWidth);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
+    Authenticate((response) => {
+      setCurrentUser(response.username);
+    });
   }, []);
 
   // Update id state when props.data.id changes
@@ -87,6 +103,12 @@ const Brewery = (props) => {
     }
   }, [brewery]);
 
+  useEffect(() => {
+    if (selectedReview) {
+      console.log(selectedReview);
+    }
+  }, [selectedReview]);
+
   // Handle image upload
   const handleImageUpload = (e) => {
     e.preventDefault();
@@ -102,6 +124,7 @@ const Brewery = (props) => {
 
       UploadImage(formData, (response) => {
         console.log(response);
+        setImage(null);
         setShowImageModal(false);
         window.location.reload();
       });
@@ -123,7 +146,20 @@ const Brewery = (props) => {
 
       SubmitReview(formData, (response) => {
         console.log(response);
+        setRating(0);
+        setReview('');
         setShowReviewModal(false);
+        window.location.reload();
+      });
+    }
+  };
+
+  // Handle review deletion
+  const handleReviewDelete = () => {
+    if(selectedReview) {
+      DeleteReview(selectedReview.id, (response) => {
+        console.log(response);
+        setShowConfirmModal(false);
         window.location.reload();
       });
     }
@@ -270,10 +306,15 @@ const Brewery = (props) => {
               <div className='col-8 col-md-6 d-flex align-items-center flex-column pb-5'>
                 {breweryReviews.length > 0 ? (
                   breweryReviews.map((review, index) => (
-                    <div className='border-bottom pb-3 mt-5 w-100' key={index}>
-                      <div className='d-flex flex-row justify-content-between'>
+                    <div className='border-bottom pb-3 mt-5 w-100' key={index} onMouseEnter={() => setSelectedReview(review)}>
+                      <div className='d-flex flex-row justify-content-between align-items-center'>
                         <h5>{review.user.username}</h5>
                         <h6 className='lead fs-6'>{review.created_at.split('T')[0]}</h6>
+                        {currentUser === review.user.username && (
+                          <button className='btn p-0' onClick={() => setShowConfirmModal(true)}>
+                            <FontAwesomeIcon icon={faTrash} style={{ color: '#C06014' }} />
+                          </button>
+                        )}
                       </div>
                       <h6>
                         {[...Array(5)].map((star, i) => {
@@ -327,6 +368,13 @@ const Brewery = (props) => {
         setCaption={setCaption}
         caption={caption}
         handleSubmit={handleImageUpload}
+      />
+
+      <ConfirmModal
+        show={showConfirmModal}
+        setShow={setShowConfirmModal}
+        handleDelete={handleReviewDelete}
+        header='this review'
       />
     </Layout>
   );

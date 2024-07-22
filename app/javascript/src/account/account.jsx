@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '@utils/layout';
-import { GetImagesByUser, GetReviewsByUser, Authenticate } from '@utils/apiService';
+import { GetImagesByUser, GetReviewsByUser, Authenticate, DeleteReview } from '@utils/apiService';
 import './account.scss';
 
 const Account = (props) => {
@@ -23,6 +23,15 @@ const Account = (props) => {
       GetImagesByUser(response.id, (images) => setUserImages(images));
     });
   }, []);
+
+  const handleReviewDelete = (e, reviewId) => {
+    e.preventDefault();
+    DeleteReview(reviewId, (response) => {
+      console.log(response);
+      window.location.reload();
+    });
+
+  }
 
   return (
     <Layout currentComponent='account'>
@@ -103,7 +112,7 @@ const Account = (props) => {
                         </td>
                         <td>{review.created_at.split('T')[0]}</td>
                         <td>
-                          <button className='btn btn-sm btn-outline-danger border-0'>Delete</button>
+                          <button className='btn btn-sm btn-outline-danger border-0' onClick={(e) => handleReviewDelete(e, review.id)}>Delete</button>
                         </td>
                       </tr>
                     ))

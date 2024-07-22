@@ -163,3 +163,17 @@ export const GetImagesByUser = (userId, callback) => {
       console.error('Error:', error);
     });
 };
+
+export const DeleteReview = (reviewId, callback) => {
+  fetch(
+    `/api/reviews/${reviewId}`,
+    safeCredentials({
+      method: 'DELETE',
+    })
+  )
+    .then(handleErrors)
+    .then((response) => {
+      console.log('Review deleted:', response);
+      return callback(response);
+    });
+};

@@ -224,3 +224,24 @@ export const ImageModal = ({ show, setShow, setImage, image, setCaption, caption
     </Modal>
   );
 };
+
+export const ConfirmModal = ({show, setShow, handleDelete, header}) => {
+  return (
+    <Modal show={show} onHide={() => setShow(false)} centered fullscreen={'sm-down'} keyboard>
+      <Modal.Header closeButton></Modal.Header>
+      <Modal.Body>
+        <Modal.Body>
+          <p>{`Are you sure you want to delete ${header}?`}</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant='secondary' onClick={() => setShow(false)}>
+            No
+          </Button>
+          <Button variant='danger' onClick={handleDelete}>
+            Yes
+          </Button>
+        </Modal.Footer>
+      </Modal.Body>
+    </Modal>
+  );
+}

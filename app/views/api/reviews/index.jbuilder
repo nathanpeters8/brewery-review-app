@@ -1,5 +1,6 @@
 json.reviews do
   json.array! @reviews do |review|
+    json.id review.id
     json.rating review.rating
     json.content review.content
     json.brewery_id review.brewery_id

@@ -7,7 +7,7 @@ Rails.application.routes.draw do
   namespace :api do
     resources :users, only: [:create]
     resources :sessions, only: [:create]
-    resources :reviews, only: [:create]
+    resources :reviews, only: [:create, :destroy]
     resources :images, only: [:create]
 
     delete '/logout' => 'sessions#destroy'
