@@ -211,3 +211,17 @@ export const EditProfile = (info, userId, callback) => {
       return callback(response);
     });
 };
+
+export const DeleteUser = (userId, callback) => {
+  fetch(
+    `/api/users/${userId}`,
+    safeCredentials({
+      method: 'DELETE',
+    })
+  )
+    .then(handleErrors)
+    .then((response) => {
+      console.log('User deleted:', response);
+      return callback(response);
+    });
+};

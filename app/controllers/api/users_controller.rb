@@ -37,7 +37,8 @@ module Api
     end
 
     def destroy
-      @user = User.find_by(id: params[:id])
+      @user = User.find(params[:id])
+      return render json: { error: 'not_found' }, status: :not_found if !@user
 
       if @user.destroy
         render json: {success: true}, status: :ok

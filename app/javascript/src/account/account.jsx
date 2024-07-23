@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '@utils/layout';
-import { FormModalTemplate } from '@utils/modalTemplates.jsx';
+import { FormModalTemplate, ConfirmModal } from '@utils/modalTemplates.jsx';
 import {
   GetImagesByUser,
   GetReviewsByUser,
@@ -8,6 +8,8 @@ import {
   DeleteReview,
   EditProfile,
   GetProfile,
+  DeleteUser,
+  UserSignOut
 } from '@utils/apiService';
 import './account.scss';
 
@@ -16,6 +18,7 @@ const Account = (props) => {
   const [userReviews, setUserReviews] = useState([]);
   const [userImages, setUserImages] = useState([]);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [userId, setUserId] = useState('');
   const [changedFields, setChangedFields] = useState([]);
   const [userInfo, setUserInfo] = useState({
@@ -73,6 +76,16 @@ const Account = (props) => {
     });
   };
 
+  const handleUserDelete = (e) => {
+    e.preventDefault();
+    UserSignOut((response) => {
+      DeleteUser(userId, (r) => {
+        console.log(r);
+        window.location.href('/');
+      });
+    })
+  };
+  
   return (
     <Layout currentComponent='account'>
       <div className='container-xl bg-secondary bg-opacity-10'>
@@ -91,7 +104,7 @@ const Account = (props) => {
               <button className='btn btn-outline-warning text-ochre border-0' onClick={() => setShowEditModal(true)}>
                 Edit Account
               </button>
-              <button className='btn btn-outline-danger text-ochre border-0'>Delete Account</button>
+              <button className='btn btn-outline-danger text-ochre border-0' onClick={() => setShowConfirmModal(true)}>Delete Account</button>
             </div>
           </div>
           <div className='col-12 col-md-9 d-flex flex-column align-items-center'>
@@ -182,6 +195,12 @@ const Account = (props) => {
         handleChange={handleChange}
         userInfo={userInfo}
         submitMethod={handleEditProfile}
+      />
+      <ConfirmModal
+        show={showConfirmModal}
+        toggleShow={setShowConfirmModal}
+        handleDelete={handleUserDelete}
+        header='your profile'
       />
     </Layout>
   );
