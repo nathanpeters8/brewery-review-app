@@ -4,7 +4,7 @@ class User < ApplicationRecord
   has_many :images
 
   validates :username, presence: true, length: { minimum: 3, maximum: 20 }
-  validates :password, presence: true, length: { minimum: 8, maximum: 20 }
+  validates :password, presence: true, length: { minimum: 8 }
   validates :email, presence: true, length: { minimum: 5, maximum: 50 }
 
   validates_uniqueness_of :username

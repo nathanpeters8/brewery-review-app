@@ -177,3 +177,37 @@ export const DeleteReview = (reviewId, callback) => {
       return callback(response);
     });
 };
+
+export const GetProfile = (userId, callback) => {
+  fetch(
+    `/api/users/${userId}`,
+    safeCredentials({
+      method: 'GET',
+    })
+  )
+    .then(handleErrors)
+    .then((response) => {
+      console.log('Profile:', response);
+      return callback(response.user);
+    });
+};
+
+export const EditProfile = (info, userId, callback) => {
+  console.log('Sending update with info:', info);
+  fetch(
+    `/api/users/${userId}`,
+    safeCredentials({
+      method: 'PATCH',
+      body: JSON.stringify({
+        user: {
+          ...info,
+        },
+      }),
+    })
+  )
+    .then(handleErrors)
+    .then((response) => {
+      console.log('Profile updated');
+      return callback(response);
+    });
+};

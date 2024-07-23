@@ -46,7 +46,7 @@ export const FormModalTemplate = ({ show, toggleShow, formType, title, handleCha
               placeholder='name@example.com'
               onChange={(e) => handleChange(e.target)}
               value={email}
-              required
+              required={formType !== 'editprofile' ? true : false}
             />
             <label htmlFor='inputEmail' className='form-label'>
               Email
@@ -62,7 +62,7 @@ export const FormModalTemplate = ({ show, toggleShow, formType, title, handleCha
                 placeholder='my_username'
                 onChange={(e) => handleChange(e.target)}
                 value={username}
-                required
+                required={formType !== 'editprofile' ? true : false}
               />
               <label htmlFor='inputUsername' className='form-label'>
                 Username
@@ -78,7 +78,7 @@ export const FormModalTemplate = ({ show, toggleShow, formType, title, handleCha
               placeholder='1234567890'
               onChange={(e) => handleChange(e.target)}
               value={password}
-              required
+              required={formType !== 'editprofile' ? true : false}
             />
             <label htmlFor='inputPassword' className='form-label'>
               Password
@@ -244,4 +244,4 @@ export const ConfirmModal = ({show, setShow, handleDelete, header}) => {
       </Modal.Body>
     </Modal>
   );
-}
+};

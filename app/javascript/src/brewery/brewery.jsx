@@ -103,12 +103,6 @@ const Brewery = (props) => {
     }
   }, [brewery]);
 
-  useEffect(() => {
-    if (selectedReview) {
-      console.log(selectedReview);
-    }
-  }, [selectedReview]);
-
   // Handle image upload
   const handleImageUpload = (e) => {
     e.preventDefault();
@@ -156,7 +150,7 @@ const Brewery = (props) => {
 
   // Handle review deletion
   const handleReviewDelete = () => {
-    if(selectedReview) {
+    if (selectedReview) {
       DeleteReview(selectedReview.id, (response) => {
         console.log(response);
         setShowConfirmModal(false);
@@ -306,7 +300,11 @@ const Brewery = (props) => {
               <div className='col-8 col-md-6 d-flex align-items-center flex-column pb-5'>
                 {breweryReviews.length > 0 ? (
                   breweryReviews.map((review, index) => (
-                    <div className='border-bottom pb-3 mt-5 w-100' key={index} onMouseEnter={() => setSelectedReview(review)}>
+                    <div
+                      className='border-bottom pb-3 mt-5 w-100'
+                      key={index}
+                      onMouseEnter={() => setSelectedReview(review)}
+                    >
                       <div className='d-flex flex-row justify-content-between align-items-center'>
                         <h5>{review.user.username}</h5>
                         <h6 className='lead fs-6'>{review.created_at.split('T')[0]}</h6>

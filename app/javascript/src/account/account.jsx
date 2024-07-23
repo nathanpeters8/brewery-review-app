@@ -1,12 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '@utils/layout';
-import { GetImagesByUser, GetReviewsByUser, Authenticate, DeleteReview } from '@utils/apiService';
+import { FormModalTemplate } from '@utils/modalTemplates.jsx';
+import {
+  GetImagesByUser,
+  GetReviewsByUser,
+  Authenticate,
+  DeleteReview,
+  EditProfile,
+  GetProfile,
+} from '@utils/apiService';
 import './account.scss';
 
 const Account = (props) => {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [userReviews, setUserReviews] = useState([]);
   const [userImages, setUserImages] = useState([]);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [userId, setUserId] = useState('');
+  const [changedFields, setChangedFields] = useState([]);
+  const [userInfo, setUserInfo] = useState({
+    email: '',
+    username: '',
+    password: '',
+    city: '',
+    state: '',
+  });
 
   // update window width on resize
   useEffect(() => {
@@ -18,11 +36,34 @@ const Account = (props) => {
   // check user authentication and get user reviews and images
   useEffect(() => {
     Authenticate((response) => {
-      console.log(response);
+      // console.log(response);
+      setUserId(response.id);
+      GetProfile(response.id, (profile) => setUserInfo({ ...profile, password: '' }));
       GetReviewsByUser(response.id, (reviews) => setUserReviews(reviews));
       GetImagesByUser(response.id, (images) => setUserImages(images));
     });
   }, []);
+
+  const handleChange = (target) => {
+    setUserInfo({ ...userInfo, [target.name]: target.value });
+    if (!changedFields.includes(target.name)) setChangedFields([...changedFields, target.name]);
+  };
+
+  const handleEditProfile = (e) => {
+    e.preventDefault();
+    const info = {};
+    if (changedFields) {
+      changedFields.forEach((field) => {
+        info[field] = userInfo[field];
+      });
+    }
+
+    EditProfile(info, userId, (response) => {
+      console.log(response);
+      setShowEditModal(false);
+      // window.location.reload();
+    });
+  };
 
   const handleReviewDelete = (e, reviewId) => {
     e.preventDefault();
@@ -30,8 +71,7 @@ const Account = (props) => {
       console.log(response);
       window.location.reload();
     });
-
-  }
+  };
 
   return (
     <Layout currentComponent='account'>
@@ -44,11 +84,13 @@ const Account = (props) => {
           >
             <img src='https://placehold.co/150' className='mb-0 mb-md-5' />
             <div className='d-flex flex-column gap-2 mb-0 mb-md-5'>
-              <h5 className='text-center'>Username</h5>
-              <h5 className='text-center'>City, State</h5>
+              <h5 className='text-center'>{userInfo.username}</h5>
+              <h5 className='text-center'>{`${userInfo.city}, ${userInfo.state}`}</h5>
             </div>
             <div className='d-flex flex-column gap-2'>
-              <button className='btn btn-outline-warning text-ochre border-0'>Edit Account</button>
+              <button className='btn btn-outline-warning text-ochre border-0' onClick={() => setShowEditModal(true)}>
+                Edit Account
+              </button>
               <button className='btn btn-outline-danger text-ochre border-0'>Delete Account</button>
             </div>
           </div>
@@ -112,7 +154,12 @@ const Account = (props) => {
                         </td>
                         <td>{review.created_at.split('T')[0]}</td>
                         <td>
-                          <button className='btn btn-sm btn-outline-danger border-0' onClick={(e) => handleReviewDelete(e, review.id)}>Delete</button>
+                          <button
+                            className='btn btn-sm btn-outline-danger border-0'
+                            onClick={(e) => handleReviewDelete(e, review.id)}
+                          >
+                            Delete
+                          </button>
                         </td>
                       </tr>
                     ))
@@ -127,6 +174,15 @@ const Account = (props) => {
           </div>
         </div>
       </div>
+      <FormModalTemplate
+        show={showEditModal}
+        toggleShow={setShowEditModal}
+        formType='editprofile'
+        title='Edit Profile'
+        handleChange={handleChange}
+        userInfo={userInfo}
+        submitMethod={handleEditProfile}
+      />
     </Layout>
   );
 };
