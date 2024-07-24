@@ -1,16 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '@utils/layout';
 import { FormModalTemplate, ConfirmModal } from '@utils/modalTemplates.jsx';
-import {
-  GetImagesByUser,
-  GetReviewsByUser,
-  Authenticate,
-  DeleteReview,
-  EditProfile,
-  GetProfile,
-  DeleteUser,
-  UserSignOut,
-} from '@utils/apiService';
+import * as ApiService from '@utils/apiService';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPenToSquare } from '@fortawesome/free-regular-svg-icons';
 import './account.scss';
 
 const Account = (props) => {
@@ -38,17 +31,22 @@ const Account = (props) => {
 
   // check user authentication and get user reviews and images
   useEffect(() => {
-    Authenticate((response) => {
+    ApiService.Authenticate((response) => {
       setUserId(response.id);
-      GetProfile(response.id, (profile) => setUserInfo({ ...profile, password: '' }));
-      GetReviewsByUser(response.id, (reviews) => setUserReviews(reviews));
-      GetImagesByUser(response.id, (images) => setUserImages(images));
+      ApiService.GetProfile(response.id, (profile) => setUserInfo({ ...profile, password: '' }));
+      ApiService.GetReviewsByUser(response.id, (reviews) => setUserReviews(reviews));
+      ApiService.GetImagesByUser(response.id, (images) => setUserImages(images));
     });
   }, []);
 
   // handle form input changes
   const handleChange = (target) => {
-    setUserInfo({ ...userInfo, [target.name]: target.value });
+    if (target.name === 'avatar') {
+      setUserInfo({ ...userInfo, avatar: target.files[0] });
+    } else {
+      setUserInfo({ ...userInfo, [target.name]: target.value });
+    }
+
     if (!changedFields.includes(target.name)) setChangedFields([...changedFields, target.name]);
   };
 
@@ -65,7 +63,7 @@ const Account = (props) => {
     }
 
     // send updated info to API
-    EditProfile(info, userId, (response) => {
+    ApiService.EditProfile(info, userId, (response) => {
       console.log(response);
       setShowEditModal(false);
       // window.location.reload();
@@ -75,7 +73,16 @@ const Account = (props) => {
   // handle review deletion
   const handleReviewDelete = (e, reviewId) => {
     e.preventDefault();
-    DeleteReview(reviewId, (response) => {
+    ApiService.DeleteReview(reviewId, (response) => {
+      console.log(response);
+      window.location.reload();
+    });
+  };
+
+  // handle image deletion
+  const handleImageDelete = (e, imageId) => {
+    e.preventDefault();
+    ApiService.DeleteImage(imageId, (response) => {
       console.log(response);
       window.location.reload();
     });
@@ -84,10 +91,10 @@ const Account = (props) => {
   // handle user deletion
   const handleUserDelete = (e) => {
     e.preventDefault();
-    UserSignOut((response) => {
-      DeleteUser(userId, (r) => {
+    ApiService.UserSignOut((response) => {
+      ApiService.DeleteUser(userId, (r) => {
         console.log(r);
-        window.location.href('/');
+        window.location.href = '/';
       });
     });
   };
@@ -97,11 +104,18 @@ const Account = (props) => {
       <div className='container-xl bg-secondary bg-opacity-10'>
         <div className='row justify-content-center'>
           <div
-            className={`col-10 col-md-3 d-flex flex-row flex-md-column justify-content-between justify-content-md-center align-items-center ${
+            className={`col-12 col-md-3 d-flex flex-row flex-md-column justify-content-between justify-content-md-start pt-md-5 align-items-center ${
               windowWidth >= 768 ? 'vh-100 border' : 'mt-4 border-bottom pb-4'
             }`}
           >
-            <img src='https://placehold.co/150' className='mb-0 mb-md-5' />
+            <div
+              className='avatar-image col-4 col-md-9 border mb-0 mb-md-5 position-relative'
+              style={{ backgroundImage: `url(https://placehold.co/150)` }}
+            >
+              <button className='btn btn-lg text-ochre border-0 position-absolute top-0 end-0'>
+                <FontAwesomeIcon icon={faPenToSquare} />
+              </button>
+            </div>
             <div className='d-flex flex-column gap-2 mb-0 mb-md-5'>
               <h5 className='text-center'>{userInfo.username}</h5>
               <h5 className='text-center'>{`${userInfo.city}, ${userInfo.state}`}</h5>
@@ -137,7 +151,20 @@ const Account = (props) => {
                         <td>{image.brewery_name}</td>
                         <td>{image.created_at.split('T')[0]}</td>
                         <td>
-                          <button className='btn btn-sm btn-outline-danger border-0'>Delete</button>
+                          <div className='d-flex flex-column gap-1'>
+                            <button
+                              className='btn btn-sm btn-outline-primary text-ochre border-0'
+                              onClick={() => (window.location.href = `/brewery/${image.brewery_id}`)}
+                            >
+                              View
+                            </button>
+                            <button
+                              className='btn btn-sm btn-outline-danger border-0'
+                              onClick={(e) => handleImageDelete(e, image.id)}
+                            >
+                              Delete
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))
@@ -175,12 +202,20 @@ const Account = (props) => {
                         </td>
                         <td>{review.created_at.split('T')[0]}</td>
                         <td>
-                          <button
-                            className='btn btn-sm btn-outline-danger border-0'
-                            onClick={(e) => handleReviewDelete(e, review.id)}
-                          >
-                            Delete
-                          </button>
+                          <div className='d-flex flex-column gap-1'>
+                            <button
+                              className='btn btn-sm btn-outline-primary text-ochre border-0'
+                              onClick={() => (window.location.href = `/brewery/${review.brewery_id}`)}
+                            >
+                              View
+                            </button>
+                            <button
+                              className='btn btn-sm btn-outline-danger border-0'
+                              onClick={(e) => handleReviewDelete(e, review.id, review.brewery_id)}
+                            >
+                              Delete
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))

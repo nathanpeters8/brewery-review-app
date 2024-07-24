@@ -266,14 +266,14 @@ const Brewery = (props) => {
               <div className='col-6 col-sm-5 col-md-10 d-flex flex-column justify-content-center align-items-center border px-4 py-5 bg-light text-ochre gap-2'>
                 <h3 className='d-flex flex-row gap-3'>
                   {brewery.website_url && (
-                    <a href={brewery.website_url} className='link-dark' target='_blank' rel='noreferrer'>
+                    <a href={brewery.website_url} className='link-dark social-links' target='_blank' rel='noreferrer'>
                       <FontAwesomeIcon icon={faGlobe} />
                     </a>
                   )}
-                  <a href={facebookLink} className='link-dark' target='_blank' rel='noreferrer'>
+                  <a href={facebookLink} className='link-dark social-links' target='_blank' rel='noreferrer'>
                     <FontAwesomeIcon icon={faFacebook} />
                   </a>
-                  <a href={instagramLink} className='link-dark' target='_blank' rel='noreferrer'>
+                  <a href={instagramLink} className='link-dark social-links' target='_blank' rel='noreferrer'>
                     <FontAwesomeIcon icon={faInstagram} />
                   </a>
                 </h3>
@@ -303,16 +303,19 @@ const Brewery = (props) => {
             </div>
             <div className='col-12 col-md-8 d-flex flex-column align-items-center mt-3'>
               <div
-                className={`col-11 d-flex flex-row border-bottom border-secondary overflow-scroll overflow-hidden py-5 ${
+                className={`col-11 d-flex flex-row border-bottom border-secondary overflow-scroll overflow-hidden py-2 ${
                   breweryImages.length > 0 ? 'justify-content-start gap-3' : 'justify-content-center'
                 }`}
               >
                 {breweryImages.length > 0 ? (
                   breweryImages.map((image, index) => (
-                    <div className='col-7 col-sm-5 col-lg-4 d-flex flex-column' key={index}>
-                      <div className='user-image border' style={{ backgroundImage: `url(${image.upload})` }}></div>
-                      <div className='d-flex flex-row justify-content-between'>
-                        <p className='small pt-3'>{image.caption}</p>
+                    <figure className='figure col-7 col-sm-5 col-lg-4 d-flex flex-column border-end pe-3 pt-3' key={index}>
+                      <div
+                        className='user-image figure-img border'
+                        style={{ backgroundImage: `url(${image.upload})` }}
+                      ></div>
+                      <div className='d-flex flex-row justify-content-between figure-caption'>
+                        <p className='pt-2'>{image.caption}</p>
                         {currentUser === image.user.username && (
                           <button
                             className='image-delete btn p-0'
@@ -322,7 +325,7 @@ const Brewery = (props) => {
                           </button>
                         )}
                       </div>
-                    </div>
+                    </figure>
                   ))
                 ) : (
                   <h4 className='mt-5 text-center'>No Images Yet</h4>

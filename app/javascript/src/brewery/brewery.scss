@@ -20,3 +20,27 @@
   background-size: cover;
   background-position: center;
 }
+
+.figure {
+  .image-delete {
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+}
+
+.figure:hover {
+  .user-image {
+    transform: scale(1.05);
+    transition: transform 0.5s ease;
+  }
+
+  .image-delete {
+    opacity: 1;
+    transition: opacity 0.5s ease;
+  }
+}
+
+.social-links:hover {
+  transform: scale(1.05) translateY(-3px);
+  transition: transform 0.5s ease;
+}
