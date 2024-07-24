@@ -8,7 +8,7 @@ Rails.application.routes.draw do
     resources :users, only: [:create, :show, :update, :destroy]
     resources :sessions, only: [:create]
     resources :reviews, only: [:create, :destroy]
-    resources :images, only: [:create]
+    resources :images, only: [:create, :destroy]
 
     delete '/logout' => 'sessions#destroy'
     get '/authenticated' => 'sessions#authenticated'

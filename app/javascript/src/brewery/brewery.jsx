@@ -13,6 +13,7 @@ import {
   GetImagesByBrewery,
   Authenticate,
   DeleteReview,
+  DeleteImage,
 } from '@utils/apiService';
 import Layout from '@utils/layout';
 import './brewery.scss';
@@ -37,7 +38,8 @@ const Brewery = (props) => {
   const [review, setReview] = useState('');
   const [image, setImage] = useState(null);
   const [caption, setCaption] = useState('');
-  const [selectedReview, setSelectedReview] = useState(null);
+  const [selectedContent, setSelectedContent] = useState(null);
+  const [selectedContentID, setSelectedContentID] = useState(null);
 
   // Fix left column on scroll
   useEffect(() => {
@@ -148,15 +150,34 @@ const Brewery = (props) => {
     }
   };
 
+  const handleShowConfirmModal = (id, content) => {
+    console.log(content);
+    console.log(id);
+    setSelectedContent(content);
+    setSelectedContentID(id);
+    setShowConfirmModal(true);
+  };
+
   // Handle review deletion
   const handleReviewDelete = () => {
-    if (selectedReview) {
-      DeleteReview(selectedReview.id, (response) => {
-        console.log(response);
-        setShowConfirmModal(false);
-        window.location.reload();
-      });
-    }
+    DeleteReview(selectedContentID, (response) => {
+      console.log(response);
+      setShowConfirmModal(false);
+      setSelectedContent(null);
+      setSelectedContentID(null);
+      window.location.reload();
+    });
+  };
+
+  // Handle image deletion
+  const handleImageDelete = () => {
+    DeleteImage(selectedContentID, (response) => {
+      console.log(response);
+      setShowConfirmModal(false);
+      setSelectedContent(null);
+      setSelectedContentID(null);
+      window.location.reload();
+    });
   };
 
   // Get social media links from search results
@@ -290,7 +311,17 @@ const Brewery = (props) => {
                   breweryImages.map((image, index) => (
                     <div className='col-7 col-sm-5 col-lg-4 d-flex flex-column' key={index}>
                       <div className='user-image border' style={{ backgroundImage: `url(${image.upload})` }}></div>
-                      <p className='small'>{image.caption}</p>
+                      <div className='d-flex flex-row justify-content-between'>
+                        <p className='small pt-3'>{image.caption}</p>
+                        {currentUser === image.user.username && (
+                          <button
+                            className='image-delete btn p-0'
+                            onClick={(e) => handleShowConfirmModal(image.id, 'image')}
+                          >
+                            <FontAwesomeIcon icon={faTrash} style={{ color: '#C06014' }} />
+                          </button>
+                        )}
+                      </div>
                     </div>
                   ))
                 ) : (
@@ -300,16 +331,15 @@ const Brewery = (props) => {
               <div className='col-8 col-md-6 d-flex align-items-center flex-column pb-5'>
                 {breweryReviews.length > 0 ? (
                   breweryReviews.map((review, index) => (
-                    <div
-                      className='border-bottom pb-3 mt-5 w-100'
-                      key={index}
-                      onMouseEnter={() => setSelectedReview(review)}
-                    >
+                    <div className='border-bottom pb-3 mt-5 w-100' key={index}>
                       <div className='d-flex flex-row justify-content-between align-items-center'>
                         <h5>{review.user.username}</h5>
                         <h6 className='lead fs-6'>{review.created_at.split('T')[0]}</h6>
                         {currentUser === review.user.username && (
-                          <button className='btn p-0' onClick={() => setShowConfirmModal(true)}>
+                          <button
+                            className='review-delete btn p-0'
+                            onClick={(e) => handleShowConfirmModal(review.id, 'review')}
+                          >
                             <FontAwesomeIcon icon={faTrash} style={{ color: '#C06014' }} />
                           </button>
                         )}
@@ -367,13 +397,26 @@ const Brewery = (props) => {
         caption={caption}
         handleSubmit={handleImageUpload}
       />
-
-      <ConfirmModal
-        show={showConfirmModal}
-        setShow={setShowConfirmModal}
-        handleDelete={handleReviewDelete}
-        header='this review'
-      />
+      {(() => {
+        if (selectedContent === 'review')
+          return (
+            <ConfirmModal
+              show={showConfirmModal}
+              setShow={setShowConfirmModal}
+              handleDelete={handleReviewDelete}
+              header='this review'
+            />
+          );
+        if (selectedContent === 'image')
+          return (
+            <ConfirmModal
+              show={showConfirmModal}
+              setShow={setShowConfirmModal}
+              handleDelete={handleImageDelete}
+              header='this image'
+            />
+          );
+      })()}
     </Layout>
   );
 };

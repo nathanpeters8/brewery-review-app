@@ -178,6 +178,20 @@ export const DeleteReview = (reviewId, callback) => {
     });
 };
 
+export const DeleteImage = (imageId, callback) => {
+  fetch(
+    `/api/images/${imageId}`,
+    safeCredentials({
+      method: 'DELETE',
+    })
+  )
+    .then(handleErrors)
+    .then((response) => {
+      console.log('Image deleted:', response);
+      return callback(response);
+    });
+};
+
 export const GetProfile = (userId, callback) => {
   fetch(
     `/api/users/${userId}`,

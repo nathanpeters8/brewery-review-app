@@ -9,7 +9,7 @@ import {
   EditProfile,
   GetProfile,
   DeleteUser,
-  UserSignOut
+  UserSignOut,
 } from '@utils/apiService';
 import './account.scss';
 
@@ -39,7 +39,6 @@ const Account = (props) => {
   // check user authentication and get user reviews and images
   useEffect(() => {
     Authenticate((response) => {
-      // console.log(response);
       setUserId(response.id);
       GetProfile(response.id, (profile) => setUserInfo({ ...profile, password: '' }));
       GetReviewsByUser(response.id, (reviews) => setUserReviews(reviews));
@@ -47,13 +46,17 @@ const Account = (props) => {
     });
   }, []);
 
+  // handle form input changes
   const handleChange = (target) => {
     setUserInfo({ ...userInfo, [target.name]: target.value });
     if (!changedFields.includes(target.name)) setChangedFields([...changedFields, target.name]);
   };
 
+  // handle edit profile form submission
   const handleEditProfile = (e) => {
     e.preventDefault();
+
+    // create object with changed fields
     const info = {};
     if (changedFields) {
       changedFields.forEach((field) => {
@@ -61,6 +64,7 @@ const Account = (props) => {
       });
     }
 
+    // send updated info to API
     EditProfile(info, userId, (response) => {
       console.log(response);
       setShowEditModal(false);
@@ -68,6 +72,7 @@ const Account = (props) => {
     });
   };
 
+  // handle review deletion
   const handleReviewDelete = (e, reviewId) => {
     e.preventDefault();
     DeleteReview(reviewId, (response) => {
@@ -76,6 +81,7 @@ const Account = (props) => {
     });
   };
 
+  // handle user deletion
   const handleUserDelete = (e) => {
     e.preventDefault();
     UserSignOut((response) => {
@@ -83,9 +89,9 @@ const Account = (props) => {
         console.log(r);
         window.location.href('/');
       });
-    })
+    });
   };
-  
+
   return (
     <Layout currentComponent='account'>
       <div className='container-xl bg-secondary bg-opacity-10'>
@@ -104,7 +110,9 @@ const Account = (props) => {
               <button className='btn btn-outline-warning text-ochre border-0' onClick={() => setShowEditModal(true)}>
                 Edit Account
               </button>
-              <button className='btn btn-outline-danger text-ochre border-0' onClick={() => setShowConfirmModal(true)}>Delete Account</button>
+              <button className='btn btn-outline-danger text-ochre border-0' onClick={() => setShowConfirmModal(true)}>
+                Delete Account
+              </button>
             </div>
           </div>
           <div className='col-12 col-md-9 d-flex flex-column align-items-center'>
