@@ -6,6 +6,7 @@ module Api
       if @user.save
         render 'api/users/create', status: :created
       else 
+        Rails.logger.info "Failed: #{@user.errors.full_messages.join(", ")}"
         render json: {success: false}, status: :bad_request
       end
     end
@@ -16,6 +17,7 @@ module Api
       if @user
         render 'api/users/show', status: :ok
       else
+        Rails.logger.info "Failed: #{@user.errors.full_messages.join(", ")}"
         render json: {success: false}, status: :bad_request
       end
     end
@@ -50,7 +52,7 @@ module Api
     private
 
     def user_params 
-      params.require(:user).permit(:username, :email, :password, :city, :state)
+      params.require(:user).permit(:username, :email, :password, :city, :state, :profile_picture)
     end 
   end
 end

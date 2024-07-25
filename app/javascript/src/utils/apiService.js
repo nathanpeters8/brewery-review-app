@@ -16,20 +16,12 @@ export const Authenticate = (callback) => {
 };
 
 // post request to sign up a user
-export const UserSignUp = (username, email, password, city, state, callback) => {
+export const UserSignUp = (formData, callback) => {
   fetch(
     '/api/users',
-    safeCredentials({
+    safeCredentialsForm({
       method: 'POST',
-      body: JSON.stringify({
-        user: {
-          username: username,
-          email: email,
-          password: password,
-          city: city,
-          state: state,
-        },
-      }),
+      body: formData,
     })
   )
     .then(handleErrors)

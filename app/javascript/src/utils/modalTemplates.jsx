@@ -29,7 +29,7 @@ export const MapModalTemplate = ({ showMap, toggleShowMap, name, city, state, st
 };
 
 export const FormModalTemplate = ({ show, toggleShow, formType, title, handleChange, userInfo, submitMethod }) => {
-  const { email, username, password, city, state } = userInfo;
+  const { email, username, password, city, state, profile_picture } = userInfo;
   return (
     <Modal show={show} onHide={() => toggleShow(false)} fullscreen={'sm-down'} keyboard>
       <Modal.Header closeButton>
@@ -114,6 +114,18 @@ export const FormModalTemplate = ({ show, toggleShow, formType, title, handleCha
                   State
                 </label>
               </div>
+            </div>
+          )}
+          {formType === 'signup' && (
+            <div className='col-10'>
+              <input
+                type='file'
+                name='profile_picture'
+                accept='image/*'
+                className='form-control'
+                onChange={(e) => handleChange(e.target)}
+                required
+              />
             </div>
           )}
           <div className='col-6 text-center'>

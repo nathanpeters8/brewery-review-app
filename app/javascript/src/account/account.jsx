@@ -20,6 +20,7 @@ const Account = (props) => {
     password: '',
     city: '',
     state: '',
+    profile_picture: '',
   });
 
   // update window width on resize
@@ -110,7 +111,11 @@ const Account = (props) => {
           >
             <div
               className='avatar-image col-4 col-md-9 border mb-0 mb-md-5 position-relative'
-              style={{ backgroundImage: `url(https://placehold.co/150)` }}
+              style={{
+                backgroundImage: `url(${
+                  userInfo.profile_picture ? userInfo.profile_picture : 'https://placehold.co/150'
+                })`,
+              }}
             >
               <button className='btn btn-lg text-ochre border-0 position-absolute top-0 end-0'>
                 <FontAwesomeIcon icon={faPenToSquare} />

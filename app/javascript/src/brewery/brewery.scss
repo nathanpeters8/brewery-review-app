@@ -4,6 +4,18 @@
   background-position: center;
 }
 
+.avatar-image {
+  // @media (max-width: 991px) {
+  //   padding-top: calc(1 / 6 * 100%);
+  // }
+  // @media (min-width: 992px) {
+  //   padding-top: calc(1 / 10 * 100%);
+  // }
+  padding-top: calc(1 / 6 * 100%);
+  background-size: cover;
+  background-position: center;
+}
+
 .brewery-main-img {
   @media (max-width: 576px) {
     padding-top: calc(1 / 2 * 100%);

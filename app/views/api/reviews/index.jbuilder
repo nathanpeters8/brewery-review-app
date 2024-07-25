@@ -11,6 +11,7 @@ json.reviews do
     json.user do
       json.id review.user.id
       json.username review.user.username
+      json.profile_picture url_for(review.user.profile_picture) if review.user.profile_picture.attached?
     end
   end
 end
