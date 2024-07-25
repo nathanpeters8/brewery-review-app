@@ -257,3 +257,32 @@ export const ConfirmModal = ({show, setShow, handleDelete, header}) => {
     </Modal>
   );
 };
+
+export const ProfilePictureModal = ({ show, setShow, handleChange, handleSubmit }) => {
+  return (
+    <Modal show={show} onHide={() => setShow(false)} centered fullscreen={'sm-down'} keyboard>
+      <Modal.Header closeButton></Modal.Header>
+      <Modal.Body>
+        <form className='row d-flex justify-content-center' onSubmit={handleSubmit}>
+          <div className='col-10'>
+            <input
+              type='file'
+              name='profile_picture'
+              accept='image/*'
+              className='form-control'
+              onChange={(e) => handleChange(e.target)}
+              required
+            />
+          </div>
+          <div className='col-6 text-center mt-3'>
+            <button type='submit' className='btn btn-outline-primary text-ochre border-0'>
+              Upload
+            </button>
+          </div>
+        </form>
+      </Modal.Body>
+      <Modal.Footer className='text-center'>
+      </Modal.Footer>
+    </Modal>
+  );
+};

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '@utils/layout';
-import { FormModalTemplate, ConfirmModal } from '@utils/modalTemplates.jsx';
+import { FormModalTemplate, ConfirmModal, ProfilePictureModal } from '@utils/modalTemplates.jsx';
 import * as ApiService from '@utils/apiService';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare } from '@fortawesome/free-regular-svg-icons';
@@ -12,6 +12,7 @@ const Account = (props) => {
   const [userImages, setUserImages] = useState([]);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [showProfilePicModal, setShowProfilePicModal] = useState(false);
   const [userId, setUserId] = useState('');
   const [changedFields, setChangedFields] = useState([]);
   const [userInfo, setUserInfo] = useState({
@@ -42,8 +43,8 @@ const Account = (props) => {
 
   // handle form input changes
   const handleChange = (target) => {
-    if (target.name === 'avatar') {
-      setUserInfo({ ...userInfo, avatar: target.files[0] });
+    if (target.type === 'file') {
+      setUserInfo({ ...userInfo, profile_picture: target.files[0] });
     } else {
       setUserInfo({ ...userInfo, [target.name]: target.value });
     }
@@ -55,19 +56,20 @@ const Account = (props) => {
   const handleEditProfile = (e) => {
     e.preventDefault();
 
-    // create object with changed fields
-    const info = {};
+    // create form data with changed fields
+    const formData = new FormData();
     if (changedFields) {
       changedFields.forEach((field) => {
-        info[field] = userInfo[field];
+        formData.append(`user[${field}]`, userInfo[field]);
       });
     }
 
     // send updated info to API
-    ApiService.EditProfile(info, userId, (response) => {
+    ApiService.EditProfile(formData, userId, (response) => {
       console.log(response);
       setShowEditModal(false);
-      // window.location.reload();
+      setShowProfilePicModal(false);
+      window.location.reload();
     });
   };
 
@@ -117,7 +119,7 @@ const Account = (props) => {
                 })`,
               }}
             >
-              <button className='btn btn-lg text-ochre border-0 position-absolute top-0 end-0'>
+              <button className='btn btn-lg text-ochre border-0 position-absolute top-0 end-0' onClick={() => setShowProfilePicModal(true)}>
                 <FontAwesomeIcon icon={faPenToSquare} />
               </button>
             </div>
@@ -237,7 +239,7 @@ const Account = (props) => {
       </div>
       <FormModalTemplate
         show={showEditModal}
-        toggleShow={setShowEditModal}
+        setShow={setShowEditModal}
         formType='editprofile'
         title='Edit Profile'
         handleChange={handleChange}
@@ -246,9 +248,15 @@ const Account = (props) => {
       />
       <ConfirmModal
         show={showConfirmModal}
-        toggleShow={setShowConfirmModal}
+        setShow={setShowConfirmModal}
         handleDelete={handleUserDelete}
         header='your profile'
+      />
+      <ProfilePictureModal
+        show={showProfilePicModal}
+        setShow={setShowProfilePicModal}
+        handleChange={handleChange}
+        handleSubmit={handleEditProfile}
       />
     </Layout>
   );
