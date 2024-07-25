@@ -9,14 +9,20 @@ const BreweryReviews = ({ breweryReviews, currentUser, handleShowConfirmModal })
     <div className='col-9 d-flex align-items-center flex-column pb-5'>
       {breweryReviews.length > 0 ? (
         breweryReviews.map((review, index) => (
-          <div className='d-flex flex-row mt-5 justify-content-around'>
+          <div className='d-flex flex-row mt-5 justify-content-around w-100' key={index}>
             {review.user.profile_picture && (
               <div
                 className='avatar-image col-2 mb-3 rounded-circle align-self-start me-4'
                 style={{ backgroundImage: `url(${review.user.profile_picture})` }}
               ></div>
             )}
-            <div className='border-bottom pb-3 w-100' key={index}>
+            {!review.user.profile_picture && (
+              <div
+                className='avatar-image col-2 mb-3 rounded-circle align-self-start me-4'
+                style={{ backgroundImage: `url(https://placehold.co/100)` }}
+              ></div>
+            )}
+            <div className='border-bottom pb-3 w-100'>
               <div className='d-flex flex-row justify-content-between align-items-center'>
                 <h5>{review.user.username}</h5>
                 <h6 className='lead fs-6'>{review.created_at.split('T')[0]}</h6>

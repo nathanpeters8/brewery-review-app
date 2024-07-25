@@ -4,6 +4,8 @@ import { FormModalTemplate, ConfirmModal, ProfilePictureModal } from '@utils/mod
 import * as ApiService from '@utils/apiService';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare } from '@fortawesome/free-regular-svg-icons';
+import ReviewsTable from './reviewsTable';
+import ImagesTable from './imagesTable';
 import './account.scss';
 
 const Account = (props) => {
@@ -31,7 +33,7 @@ const Account = (props) => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // check user authentication and get user reviews and images
+  // check user authentication and get user profile, reviews and images
   useEffect(() => {
     ApiService.Authenticate((response) => {
       setUserId(response.id);
@@ -41,7 +43,7 @@ const Account = (props) => {
     });
   }, []);
 
-  // handle form input changes
+  // handle form input changes and update changed fields
   const handleChange = (target) => {
     if (target.type === 'file') {
       setUserInfo({ ...userInfo, profile_picture: target.files[0] });
@@ -119,7 +121,10 @@ const Account = (props) => {
                 })`,
               }}
             >
-              <button className='btn btn-lg text-ochre border-0 position-absolute top-0 end-0' onClick={() => setShowProfilePicModal(true)}>
+              <button
+                className='btn btn-warning border-0 position-absolute top-0 end-0'
+                onClick={() => setShowProfilePicModal(true)}
+              >
                 <FontAwesomeIcon icon={faPenToSquare} />
               </button>
             </div>
@@ -139,107 +144,18 @@ const Account = (props) => {
           <div className='col-12 col-md-9 d-flex flex-column align-items-center'>
             <div className='col-11 col-md-9 table-responsive mt-5'>
               <h5 className='text-center text-decoration-underline mb-3'>My Uploaded Images</h5>
-              <table className='table table-striped table-hover table-bordered table-secondary align-items-center'>
-                <thead>
-                  <tr className='align-middle text-center'>
-                    <th></th>
-                    <th>Brewery Name</th>
-                    <th>Date Posted</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {userImages.length > 0 ? (
-                    userImages.map((image, index) => (
-                      <tr key={index} className='align-middle text-center'>
-                        <td className='d-flex justify-content-center'>
-                          <div className='user-image border' style={{ backgroundImage: `url(${image.upload})` }}></div>
-                        </td>
-                        <td>{image.brewery_name}</td>
-                        <td>{image.created_at.split('T')[0]}</td>
-                        <td>
-                          <div className='d-flex flex-column gap-1'>
-                            <button
-                              className='btn btn-sm btn-outline-primary text-ochre border-0'
-                              onClick={() => (window.location.href = `/brewery/${image.brewery_id}`)}
-                            >
-                              View
-                            </button>
-                            <button
-                              className='btn btn-sm btn-outline-danger border-0'
-                              onClick={(e) => handleImageDelete(e, image.id)}
-                            >
-                              Delete
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr className='align-middle text-center'>
-                      <td>No Images Yet</td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
+              <ImagesTable userImages={userImages} handleImageDelete={handleImageDelete} />
             </div>
             <div className='col-11 col-md-9 table-responsive mt-5'>
               <h5 className='text-center text-decoration-underline mb-3'>My Reviews</h5>
-              <table className='table table-striped table-hover table-bordered table-secondary align-items-center'>
-                <thead>
-                  <tr className='align-middle text-center'>
-                    <th>Brewery Name</th>
-                    <th>Review</th>
-                    <th>Date Posted</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {userReviews.length > 0 ? (
-                    userReviews.map((review, index) => (
-                      <tr key={index} className='align-middle text-center'>
-                        <td>{review.brewery_name}</td>
-                        <td id='reviewCell'>
-                          <textarea
-                            name='review'
-                            className='form-control-plaintext lh-sm small'
-                            value={review.content}
-                            readOnly
-                          ></textarea>
-                        </td>
-                        <td>{review.created_at.split('T')[0]}</td>
-                        <td>
-                          <div className='d-flex flex-column gap-1'>
-                            <button
-                              className='btn btn-sm btn-outline-primary text-ochre border-0'
-                              onClick={() => (window.location.href = `/brewery/${review.brewery_id}`)}
-                            >
-                              View
-                            </button>
-                            <button
-                              className='btn btn-sm btn-outline-danger border-0'
-                              onClick={(e) => handleReviewDelete(e, review.id, review.brewery_id)}
-                            >
-                              Delete
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr className='align-middle text-center'>
-                      <td className='w-25'>No Reviews Yet</td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
+              <ReviewsTable userReviews={userReviews} handleReviewDelete={handleReviewDelete} />
             </div>
           </div>
         </div>
       </div>
       <FormModalTemplate
         show={showEditModal}
-        setShow={setShowEditModal}
+        toggleShow={setShowEditModal}
         formType='editprofile'
         title='Edit Profile'
         handleChange={handleChange}
@@ -248,13 +164,13 @@ const Account = (props) => {
       />
       <ConfirmModal
         show={showConfirmModal}
-        setShow={setShowConfirmModal}
+        toggleShow={setShowConfirmModal}
         handleDelete={handleUserDelete}
         header='your profile'
       />
       <ProfilePictureModal
         show={showProfilePicModal}
-        setShow={setShowProfilePicModal}
+        toggleShow={setShowProfilePicModal}
         handleChange={handleChange}
         handleSubmit={handleEditProfile}
       />

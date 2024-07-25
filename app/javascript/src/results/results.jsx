@@ -70,6 +70,7 @@ const Results = ({ queryParams }) => {
   // get average ratings and main image for each brewery
   useEffect(() => {
     if (results.length > 0) {
+      // get average ratings for each brewery
       const ratingPromises = results.map(
         (brewery) =>
           new Promise((resolve) => {
@@ -82,6 +83,7 @@ const Results = ({ queryParams }) => {
             });
           })
       );
+      // get main image for each brewery
       const imagePromises = results.map(
         (brewery) =>
           new Promise((resolve) => {
@@ -92,7 +94,7 @@ const Results = ({ queryParams }) => {
             });
           })
       );
-
+      // set breweryRatings and breweryImages states
       Promise.all(ratingPromises).then((breweryRatings) => {
         setBreweryRatings(breweryRatings);
       });
@@ -111,6 +113,7 @@ const Results = ({ queryParams }) => {
     }
   }, [clickedBrewery]);
 
+  // get average rating from brewery ratings
   const getAverageRating = (reviews) => {
     let total = 0;
     reviews.forEach((review) => {
@@ -136,6 +139,7 @@ const Results = ({ queryParams }) => {
   // format phone number
   const formatPhoneNumber = (num) => `(${num.slice(0, 3)}) ${num.slice(3, 6)}-${num.slice(6)}`;
 
+  // build query string for results
   const buildQueryString = (query, total) => {
     let string = `${total} brewery results`;
     if (query) {
@@ -167,6 +171,7 @@ const Results = ({ queryParams }) => {
             />
           )}
           {(() => {
+            // display loading placeholders while fetching data
             if (loading || breweryRatings.length < results.length || breweryImages.length < results.length) {
               return (
                 <>
@@ -175,6 +180,7 @@ const Results = ({ queryParams }) => {
                 </>
               );
             }
+            // display message if no results are found
             if (!loading && results.length == 0) {
               return (
                 <div className='col-12 d-flex flex-column gap-3'>
@@ -185,6 +191,7 @@ const Results = ({ queryParams }) => {
                 </div>
               );
             }
+            // display brewery results
             return results.map((brewery, index) => {
               return (
                 <div
@@ -252,21 +259,16 @@ const Results = ({ queryParams }) => {
           )}
         </div>
       </div>
-      {(() => {
-        if (!clickedBrewery) {
-          return null;
-        }
-        return (
-          <MapModalTemplate
-            showMap={showMap}
-            toggleShowMap={setShowMap}
-            name={clickedBrewery.name}
-            city={clickedBrewery.city}
-            state={clickedBrewery.state}
-            street={clickedBrewery.street}
-          />
-        );
-      })()}
+      {clickedBrewery && (
+        <MapModalTemplate
+          showMap={showMap}
+          toggleShowMap={setShowMap}
+          name={clickedBrewery.name}
+          city={clickedBrewery.city}
+          state={clickedBrewery.state}
+          street={clickedBrewery.street}
+        />
+      )}
     </Layout>
   );
 };

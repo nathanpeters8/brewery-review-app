@@ -44,12 +44,10 @@ export const UserLogIn = (email, password, callback) => {
         },
       }),
     })
-  )
-    .then(handleErrors)
-    .then((response) => {
-      console.log('Log in:', response);
-      return callback(response);
-    });
+  ).then((response) => {
+    console.log('Log in:', response);
+    return callback(response);
+  });
 };
 
 // delete request to sign out a user
@@ -204,7 +202,7 @@ export const EditProfile = (formData, userId, callback) => {
     `/api/users/${userId}`,
     safeCredentialsForm({
       method: 'PATCH',
-      body: formData
+      body: formData,
     })
   )
     .then(handleErrors)

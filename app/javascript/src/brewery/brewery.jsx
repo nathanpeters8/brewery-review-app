@@ -253,7 +253,7 @@ const Brewery = (props) => {
 
       <ReviewModal
         show={showReviewModal}
-        setShow={setShowReviewModal}
+        toggleShow={setShowReviewModal}
         review={review}
         setReview={setReview}
         rating={rating}
@@ -265,7 +265,7 @@ const Brewery = (props) => {
 
       <ImageModal
         show={showImageModal}
-        setShow={setShowImageModal}
+        toggleShow={setShowImageModal}
         setImage={setImage}
         image={image}
         setCaption={setCaption}
@@ -277,7 +277,7 @@ const Brewery = (props) => {
           return (
             <ConfirmModal
               show={showConfirmModal}
-              setShow={setShowConfirmModal}
+              toggleShow={setShowConfirmModal}
               handleDelete={handleReviewDelete}
               header='this review'
             />
@@ -286,7 +286,7 @@ const Brewery = (props) => {
           return (
             <ConfirmModal
               show={showConfirmModal}
-              setShow={setShowConfirmModal}
+              toggleShow={setShowConfirmModal}
               handleDelete={handleImageDelete}
               header='this image'
             />

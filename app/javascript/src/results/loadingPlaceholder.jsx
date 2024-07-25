@@ -28,6 +28,6 @@ const LoadingPlaceholder = (props) => {
       </div>
     </div>
   );
-}
+};
 
 export default LoadingPlaceholder;
