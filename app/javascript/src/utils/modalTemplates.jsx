@@ -140,9 +140,19 @@ export const FormModalTemplate = ({ show, toggleShow, formType, title, handleCha
   );
 };
 
-export const ReviewModal = ({ show, setShow, review, setReview, rating, setRating, hover, setHover, handleSubmit }) => {
+export const ReviewModal = ({
+  show,
+  toggleShow,
+  review,
+  setReview,
+  rating,
+  setRating,
+  hover,
+  setHover,
+  handleSubmit,
+}) => {
   return (
-    <Modal show={show} onHide={() => setShow(false)} centered fullscreen={'sm-down'} keyboard>
+    <Modal show={show} onHide={() => toggleShow(false)} centered fullscreen={'sm-down'} keyboard>
       <Modal.Header closeButton></Modal.Header>
       <Modal.Body>
         <form className='row d-flex justify-content-center' onSubmit={handleSubmit}>
@@ -183,7 +193,7 @@ export const ReviewModal = ({ show, setShow, review, setReview, rating, setRatin
           </div>
           <div className='col-6 text-center mt-3'>
             <button type='submit' className='btn btn-outline-primary text-ochre border-0'>
-             Submit
+              Submit
             </button>
           </div>
         </form>
@@ -197,9 +207,9 @@ export const ReviewModal = ({ show, setShow, review, setReview, rating, setRatin
   );
 };
 
-export const ImageModal = ({ show, setShow, setImage, image, setCaption, caption, handleSubmit }) => {
+export const ImageModal = ({ show, toggleShow, setImage, image, setCaption, caption, handleSubmit }) => {
   return (
-    <Modal show={show} onHide={() => setShow(false)} centered fullscreen={'sm-down'} keyboard>
+    <Modal show={show} onHide={() => toggleShow(false)} centered fullscreen={'sm-down'} keyboard>
       <Modal.Header closeButton></Modal.Header>
       <Modal.Body>
         <form className='row d-flex justify-content-center' onSubmit={handleSubmit}>
@@ -231,22 +241,21 @@ export const ImageModal = ({ show, setShow, setImage, image, setCaption, caption
           </div>
         </form>
       </Modal.Body>
-      <Modal.Footer className='text-center'>
-      </Modal.Footer>
+      <Modal.Footer className='text-center'></Modal.Footer>
     </Modal>
   );
 };
 
-export const ConfirmModal = ({show, setShow, handleDelete, header}) => {
+export const ConfirmModal = ({ show, toggleShow, handleDelete, header }) => {
   return (
-    <Modal show={show} onHide={() => setShow(false)} centered fullscreen={'sm-down'} keyboard>
+    <Modal show={show} onHide={() => toggleShow(false)} centered fullscreen={'sm-down'} keyboard>
       <Modal.Header closeButton></Modal.Header>
       <Modal.Body>
         <Modal.Body>
           <p>{`Are you sure you want to delete ${header}?`}</p>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant='secondary' onClick={() => setShow(false)}>
+          <Button variant='secondary' onClick={() => toggleShow(false)}>
             No
           </Button>
           <Button variant='danger' onClick={handleDelete}>
@@ -254,6 +263,34 @@ export const ConfirmModal = ({show, setShow, handleDelete, header}) => {
           </Button>
         </Modal.Footer>
       </Modal.Body>
+    </Modal>
+  );
+};
+
+export const ProfilePictureModal = ({ show, toggleShow, handleChange, handleSubmit }) => {
+  return (
+    <Modal show={show} onHide={() => toggleShow(false)} centered fullscreen={'sm-down'} keyboard>
+      <Modal.Header closeButton></Modal.Header>
+      <Modal.Body>
+        <form className='row d-flex justify-content-center' onSubmit={handleSubmit}>
+          <div className='col-10'>
+            <input
+              type='file'
+              name='profile_picture'
+              accept='image/*'
+              className='form-control'
+              onChange={(e) => handleChange(e.target)}
+              required
+            />
+          </div>
+          <div className='col-6 text-center mt-3'>
+            <button type='submit' className='btn btn-outline-primary text-ochre border-0'>
+              Upload
+            </button>
+          </div>
+        </form>
+      </Modal.Body>
+      <Modal.Footer className='text-center'></Modal.Footer>
     </Modal>
   );
 };

@@ -51,6 +51,10 @@ const Layout = (props) => {
     e.preventDefault();
     UserLogIn(email, password, (response) => {
       console.log(response);
+      if(!response.ok) {
+        alert('Invalid email or password');
+        return;
+      }
       window.location.href = window.location.search;
     })
   }

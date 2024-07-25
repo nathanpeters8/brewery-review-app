@@ -19,14 +19,9 @@
   background-position: center;
 }
 
-
 .brewery:hover {
   background-color: rgb(232, 232, 232);
   transition: background-color 0.3s ease-in-out;
-  // .brewery-main-img {
-  //   transform: scale(1.02);
-  //   transition: transform 0.3s ease-in-out;
-  // }
   .brewery-main-img:hover {
     cursor: pointer;
     transform: scale(1.03);

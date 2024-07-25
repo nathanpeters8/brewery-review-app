@@ -44,12 +44,10 @@ export const UserLogIn = (email, password, callback) => {
         },
       }),
     })
-  )
-    .then(handleErrors)
-    .then((response) => {
-      console.log('Log in:', response);
-      return callback(response);
-    });
+  ).then((response) => {
+    console.log('Log in:', response);
+    return callback(response);
+  });
 };
 
 // delete request to sign out a user
@@ -198,22 +196,18 @@ export const GetProfile = (userId, callback) => {
     });
 };
 
-export const EditProfile = (info, userId, callback) => {
-  console.log('Sending update with info:', info);
+export const EditProfile = (formData, userId, callback) => {
+  // console.log('Sending update with info:', info);
   fetch(
     `/api/users/${userId}`,
-    safeCredentials({
+    safeCredentialsForm({
       method: 'PATCH',
-      body: JSON.stringify({
-        user: {
-          ...info,
-        },
-      }),
+      body: formData,
     })
   )
     .then(handleErrors)
     .then((response) => {
-      console.log('Profile updated');
+      console.log('Profile updated: ', response);
       return callback(response);
     });
 };

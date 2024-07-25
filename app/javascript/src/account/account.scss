@@ -23,9 +23,10 @@
   @media (min-width: 768px) {
     padding-top: calc(2 / 3 * 100%);
   }
-  
+
   background-size: cover;
   background-position: center;
+  transition: opacity 0.5s ease;
 
   button {
     opacity: 0;
@@ -33,6 +34,8 @@
   }
 
   &:hover {
+    opacity: 0.7;
+    transition: opacity 0.5s ease;
     button {
       opacity: 1;
       transition: opacity 0.5s ease;

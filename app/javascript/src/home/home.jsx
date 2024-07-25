@@ -3,18 +3,18 @@ import Layout from '@utils/layout';
 import './home.scss';
 
 const Home = (props) => {
+  // state variables
   const [name, setName] = useState('');
   const [city, setCity] = useState('');
   const [state, setState] = useState('');
-  const [postal, setPostal] = useState('');
 
+  // handle search form submission
   const handleSearch = (event) => {
     event.preventDefault();
     const params = new URLSearchParams();
     if (name) params.append('name', name.replace(' ', '_').toLowerCase());
     if (city) params.append('city', city.toLowerCase());
     if (state) params.append('state', state.toLowerCase());
-    if (postal) params.append('postal', postal);
 
     window.location.href = `/results?${params.toString()}`;
   };
@@ -25,6 +25,7 @@ const Home = (props) => {
         <div className='row'>
           <h4 className='text-center text-ochre'>Search for breweries using any or all fields below:</h4>
         </div>
+        {/* Brewery Search Form */}
         <form
           id='homeBrewerySearch'
           className='row d-flex justify-content-center mt-4 border bg-secondary bg-opacity-25 py-5'
@@ -69,19 +70,6 @@ const Home = (props) => {
               value={state}
             />
           </div>
-          {/* <div className='col-5 text-center mt-3 text-dark'>
-            <label htmlFor='zipCode' className='form-label'>
-              Zip Code
-            </label>
-            <input
-              type='text'
-              id='zipCode'
-              name='postal'
-              className='form-control text-center text-ochre'
-              onChange={(event) => setPostal(event.target.value)}
-              value={postal}
-            />
-          </div> */}
           <div className='col-8 text-center mt-5'>
             <button className='btn btn-lg btn-outline-secondary text-ochre border-0'>Search</button>
           </div>
