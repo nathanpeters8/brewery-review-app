@@ -1,33 +1,45 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faStar, faGlobe } from '@fortawesome/free-solid-svg-icons';
+import { faStar, faGlobe, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { faStar as faStarEmpty } from '@fortawesome/free-regular-svg-icons';
 import { faFacebook, faInstagram } from '@fortawesome/free-brands-svg-icons';
-import Layout from '@utils/layout';
 import { GetBreweriesById } from '@utils/openBreweryDBRequests';
 import { SocialMediaSearch } from '@utils/googleRequests';
-import { MapModalTemplate, ReviewModal, ImageModal } from '@utils/modalTemplates';
-import { SubmitReview, GetReviewsByBrewery, UploadImage, GetImagesByBrewery } from '@utils/apiService';
+import { MapModalTemplate, ReviewModal, ImageModal, ConfirmModal } from '@utils/modalTemplates';
+import {
+  SubmitReview,
+  GetReviewsByBrewery,
+  UploadImage,
+  GetImagesByBrewery,
+  Authenticate,
+  DeleteReview,
+  DeleteImage,
+} from '@utils/apiService';
+import Layout from '@utils/layout';
 import './brewery.scss';
 
 const Brewery = (props) => {
   const [id, setId] = useState('');
+  const [currentUser, setCurrentUser] = useState(null);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [isFixed, setIsFixed] = useState(false);
+  const [showMap, setShowMap] = useState(false);
   const [brewery, setBrewery] = useState({});
   const [breweryReviews, setBreweryReviews] = useState([]);
   const [breweryImages, setBreweryImages] = useState([]);
-  const [showMap, setShowMap] = useState(false);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [showImageModal, setShowImageModal] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [facebookLink, setFacebookLink] = useState('');
   const [instagramLink, setInstagramLink] = useState('');
-  const [isFixed, setIsFixed] = useState(false);
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [loading, setLoading] = useState(true);
   const [rating, setRating] = useState(0);
   const [ratingHover, setRatingHover] = useState(0);
   const [review, setReview] = useState('');
   const [image, setImage] = useState(null);
   const [caption, setCaption] = useState('');
+  const [selectedContent, setSelectedContent] = useState(null);
+  const [selectedContentID, setSelectedContentID] = useState(null);
 
   // Fix left column on scroll
   useEffect(() => {
@@ -51,6 +63,12 @@ const Brewery = (props) => {
     const handleResize = () => setWindowWidth(window.innerWidth);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
+    Authenticate((response) => {
+      setCurrentUser(response.username);
+    });
   }, []);
 
   // Update id state when props.data.id changes
@@ -102,6 +120,7 @@ const Brewery = (props) => {
 
       UploadImage(formData, (response) => {
         console.log(response);
+        setImage(null);
         setShowImageModal(false);
         window.location.reload();
       });
@@ -123,10 +142,42 @@ const Brewery = (props) => {
 
       SubmitReview(formData, (response) => {
         console.log(response);
+        setRating(0);
+        setReview('');
         setShowReviewModal(false);
         window.location.reload();
       });
     }
+  };
+
+  const handleShowConfirmModal = (id, content) => {
+    console.log(content);
+    console.log(id);
+    setSelectedContent(content);
+    setSelectedContentID(id);
+    setShowConfirmModal(true);
+  };
+
+  // Handle review deletion
+  const handleReviewDelete = () => {
+    DeleteReview(selectedContentID, (response) => {
+      console.log(response);
+      setShowConfirmModal(false);
+      setSelectedContent(null);
+      setSelectedContentID(null);
+      window.location.reload();
+    });
+  };
+
+  // Handle image deletion
+  const handleImageDelete = () => {
+    DeleteImage(selectedContentID, (response) => {
+      console.log(response);
+      setShowConfirmModal(false);
+      setSelectedContent(null);
+      setSelectedContentID(null);
+      window.location.reload();
+    });
   };
 
   // Get social media links from search results
@@ -180,11 +231,11 @@ const Brewery = (props) => {
               ></div>
             )}
             <div className='col-md-6 d-flex flex-column text-ochre text-center text-md-start ms-0 ms-md-5 mt-3 mt-md-0 justify-content-around'>
-              <h4 className=''>{brewery.name}</h4>
-              <h6 className='lead fs-6 fw-normal text-capitalize'>{brewery.brewery_type}</h6>
-              <h6 className='lead fs-6 fw-normal'>
+              <h3 className=''>{brewery.name}</h3>
+              <h5 className='lead fs-6 fw-normal text-capitalize'>{brewery.brewery_type}</h5>
+              <h5 className='lead fs-6 fw-normal'>
                 {brewery.city}, {brewery.state}
-              </h6>
+              </h5>
               <h5 className='text-dark mt-2'>
                 {[...Array(5)].map((star, i) => {
                   return (
@@ -213,27 +264,21 @@ const Brewery = (props) => {
               } ${isFixed && windowWidth >= 768 ? 'position-sticky top-0 vh-100 justify-content-center' : ''}`}
             >
               <div className='col-6 col-sm-5 col-md-10 d-flex flex-column justify-content-center align-items-center border px-4 py-5 bg-light text-ochre gap-2'>
-                <h4 className='d-flex flex-row gap-3'>
-                  {brewery.website_url !== null && (
-                    <a href={brewery.website_url} className='link-dark' target='_blank' rel='noreferrer'>
+                <h3 className='d-flex flex-row gap-3'>
+                  {brewery.website_url && (
+                    <a href={brewery.website_url} className='link-dark social-links' target='_blank' rel='noreferrer'>
                       <FontAwesomeIcon icon={faGlobe} />
                     </a>
                   )}
-                  <a href={facebookLink} className='link-dark' target='_blank' rel='noreferrer'>
+                  <a href={facebookLink} className='link-dark social-links' target='_blank' rel='noreferrer'>
                     <FontAwesomeIcon icon={faFacebook} />
                   </a>
-                  <a href={instagramLink} className='link-dark' target='_blank' rel='noreferrer'>
+                  <a href={instagramLink} className='link-dark social-links' target='_blank' rel='noreferrer'>
                     <FontAwesomeIcon icon={faInstagram} />
                   </a>
-                </h4>
-                {(() => {
-                  if (!brewery.phone) {
-                    return null;
-                  }
-                  return <h6>{formatPhoneNumber(brewery.phone)}</h6>;
-                })()}
+                </h3>
+                {brewery.phone && <h6>{formatPhoneNumber(brewery.phone)}</h6>}
                 <h6>{brewery.street}</h6>
-                {/* <h6>Open Until 11:00pm</h6> */}
               </div>
               <div id='breweryButtonDiv' className='d-flex flex-column'>
                 <button
@@ -258,42 +303,74 @@ const Brewery = (props) => {
             </div>
             <div className='col-12 col-md-8 d-flex flex-column align-items-center mt-3'>
               <div
-                className={`col-11 d-flex flex-row border-bottom border-secondary overflow-scroll overflow-hidden py-5 ${
+                className={`col-11 d-flex flex-row border-bottom border-secondary overflow-scroll overflow-hidden py-2 ${
                   breweryImages.length > 0 ? 'justify-content-start gap-3' : 'justify-content-center'
                 }`}
               >
                 {breweryImages.length > 0 ? (
                   breweryImages.map((image, index) => (
-                    <div className='col-7 col-sm-5 col-lg-4 d-flex flex-column' key={index}>
-                      <div className='user-image border' style={{ backgroundImage: `url(${image.upload})` }}></div>
-                      <p className='small'>{image.caption}</p>
-                    </div>
+                    <figure
+                      className='figure col-7 col-sm-5 col-lg-4 d-flex flex-column border-end pe-3 pt-3'
+                      key={index}
+                    >
+                      <div
+                        className='user-image figure-img border'
+                        style={{ backgroundImage: `url(${image.upload})` }}
+                      ></div>
+                      <div className='d-flex flex-row justify-content-between figure-caption'>
+                        <p className='pt-2'>{image.caption}</p>
+                        {currentUser === image.user.username && (
+                          <button
+                            className='image-delete btn p-0'
+                            onClick={(e) => handleShowConfirmModal(image.id, 'image')}
+                          >
+                            <FontAwesomeIcon icon={faTrash} style={{ color: '#C06014' }} />
+                          </button>
+                        )}
+                      </div>
+                    </figure>
                   ))
                 ) : (
                   <h4 className='mt-5 text-center'>No Images Yet</h4>
                 )}
               </div>
-              <div className='col-8 col-md-6 d-flex align-items-center flex-column pb-5'>
+              <div className='col-9 d-flex align-items-center flex-column pb-5'>
                 {breweryReviews.length > 0 ? (
                   breweryReviews.map((review, index) => (
-                    <div className='brewery border-bottom pb-3 mt-5 w-100' key={index}>
-                      <div className='d-flex flex-row justify-content-between'>
-                        <h5>{review.user.username}</h5>
-                        <h6 className='lead fs-6'>{review.created_at.split('T')[0]}</h6>
+                    <div className='d-flex flex-row mt-5 justify-content-around'>
+                      {review.user.profile_picture && (
+                        <div
+                          className='avatar-image col-2 mb-3 rounded-circle align-self-start me-4'
+                          style={{ backgroundImage: `url(${review.user.profile_picture})` }}
+                        ></div>
+                      )}
+                      <div className='border-bottom pb-3 w-100' key={index}>
+                        <div className='d-flex flex-row justify-content-between align-items-center'>
+                          <h5>{review.user.username}</h5>
+                          <h6 className='lead fs-6'>{review.created_at.split('T')[0]}</h6>
+                          {currentUser === review.user.username && (
+                            <button
+                              className='review-delete btn p-0'
+                              onClick={(e) => handleShowConfirmModal(review.id, 'review')}
+                            >
+                              <FontAwesomeIcon icon={faTrash} style={{ color: '#C06014' }} />
+                            </button>
+                          )}
+                        </div>
+                        <h6>
+                          {[...Array(5)].map((star, i) => {
+                            return (
+                              <FontAwesomeIcon
+                                key={i}
+                                icon={i < review.rating ? faStar : faStarEmpty}
+                                size='lg'
+                                style={{ color: '#C06014' }}
+                              />
+                            );
+                          })}
+                        </h6>
+                        <h6 className='mt-3'>{review.content}</h6>
                       </div>
-                      <h6>
-                        {[...Array(5)].map((star, i) => {
-                          return (
-                            <FontAwesomeIcon
-                              key={i}
-                              icon={i < review.rating ? faStar : faStarEmpty}
-                              size='lg'
-                              style={{ color: '#C06014' }}
-                            />
-                          );
-                        })}
-                      </h6>
-                      <h6 className='mt-3'>{review.content}</h6>
                     </div>
                   ))
                 ) : (
@@ -334,6 +411,26 @@ const Brewery = (props) => {
         caption={caption}
         handleSubmit={handleImageUpload}
       />
+      {(() => {
+        if (selectedContent === 'review')
+          return (
+            <ConfirmModal
+              show={showConfirmModal}
+              setShow={setShowConfirmModal}
+              handleDelete={handleReviewDelete}
+              header='this review'
+            />
+          );
+        if (selectedContent === 'image')
+          return (
+            <ConfirmModal
+              show={showConfirmModal}
+              setShow={setShowConfirmModal}
+              handleDelete={handleImageDelete}
+              header='this image'
+            />
+          );
+      })()}
     </Layout>
   );
 };

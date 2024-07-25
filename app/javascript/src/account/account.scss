@@ -12,3 +12,30 @@
   width: 150px;
   height: 125px;
 }
+
+.avatar-image {
+  @media (max-width: 576px) {
+    padding-top: calc(1 / 3 * 100%);
+  }
+  @media (min-width: 576px) {
+    padding-top: calc(1 / 4 * 100%);
+  }
+  @media (min-width: 768px) {
+    padding-top: calc(2 / 3 * 100%);
+  }
+  
+  background-size: cover;
+  background-position: center;
+
+  button {
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  &:hover {
+    button {
+      opacity: 1;
+      transition: opacity 0.5s ease;
+    }
+  }
+}

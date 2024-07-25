@@ -16,20 +16,12 @@ export const Authenticate = (callback) => {
 };
 
 // post request to sign up a user
-export const UserSignUp = (username, email, password, city, state, callback) => {
+export const UserSignUp = (formData, callback) => {
   fetch(
     '/api/users',
-    safeCredentials({
+    safeCredentialsForm({
       method: 'POST',
-      body: JSON.stringify({
-        user: {
-          username: username,
-          email: email,
-          password: password,
-          city: city,
-          state: state,
-        },
-      }),
+      body: formData,
     })
   )
     .then(handleErrors)
@@ -161,5 +153,81 @@ export const GetImagesByUser = (userId, callback) => {
     })
     .catch((error) => {
       console.error('Error:', error);
+    });
+};
+
+export const DeleteReview = (reviewId, callback) => {
+  fetch(
+    `/api/reviews/${reviewId}`,
+    safeCredentials({
+      method: 'DELETE',
+    })
+  )
+    .then(handleErrors)
+    .then((response) => {
+      console.log('Review deleted:', response);
+      return callback(response);
+    });
+};
+
+export const DeleteImage = (imageId, callback) => {
+  fetch(
+    `/api/images/${imageId}`,
+    safeCredentials({
+      method: 'DELETE',
+    })
+  )
+    .then(handleErrors)
+    .then((response) => {
+      console.log('Image deleted:', response);
+      return callback(response);
+    });
+};
+
+export const GetProfile = (userId, callback) => {
+  fetch(
+    `/api/users/${userId}`,
+    safeCredentials({
+      method: 'GET',
+    })
+  )
+    .then(handleErrors)
+    .then((response) => {
+      console.log('Profile:', response);
+      return callback(response.user);
+    });
+};
+
+export const EditProfile = (info, userId, callback) => {
+  console.log('Sending update with info:', info);
+  fetch(
+    `/api/users/${userId}`,
+    safeCredentials({
+      method: 'PATCH',
+      body: JSON.stringify({
+        user: {
+          ...info,
+        },
+      }),
+    })
+  )
+    .then(handleErrors)
+    .then((response) => {
+      console.log('Profile updated');
+      return callback(response);
+    });
+};
+
+export const DeleteUser = (userId, callback) => {
+  fetch(
+    `/api/users/${userId}`,
+    safeCredentials({
+      method: 'DELETE',
+    })
+  )
+    .then(handleErrors)
+    .then((response) => {
+      console.log('User deleted:', response);
+      return callback(response);
     });
 };

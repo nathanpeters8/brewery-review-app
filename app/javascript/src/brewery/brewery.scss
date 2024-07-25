@@ -4,6 +4,18 @@
   background-position: center;
 }
 
+.avatar-image {
+  // @media (max-width: 991px) {
+  //   padding-top: calc(1 / 6 * 100%);
+  // }
+  // @media (min-width: 992px) {
+  //   padding-top: calc(1 / 10 * 100%);
+  // }
+  padding-top: calc(1 / 6 * 100%);
+  background-size: cover;
+  background-position: center;
+}
+
 .brewery-main-img {
   @media (max-width: 576px) {
     padding-top: calc(1 / 2 * 100%);
@@ -19,4 +31,28 @@
   }
   background-size: cover;
   background-position: center;
+}
+
+.figure {
+  .image-delete {
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+}
+
+.figure:hover {
+  .user-image {
+    transform: scale(1.05);
+    transition: transform 0.5s ease;
+  }
+
+  .image-delete {
+    opacity: 1;
+    transition: opacity 0.5s ease;
+  }
+}
+
+.social-links:hover {
+  transform: scale(1.05) translateY(-3px);
+  transition: transform 0.5s ease;
 }

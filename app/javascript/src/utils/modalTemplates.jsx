@@ -29,7 +29,7 @@ export const MapModalTemplate = ({ showMap, toggleShowMap, name, city, state, st
 };
 
 export const FormModalTemplate = ({ show, toggleShow, formType, title, handleChange, userInfo, submitMethod }) => {
-  const { email, username, password, city, state } = userInfo;
+  const { email, username, password, city, state, profile_picture } = userInfo;
   return (
     <Modal show={show} onHide={() => toggleShow(false)} fullscreen={'sm-down'} keyboard>
       <Modal.Header closeButton>
@@ -46,7 +46,7 @@ export const FormModalTemplate = ({ show, toggleShow, formType, title, handleCha
               placeholder='name@example.com'
               onChange={(e) => handleChange(e.target)}
               value={email}
-              required
+              required={formType !== 'editprofile' ? true : false}
             />
             <label htmlFor='inputEmail' className='form-label'>
               Email
@@ -62,7 +62,7 @@ export const FormModalTemplate = ({ show, toggleShow, formType, title, handleCha
                 placeholder='my_username'
                 onChange={(e) => handleChange(e.target)}
                 value={username}
-                required
+                required={formType !== 'editprofile' ? true : false}
               />
               <label htmlFor='inputUsername' className='form-label'>
                 Username
@@ -78,7 +78,7 @@ export const FormModalTemplate = ({ show, toggleShow, formType, title, handleCha
               placeholder='1234567890'
               onChange={(e) => handleChange(e.target)}
               value={password}
-              required
+              required={formType !== 'editprofile' ? true : false}
             />
             <label htmlFor='inputPassword' className='form-label'>
               Password
@@ -114,6 +114,18 @@ export const FormModalTemplate = ({ show, toggleShow, formType, title, handleCha
                   State
                 </label>
               </div>
+            </div>
+          )}
+          {formType === 'signup' && (
+            <div className='col-10'>
+              <input
+                type='file'
+                name='profile_picture'
+                accept='image/*'
+                className='form-control'
+                onChange={(e) => handleChange(e.target)}
+                required
+              />
             </div>
           )}
           <div className='col-6 text-center'>
@@ -221,6 +233,27 @@ export const ImageModal = ({ show, setShow, setImage, image, setCaption, caption
       </Modal.Body>
       <Modal.Footer className='text-center'>
       </Modal.Footer>
+    </Modal>
+  );
+};
+
+export const ConfirmModal = ({show, setShow, handleDelete, header}) => {
+  return (
+    <Modal show={show} onHide={() => setShow(false)} centered fullscreen={'sm-down'} keyboard>
+      <Modal.Header closeButton></Modal.Header>
+      <Modal.Body>
+        <Modal.Body>
+          <p>{`Are you sure you want to delete ${header}?`}</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant='secondary' onClick={() => setShow(false)}>
+            No
+          </Button>
+          <Button variant='danger' onClick={handleDelete}>
+            Yes
+          </Button>
+        </Modal.Footer>
+      </Modal.Body>
     </Modal>
   );
 };

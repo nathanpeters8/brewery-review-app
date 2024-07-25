@@ -30,6 +30,21 @@ module Api
       render 'api/reviews/index'
     end
 
+    def destroy
+      token = cookies.signed[:brewery_session_token]
+      session = Session.find_by(token: token)
+      user = session.user 
+
+      @review = user.reviews.find(params[:id])
+      return render json: {error: 'review not found'}, status: :not_found if !@review
+
+      if @review.destroy
+        render json: {success: true}, status: :ok
+      else
+        render json: {success: false}, status: :bad_request
+      end
+    end
+
     private
 
     def review_params

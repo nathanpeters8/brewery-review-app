@@ -30,7 +30,7 @@ const Home = (props) => {
           className='row d-flex justify-content-center mt-4 border bg-secondary bg-opacity-25 py-5'
           onSubmit={handleSearch}
         >
-          <div className='col-8 text-center text-dark'>
+          <div className='col-10 col-sm-8 text-center text-dark'>
             <label htmlFor='breweryName' className='form-label'>
               Brewery Name
             </label>
@@ -43,7 +43,7 @@ const Home = (props) => {
               value={name}
             />
           </div>
-          <div className='col-5 text-center mt-3 text-dark'>
+          <div className='col-10 col-sm-5 text-center mt-3 text-dark'>
             <label htmlFor='city' className='form-label'>
               City
             </label>
@@ -56,7 +56,7 @@ const Home = (props) => {
               value={city}
             />
           </div>
-          <div className='col-5 text-center mt-3 text-dark'>
+          <div className='col-10 col-sm-5 text-center mt-3 text-dark'>
             <label htmlFor='state' className='form-label'>
               State
             </label>

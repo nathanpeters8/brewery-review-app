@@ -30,6 +30,22 @@ module Api
       render 'api/images/index'
     end
 
+    def destroy
+      token = cookies.signed[:brewery_session_token]
+      session = Session.find_by(token: token)
+      user = session.user
+
+      @image = user.images.find(params[:id])
+      return render json: {error: 'image not found'}, status: :not_found if !@image
+
+      if @image.destroy
+        render json: {success: true}, status: :ok
+      else
+        render json: {success: false}, status: :bad_request
+      end
+    end
+    
+
     private
 
     def image_params

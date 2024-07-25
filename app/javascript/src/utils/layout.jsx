@@ -14,6 +14,7 @@ const Layout = (props) => {
   const [password, setPassword] = useState('');
   const [city, setCity] = useState('');
   const [state, setState] = useState('');
+  const [profilePic, setProfilePic] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [userLoggedIn, setUserLoggedIn] = useState(false);
 
@@ -30,7 +31,16 @@ const Layout = (props) => {
   // sign up user, then log in
   const handleSignUp = (e) => {
     e.preventDefault();
-    UserSignUp(username, email, password, city, state, (response) => {
+    const formData = new FormData();
+
+    formData.append('user[username]', username);
+    formData.append('user[email]', email);
+    formData.append('user[password]', password);
+    if (city) formData.append('user[city]', city);
+    if (state) formData.append('user[state]', state);
+    if (profilePic) formData.append('user[profile_picture]', profilePic);
+
+    UserSignUp(formData, (response) => {
       console.log(response);
       handleLogIn(e);
     })
@@ -75,10 +85,12 @@ const Layout = (props) => {
       setCity(target.value);
     } else if (target.name === 'state') {
       setState(target.value);
+    } else if (target.type === 'file') {
+      setProfilePic(target.files[0]);
     }
   }
 
-  const signUpInfo = { username, email, password, city, state };
+  const signUpInfo = { username, email, password, city, state, profilePic };
   const logInInfo = { email, password };
 
   return (

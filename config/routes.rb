@@ -5,10 +5,10 @@ Rails.application.routes.draw do
   get '/account' => 'static_pages#account'
 
   namespace :api do
-    resources :users, only: [:create]
+    resources :users, only: [:create, :show, :update, :destroy]
     resources :sessions, only: [:create]
-    resources :reviews, only: [:create]
-    resources :images, only: [:create]
+    resources :reviews, only: [:create, :destroy]
+    resources :images, only: [:create, :destroy]
 
     delete '/logout' => 'sessions#destroy'
     get '/authenticated' => 'sessions#authenticated'
