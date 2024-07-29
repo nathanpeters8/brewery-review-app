@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '@utils/layout';
+import { getAllStates, getCities } from '@utils/fetchHelper';
+import { GetCitySuggestions } from '@utils/apiService';
+import Select from 'react-select';
 import './home.scss';
 
 const Home = (props) => {
@@ -7,6 +10,75 @@ const Home = (props) => {
   const [name, setName] = useState('');
   const [city, setCity] = useState('');
   const [state, setState] = useState('');
+  const [stateSuggestions, setStateSuggestions] = useState([]);
+  const [citySuggestions, setCitySuggestions] = useState([]);
+
+  const debounce = (func, wait) => {
+    let timeout;
+    return function (...args) {
+      const context = this;
+      if (timeout) clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        timeout = null;
+        func.apply(context, args);
+      }, wait);
+    };
+  };
+
+  const fetchCitySuggestions = (value) => {
+    if (value) {
+      GetCitySuggestions(value, state, (response) => {
+        const cityArray = response.map((city) => ({
+          label: city.name,
+          value: city.name,
+          state: city.state_name,
+        }));
+
+        // Use a Map to track occurrences of city names
+        const cityMap = new Map();
+        cityArray.forEach((city) => {
+          if (cityMap.has(city.value)) {
+            cityMap.get(city.value).push(city.state);
+          } else {
+            cityMap.set(city.value, [city.state]);
+          }
+        });
+
+        // Modify labels for duplicate city names
+        const uniqueCities = cityArray.map((city) => {
+          const states = cityMap.get(city.value);
+          if (states.length > 1) {
+            return {
+              ...city,
+              label: `${city.label} (${city.state})`,
+            };
+          }
+          return city;
+        });
+
+        setCitySuggestions(uniqueCities);
+      });
+    }
+  };
+
+  const fetchStateSuggestions = (value = null) => {
+    if (value) {
+      const suggestions = getAllStates()
+        .filter((state) => state.toLowerCase().includes(value.toLowerCase()))
+        .map((state) => ({ label: state, value: state }));
+      setStateSuggestions(suggestions);
+    } else {
+      setStateSuggestions(getAllStates().map((state) => ({ label: state, value: state })));
+    }
+  };
+
+  useEffect(() => {
+    console.log(citySuggestions);
+  }, [citySuggestions]);
+
+  useEffect(() => {
+    console.log(state);
+  }, [state]);
 
   // handle search form submission
   const handleSearch = (event) => {
@@ -18,6 +90,17 @@ const Home = (props) => {
 
     window.location.href = `/results?${params.toString()}`;
   };
+
+  const handleCityChange = (selectedOption) => {
+    if (selectedOption) {
+      setCity(selectedOption.value);
+      setState(selectedOption.state);
+    } else {
+      setCity('');
+    }
+  }
+
+  const debounceFetchCities = debounce(fetchCitySuggestions, 1000);
 
   return (
     <Layout currentComponent='home'>
@@ -48,26 +131,48 @@ const Home = (props) => {
             <label htmlFor='city' className='form-label'>
               City
             </label>
-            <input
-              type='text'
+            <Select
               id='city'
-              name='city'
-              className='form-control text-center text-ochre'
-              onChange={(event) => setCity(event.target.value)}
-              value={city}
+              components={{ DropdownIndicator: () => null }}
+              options={citySuggestions}
+              onInputChange={(value) => debounceFetchCities(value)}
+              onChange={(selectedOption) => handleCityChange(selectedOption)}
+              value={citySuggestions.find((option) => option.value === city)}
+              styles={{
+                option: (styles, state) => ({
+                  ...styles,
+                  color: '#C06014',
+                  backgroundColor: state.isFocused ? 'lightgrey' : 'transparent',
+                }),
+                singleValue: (styles) => ({ ...styles, color: '#C06014' }),
+              }}
+              isClearable={true}
+              openMenuOnClick={false}
             />
           </div>
-          <div className='col-10 col-sm-5 text-center mt-3 text-dark'>
+          <div className='col-10 d-flex flex-column col-sm-5 text-center mt-3 text-dark'>
             <label htmlFor='state' className='form-label'>
               State
             </label>
-            <input
-              type='text'
+            <Select
               id='state'
-              name='state'
-              className='form-control text-center text-ochre'
-              onChange={(event) => setState(event.target.value)}
-              value={state}
+              components={{ DropdownIndicator: () => null }}
+              options={stateSuggestions}
+              onFocus={() => fetchStateSuggestions()}
+              onInputChange={(value) => fetchStateSuggestions(value)}
+              onChange={(selectedOption) => (selectedOption ? setState(selectedOption.value) : setState(''))}
+              value={stateSuggestions.find((option) => option.value === state)}
+              styles={{
+                option: (styles, state) => ({
+                  ...styles,
+                  color: '#C06014',
+                  backgroundColor: state.isFocused ? 'lightgrey' : 'transparent',
+                }),
+                singleValue: (styles) => ({ ...styles, color: '#C06014' }),
+              }}
+              classNames={{ control: (state) => 'text-center text-ochre' }}
+              isClearable={true}
+              openMenuOnClick={true}
             />
           </div>
           <div className='col-8 text-center mt-5'>

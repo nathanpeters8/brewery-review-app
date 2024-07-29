@@ -225,3 +225,24 @@ export const DeleteUser = (userId, callback) => {
       return callback(response);
     });
 };
+
+// City and State Search API
+export const GetCitySuggestions = (query, state, callback) => {
+  fetch(
+    `https://city-and-state-search-api.p.rapidapi.com/cities/search?q=${encodeURIComponent(query)}&country_code=US${
+      state !== '' ? `&state_name=${state}` : ''
+    }`,
+    {
+      method: 'GET',
+      headers: {
+        'x-rapidapi-key': process.env.X_RAPIDAPI_KEY,
+        'x-rapidapi-host': 'city-and-state-search-api.p.rapidapi.com',
+      },
+    }
+  )
+  .then(handleErrors)
+  .then((response) => {
+    // console.log(response);
+    return callback(response);
+  });
+};
