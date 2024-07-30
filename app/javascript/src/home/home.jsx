@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Layout from '@utils/layout';
 import { getAllStates, getCities } from '@utils/fetchHelper';
 import { GetCitySuggestions } from '@utils/apiService';
@@ -12,7 +12,10 @@ const Home = (props) => {
   const [state, setState] = useState('');
   const [stateSuggestions, setStateSuggestions] = useState([]);
   const [citySuggestions, setCitySuggestions] = useState([]);
+  const [citiesLoading, setCitiesLoading] = useState(false);
+  const stateInputRef = useRef(null);
 
+  // debounce function
   const debounce = (func, wait) => {
     let timeout;
     return function (...args) {
@@ -25,8 +28,12 @@ const Home = (props) => {
     };
   };
 
+  // fetch city suggestions
   const fetchCitySuggestions = (value) => {
     if (value) {
+      setCitiesLoading(true);
+
+      // Get city suggestions based on input value
       GetCitySuggestions(value, state, (response) => {
         const cityArray = response.map((city) => ({
           label: city.name,
@@ -34,7 +41,7 @@ const Home = (props) => {
           state: city.state_name,
         }));
 
-        // Use a Map to track occurrences of city names
+        // Create a map of city names to states
         const cityMap = new Map();
         cityArray.forEach((city) => {
           if (cityMap.has(city.value)) {
@@ -50,35 +57,38 @@ const Home = (props) => {
           if (states.length > 1) {
             return {
               ...city,
-              label: `${city.label} (${city.state})`,
+              label: (
+                <span>
+                  {city.label}{' '}
+                  <span className='text-secondary' style={{ fontSize: 'smaller', fontStyle: 'italic' }}>
+                    ({city.state})
+                  </span>
+                </span>
+              ),
             };
           }
           return city;
         });
 
         setCitySuggestions(uniqueCities);
+        setCitiesLoading(false);
       });
     }
   };
 
+  // Fetch state suggestions
   const fetchStateSuggestions = (value = null) => {
     if (value) {
+      // Filter states based on input value
       const suggestions = getAllStates()
         .filter((state) => state.toLowerCase().includes(value.toLowerCase()))
         .map((state) => ({ label: state, value: state }));
       setStateSuggestions(suggestions);
     } else {
+      // Get all states
       setStateSuggestions(getAllStates().map((state) => ({ label: state, value: state })));
     }
   };
-
-  useEffect(() => {
-    console.log(citySuggestions);
-  }, [citySuggestions]);
-
-  useEffect(() => {
-    console.log(state);
-  }, [state]);
 
   // handle search form submission
   const handleSearch = (event) => {
@@ -91,14 +101,21 @@ const Home = (props) => {
     window.location.href = `/results?${params.toString()}`;
   };
 
+  // handle city selection
   const handleCityChange = (selectedOption) => {
     if (selectedOption) {
       setCity(selectedOption.value);
       setState(selectedOption.state);
+      // Focus on state input after selecting city
+      if (stateInputRef.current) {
+        stateInputRef.current.focus();
+      }
     } else {
       setCity('');
+      setState('');
     }
-  }
+    setCitiesLoading(false);
+  };
 
   const debounceFetchCities = debounce(fetchCitySuggestions, 1000);
 
@@ -134,10 +151,12 @@ const Home = (props) => {
             <Select
               id='city'
               components={{ DropdownIndicator: () => null }}
+              isLoading={citiesLoading}
+              loadingMessage={() => 'Loading...'}
               options={citySuggestions}
               onInputChange={(value) => debounceFetchCities(value)}
               onChange={(selectedOption) => handleCityChange(selectedOption)}
-              value={citySuggestions.find((option) => option.value === city)}
+              value={citySuggestions.find((option) => option.value === city && option.state === state)}
               styles={{
                 option: (styles, state) => ({
                   ...styles,
@@ -148,6 +167,7 @@ const Home = (props) => {
               }}
               isClearable={true}
               openMenuOnClick={false}
+              noOptionsMessage={() => ''}
             />
           </div>
           <div className='col-10 d-flex flex-column col-sm-5 text-center mt-3 text-dark'>
@@ -156,6 +176,7 @@ const Home = (props) => {
             </label>
             <Select
               id='state'
+              ref={stateInputRef}
               components={{ DropdownIndicator: () => null }}
               options={stateSuggestions}
               onFocus={() => fetchStateSuggestions()}
