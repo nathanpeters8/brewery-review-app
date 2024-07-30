@@ -65,6 +65,7 @@ export const UserSignOut = (callback) => {
     });
 };
 
+// post request to create new brewery review
 export const SubmitReview = (formData, callback) => {
   fetch(
     '/api/reviews',
@@ -80,6 +81,7 @@ export const SubmitReview = (formData, callback) => {
     });
 };
 
+// get request to get all reviews for a brewery
 export const GetReviewsByBrewery = (breweryId, callback) => {
   fetch(
     `/api/${breweryId}/brewery_reviews`,
@@ -94,6 +96,7 @@ export const GetReviewsByBrewery = (breweryId, callback) => {
     });
 };
 
+// post request to upload image
 export const UploadImage = (formData, callback) => {
   fetch(
     '/api/images',
@@ -109,6 +112,7 @@ export const UploadImage = (formData, callback) => {
     });
 };
 
+// get request to get all images for a brewery
 export const GetImagesByBrewery = (breweryId, callback) => {
   fetch(
     `/api/${breweryId}/brewery_images`,
@@ -122,6 +126,7 @@ export const GetImagesByBrewery = (breweryId, callback) => {
     });
 };
 
+// get request to get all reviews for a user
 export const GetReviewsByUser = (userId, callback) => {
   fetch(
     `/api/${userId}/user_reviews`,
@@ -138,6 +143,7 @@ export const GetReviewsByUser = (userId, callback) => {
     });
 };
 
+// get request to get all images for a user
 export const GetImagesByUser = (userId, callback) => {
   fetch(
     `/api/${userId}/user_images`,
@@ -154,6 +160,7 @@ export const GetImagesByUser = (userId, callback) => {
     });
 };
 
+// delete request to delete a review
 export const DeleteReview = (reviewId, callback) => {
   fetch(
     `/api/reviews/${reviewId}`,
@@ -168,6 +175,7 @@ export const DeleteReview = (reviewId, callback) => {
     });
 };
 
+// delete request to delete an image
 export const DeleteImage = (imageId, callback) => {
   fetch(
     `/api/images/${imageId}`,
@@ -182,6 +190,7 @@ export const DeleteImage = (imageId, callback) => {
     });
 };
 
+// get request to retrieve user profile
 export const GetProfile = (userId, callback) => {
   fetch(
     `/api/users/${userId}`,
@@ -196,6 +205,7 @@ export const GetProfile = (userId, callback) => {
     });
 };
 
+// patch request to update user profile
 export const EditProfile = (formData, userId, callback) => {
   // console.log('Sending update with info:', info);
   fetch(
@@ -212,6 +222,7 @@ export const EditProfile = (formData, userId, callback) => {
     });
 };
 
+// delete request to delete a user
 export const DeleteUser = (userId, callback) => {
   fetch(
     `/api/users/${userId}`,
@@ -222,6 +233,45 @@ export const DeleteUser = (userId, callback) => {
     .then(handleErrors)
     .then((response) => {
       console.log('User deleted:', response);
+      return callback(response);
+    });
+};
+
+//*** City and State Search API ***//
+
+// get request to get suggested cities for autocomplete
+export const GetCitySuggestions = (query, state, callback) => {
+  fetch(
+    `https://city-and-state-search-api.p.rapidapi.com/cities/search?q=${encodeURIComponent(query)}&country_code=US${
+      state !== '' ? `&state_name=${state}` : ''
+    }`,
+    {
+      method: 'GET',
+      headers: {
+        'x-rapidapi-key': process.env.X_RAPIDAPI_KEY,
+        'x-rapidapi-host': 'city-and-state-search-api.p.rapidapi.com',
+      },
+    }
+  )
+    .then(handleErrors)
+    .then((response) => {
+      // console.log(response);
+      return callback(response);
+    });
+};
+
+//*** Google Search API ***//
+
+// get request to search for social media links
+export const SocialMediaSearch = (name, callback) => {
+  let query = `${name} site:facebook.com OR site:instagram.com`;
+  fetch(
+    `https://www.googleapis.com/customsearch/v1?key=${process.env.GOOGLE_SEARCH_API_KEY}&cx=${
+      process.env.GOOGLE_CSE_ID
+    }&q=${encodeURIComponent(query)}`
+  )
+    .then(handleErrors)
+    .then((response) => {
       return callback(response);
     });
 };

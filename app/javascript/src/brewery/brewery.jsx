@@ -7,9 +7,9 @@ import {
   Authenticate,
   DeleteReview,
   DeleteImage,
+  SocialMediaSearch,
 } from '@utils/apiService';
 import { GetBreweriesById } from '@utils/openBreweryDBRequests';
-import { SocialMediaSearch } from '@utils/googleRequests';
 import { MapModalTemplate, ReviewModal, ImageModal, ConfirmModal } from '@utils/modalTemplates';
 import BreweryReviews from './breweryReviews';
 import BreweryImages from './breweryImages';
@@ -84,11 +84,9 @@ const Brewery = (props) => {
         setBrewery(response);
         setLoading(false);
         GetReviewsByBrewery(id, (reviews) => {
-          console.log(reviews);
           setBreweryReviews(reviews);
         });
         GetImagesByBrewery(id, (images) => {
-          console.log(images);
           setBreweryImages(images);
         });
       });
@@ -99,10 +97,10 @@ const Brewery = (props) => {
   useEffect(() => {
     if (Object.keys(brewery).length > 0) {
       console.log('social media search for ' + brewery.name);
-      // SocialMediaSearch(brewery.name, (response) => {
-      //   console.log(response);
-      //   getSocialLinks(response.items);
-      // });
+      SocialMediaSearch(brewery.name, (response) => {
+        console.log(response);
+        getSocialLinks(response.items);
+      });
     }
   }, [brewery]);
 
@@ -151,6 +149,7 @@ const Brewery = (props) => {
     }
   };
 
+  // Show confirm modal
   const handleShowConfirmModal = (id, content) => {
     console.log(content);
     console.log(id);
