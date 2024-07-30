@@ -45,3 +45,11 @@ export const GetBreweriesBySearchTerm = (search, page, per_page, callback) => {
     return callback({ breweries: breweriesResponse, metadata: metadataResponse });
   });
 };
+
+export const GetBreweriesForAutoComplete = (query, callback) => {
+  fetch(`https://api.openbrewerydb.org/v1/breweries/autocomplete?query=${query}`)
+    .then(handleErrors)
+    .then((response) => {
+      return callback(response);
+    });
+};

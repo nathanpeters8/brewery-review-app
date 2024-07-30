@@ -2,8 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import Layout from '@utils/layout';
 import { getAllStates, getCities } from '@utils/fetchHelper';
 import { GetCitySuggestions } from '@utils/apiService';
+import { GetBreweriesForAutoComplete } from '@utils/openBreweryDBRequests';
 import Select from 'react-select';
+import { AutoComplete } from 'primereact/autocomplete';
 import './home.scss';
+import 'primereact/resources/themes/bootstrap4-light-blue/theme.css';
 
 const Home = (props) => {
   // state variables
@@ -12,7 +15,9 @@ const Home = (props) => {
   const [state, setState] = useState('');
   const [stateSuggestions, setStateSuggestions] = useState([]);
   const [citySuggestions, setCitySuggestions] = useState([]);
+  const [brewerySuggestions, setBrewerySuggestions] = useState([]);
   const [citiesLoading, setCitiesLoading] = useState(false);
+  const [breweriesLoading, setBreweriesLoading] = useState(false);
   const stateInputRef = useRef(null);
 
   // debounce function
@@ -90,11 +95,34 @@ const Home = (props) => {
     }
   };
 
+  useEffect(() => {
+    console.log(name);
+  }, [name]);
+  
+  // Fetch brewery suggestions
+  const fetchBrewerySuggestions = () => {
+    if(name) {
+      setBreweriesLoading(true);
+      GetBreweriesForAutoComplete(name, (response) => {
+        console.log(response);
+        setBrewerySuggestions(response.map((brewery) => ({ label: brewery.name, value: brewery.name })));
+        setBreweriesLoading(false);
+      });
+    }
+  };
+
+
   // handle search form submission
   const handleSearch = (event) => {
     event.preventDefault();
     const params = new URLSearchParams();
-    if (name) params.append('name', name.replace(' ', '_').toLowerCase());
+    if (name) {
+      if(typeof name === 'object') {
+        params.append('name', name.value.replace(' ', '_').toLowerCase());
+      } else {
+        params.append('name', name.replace(' ', '_').toLowerCase());
+      }
+    } 
     if (city) params.append('city', city.toLowerCase());
     if (state) params.append('state', state.toLowerCase());
 
@@ -118,6 +146,7 @@ const Home = (props) => {
   };
 
   const debounceFetchCities = debounce(fetchCitySuggestions, 1000);
+  const debounceFetchBreweries = debounce(fetchBrewerySuggestions, 1000);
 
   return (
     <Layout currentComponent='home'>
@@ -135,14 +164,25 @@ const Home = (props) => {
             <label htmlFor='breweryName' className='form-label'>
               Brewery Name
             </label>
-            <input
+            {/* <input
               type='search'
               id='breweryName'
               name='name'
               className='form-control text-center text-ochre'
               onChange={(event) => setName(event.target.value)}
               value={name}
-            />
+            /> */}
+            <div className="card justify-content-center">
+              <AutoComplete 
+                id='breweryName'
+                value={name}
+                suggestions={brewerySuggestions}
+                completeMethod={debounceFetchBreweries}
+                field="label"
+                onChange={(e) => setName(e.value)}
+                inputClassName='w-100 h-100 border-none text-center text-ochre'
+              />
+            </div>
           </div>
           <div className='col-10 col-sm-5 text-center mt-3 text-dark'>
             <label htmlFor='city' className='form-label'>
@@ -167,7 +207,8 @@ const Home = (props) => {
               }}
               isClearable={true}
               openMenuOnClick={false}
-              noOptionsMessage={() => ''}
+              noOptionsMessage={() => 'No suggestions...'}
+              placeholder=''
             />
           </div>
           <div className='col-10 d-flex flex-column col-sm-5 text-center mt-3 text-dark'>
@@ -194,6 +235,7 @@ const Home = (props) => {
               classNames={{ control: (state) => 'text-center text-ochre' }}
               isClearable={true}
               openMenuOnClick={true}
+              placeholder=''
             />
           </div>
           <div className='col-8 text-center mt-5'>
