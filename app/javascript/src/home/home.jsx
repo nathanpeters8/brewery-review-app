@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Layout from '@utils/layout';
-import { getAllStates, getCities } from '@utils/fetchHelper';
+import { getAllStates } from '@utils/fetchHelper';
 import { GetCitySuggestions } from '@utils/apiService';
 import { GetBreweriesForAutoComplete } from '@utils/openBreweryDBRequests';
 import Select from 'react-select';
@@ -17,7 +17,6 @@ const Home = (props) => {
   const [citySuggestions, setCitySuggestions] = useState([]);
   const [brewerySuggestions, setBrewerySuggestions] = useState([]);
   const [citiesLoading, setCitiesLoading] = useState(false);
-  const [breweriesLoading, setBreweriesLoading] = useState(false);
   const stateInputRef = useRef(null);
 
   // debounce function
@@ -94,23 +93,16 @@ const Home = (props) => {
       setStateSuggestions(getAllStates().map((state) => ({ label: state, value: state })));
     }
   };
-
-  useEffect(() => {
-    console.log(name);
-  }, [name]);
   
   // Fetch brewery suggestions
   const fetchBrewerySuggestions = () => {
     if(name) {
-      setBreweriesLoading(true);
       GetBreweriesForAutoComplete(name, (response) => {
         console.log(response);
-        setBrewerySuggestions(response.map((brewery) => ({ label: brewery.name, value: brewery.name })));
-        setBreweriesLoading(false);
+        setBrewerySuggestions([...new Set(response.map((brewery) => brewery.name))].map((brewery) => ({ label: brewery, value: brewery })));
       });
     }
   };
-
 
   // handle search form submission
   const handleSearch = (event) => {
@@ -145,6 +137,7 @@ const Home = (props) => {
     setCitiesLoading(false);
   };
 
+  // debounce functions
   const debounceFetchCities = debounce(fetchCitySuggestions, 1000);
   const debounceFetchBreweries = debounce(fetchBrewerySuggestions, 1000);
 
@@ -164,14 +157,6 @@ const Home = (props) => {
             <label htmlFor='breweryName' className='form-label'>
               Brewery Name
             </label>
-            {/* <input
-              type='search'
-              id='breweryName'
-              name='name'
-              className='form-control text-center text-ochre'
-              onChange={(event) => setName(event.target.value)}
-              value={name}
-            /> */}
             <div className="card justify-content-center">
               <AutoComplete 
                 id='breweryName'

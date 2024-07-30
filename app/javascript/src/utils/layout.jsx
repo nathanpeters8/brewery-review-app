@@ -3,7 +3,11 @@ import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { FormModalTemplate } from './modalTemplates';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Navbar, Nav } from 'react-bootstrap';
+import { AutoComplete } from 'primereact/autocomplete';
 import { Authenticate, UserLogIn, UserSignOut, UserSignUp } from './apiService';
+import { GetBreweriesForAutoComplete } from './openBreweryDBRequests';
+import 'primereact/resources/themes/bootstrap4-light-blue/theme.css';
+
 
 const Layout = (props) => {
   // state variables
@@ -17,16 +21,30 @@ const Layout = (props) => {
   const [profilePic, setProfilePic] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [userLoggedIn, setUserLoggedIn] = useState(false);
+  const [brewerySuggestions, setBrewerySuggestions] = useState([]);
 
   // check user authentication, on page load
   useEffect(() => {
     Authenticate((response) => {
       console.log(response);
-      if(response.authenticated) {
+      if (response.authenticated) {
         setUserLoggedIn(true);
       }
-    })
+    });
   }, []);
+
+  // debounce function
+  const debounce = (func, wait) => {
+    let timeout;
+    return function (...args) {
+      const context = this;
+      if (timeout) clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        timeout = null;
+        func.apply(context, args);
+      }, wait);
+    };
+  };
 
   // sign up user, then log in
   const handleSignUp = (e) => {
@@ -43,21 +61,21 @@ const Layout = (props) => {
     UserSignUp(formData, (response) => {
       console.log(response);
       handleLogIn(e);
-    })
-  }
+    });
+  };
 
   // log in user
   const handleLogIn = (e) => {
     e.preventDefault();
     UserLogIn(email, password, (response) => {
       console.log(response);
-      if(!response.ok) {
+      if (!response.ok) {
         alert('Invalid email or password');
         return;
       }
       window.location.href = window.location.search;
-    })
-  }
+    });
+  };
 
   // log out user
   const handleLogOut = (e) => {
@@ -66,14 +84,14 @@ const Layout = (props) => {
       console.log(response);
       setUserLoggedIn(false);
       window.location.href = window.location.search;
-    })
-  }
+    });
+  };
 
   // handle navbar search input
   const handleSearch = (event) => {
     event.preventDefault();
     const params = new URLSearchParams();
-    if (searchTerm) params.append('query', encodeURIComponent(searchTerm));
+    if (searchTerm) params.append('query', encodeURIComponent(searchTerm.value));
     window.location.href = `/results?${params.toString()}`;
   };
 
@@ -92,7 +110,21 @@ const Layout = (props) => {
     } else if (target.type === 'file') {
       setProfilePic(target.files[0]);
     }
-  }
+  };
+
+  // Fetch brewery suggestions
+  const fetchBrewerySuggestions = () => {
+    if (searchTerm) {
+      GetBreweriesForAutoComplete(searchTerm, (response) => {
+        console.log(response);
+        setBrewerySuggestions(
+          [...new Set(response.map((brewery) => brewery.name))].map((brewery) => ({ label: brewery, value: brewery }))
+        );
+      });
+    }
+  };
+
+  const debounceFetchBreweries = debounce(fetchBrewerySuggestions, 1000);
 
   const signUpInfo = { username, email, password, city, state, profilePic };
   const logInInfo = { email, password };
@@ -106,16 +138,17 @@ const Layout = (props) => {
         <Navbar.Toggle aria-controls='basic-navbar-nav' />
         <Navbar.Collapse id='basic-navbar-nav' className='justify-content-end'>
           <Nav className='d-flex flex-row gap-3 flex-column flex-md-row align-items-end pt-3 pt-md-0 ms-auto'>
-            {(props.currentComponent === 'results' || props.currentComponent === 'brewery') && (
+            {props.currentComponent !== 'home' && (
               <form className='btn-group form-inline' onSubmit={handleSearch}>
-                <input
-                  type='search'
-                  name='search'
+                <AutoComplete
                   id='brewSearch'
-                  className='form-control'
-                  placeholder='Find another brewery...'
-                  onChange={(e) => setSearchTerm(e.target.value)}
                   value={searchTerm}
+                  suggestions={brewerySuggestions}
+                  completeMethod={debounceFetchBreweries}
+                  field='label'
+                  onChange={(e) => setSearchTerm(e.value)}
+                  inputClassName='w-100 h-100 border-none text-center text-ochre'
+                  placeholder='Find another brewery...'
                 />
                 <button className='btn btn-sm bg-ochre text-light' type='submit'>
                   <FontAwesomeIcon icon={faMagnifyingGlass} />
@@ -154,7 +187,7 @@ const Layout = (props) => {
         </Navbar.Collapse>
       </Navbar>
       {props.children}
-      
+
       {/* Log In Modal */}
       <FormModalTemplate
         show={showLogIn}
@@ -164,7 +197,7 @@ const Layout = (props) => {
         handleChange={handleChange}
         userInfo={logInInfo}
         submitMethod={handleLogIn}
-      /> 
+      />
 
       {/* Sign Up Modal */}
       <FormModalTemplate
