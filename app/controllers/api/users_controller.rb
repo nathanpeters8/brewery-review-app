@@ -1,3 +1,5 @@
+require 'cgi'
+
 module Api 
   class UsersController < ApplicationController
     def create
@@ -46,6 +48,40 @@ module Api
         render json: {success: true}, status: :ok
       else
         render json: {success: false}, status: :bad_request
+      end
+    end
+
+    def find_username
+      username = params[:username]
+      @user = User.find_by(username: username)
+
+      if @user
+        render json: {
+          success: true
+        }
+      else
+        render json: {
+          success: false
+        }
+      end
+    end
+
+    def find_email
+      encoded_email = params[:email]
+      email = CGI.unescape(encoded_email)
+      email += ".com"
+      Rails.logger.info "email: #{email}"
+
+      @user = User.find_by(email: email)
+
+      if @user
+        render json: {
+          success: true
+        }
+      else
+        render json: {
+          success: false
+        }
       end
     end
 

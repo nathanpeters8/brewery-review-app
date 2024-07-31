@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar } from '@fortawesome/free-solid-svg-icons';
@@ -28,8 +28,38 @@ export const MapModalTemplate = ({ showMap, toggleShowMap, name, city, state, st
   );
 };
 
-export const FormModalTemplate = ({ show, toggleShow, formType, title, handleChange, userInfo, submitMethod }) => {
-  const { email, username, password, city, state, profile_picture } = userInfo;
+export const FormModalTemplate = ({
+  show,
+  toggleShow,
+  formType,
+  title,
+  handleChange,
+  userInfo,
+  submitMethod,
+  validEmail = null,
+  validUsername = null,
+  setValidEmail = null,
+  setValidUsername = null,
+}) => {
+  const { email, username, password, city, state } = userInfo;
+
+  const [isNameFocused, setIsNameFocused] = useState(false);
+  const [isEmailFocused, setIsEmailFocused] = useState(false);
+
+  const handleUsernameBlur = () => {
+    setIsNameFocused(false);
+    if (setValidUsername && !username) {
+      setValidUsername(false);
+    }
+  };
+
+  const handleEmailBlur = () => {
+    setIsEmailFocused(false);
+    if (setValidEmail && !email) {
+      setValidEmail(false);
+    }
+  };
+
   return (
     <Modal show={show} onHide={() => toggleShow(false)} fullscreen={'sm-down'} keyboard>
       <Modal.Header closeButton>
@@ -40,11 +70,13 @@ export const FormModalTemplate = ({ show, toggleShow, formType, title, handleCha
           <div className='col-8 form-floating'>
             <input
               id='inputEmail'
-              className='form-control'
+              className={`form-control ${isEmailFocused ? (validEmail ? 'bg-success' : 'bg-danger-soft') : ''}`}
               type='text'
               name='email'
               placeholder='name@example.com'
               onChange={(e) => handleChange(e.target)}
+              onFocus={() => setIsEmailFocused(true)}
+              onBlur={handleEmailBlur}
               value={email}
               required={formType !== 'editprofile' ? true : false}
             />
@@ -56,11 +88,13 @@ export const FormModalTemplate = ({ show, toggleShow, formType, title, handleCha
             <div className='col-8 form-floating'>
               <input
                 id='inputUsername'
-                className='form-control'
+                className={`form-control ${isNameFocused ? (validUsername ? 'bg-success' : 'bg-danger-soft') : ''}`}
                 type='text'
                 name='username'
                 placeholder='my_username'
                 onChange={(e) => handleChange(e.target)}
+                onFocus={() => setIsNameFocused(true)}
+                onBlur={handleUsernameBlur}
                 value={username}
                 required={formType !== 'editprofile' ? true : false}
               />

@@ -237,6 +237,35 @@ export const DeleteUser = (userId, callback) => {
     });
 };
 
+export const GetUser = (username, callback) => {
+    fetch(
+      `/api/users/get_username/${username}`,
+      safeCredentials({
+        method: 'GET',
+      })
+    )
+      .then(handleErrors)
+      .then((response) => {
+        console.log('Username found:', response);
+        return callback(response);
+      });
+};
+
+export const GetEmail = (email, callback) => {
+  fetch(
+    `/api/users/get_email/${email}`,
+    safeCredentials({
+      method: 'GET',
+    })
+  )
+    .then(handleErrors)
+    .then((response) => {
+      console.log('Email found:', response);
+      return callback(response);
+    });
+};
+
+
 //*** City and State Search API ***//
 
 // get request to get suggested cities for autocomplete
