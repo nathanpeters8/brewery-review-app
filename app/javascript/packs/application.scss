@@ -26,3 +26,9 @@ body {
 .text-cool-grey {
   color: #CDCDCD;
 }
+
+.fullscreen-img {
+  padding-top: calc(1 / 1 * 100%);
+  background-size: cover;
+  background-position: center;
+}

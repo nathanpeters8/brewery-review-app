@@ -328,3 +328,15 @@ export const ProfilePictureModal = ({ show, toggleShow, handleChange, handleSubm
     </Modal>
   );
 };
+
+export const PictureFullscreenModal = ({ show, toggleShow, image }) => {
+  return (
+    <Modal show={show} size='lg' onHide={() => toggleShow(false)} centered fullscreen={'sm-down'} keyboard>
+      <Modal.Header closeButton></Modal.Header>
+      <Modal.Body>
+        <div className='fullscreen-img figure-img border' style={{ backgroundImage: `url(${image})` }}></div>
+      </Modal.Body>
+      <Modal.Footer className='text-center'></Modal.Footer>
+    </Modal>
+  );
+};

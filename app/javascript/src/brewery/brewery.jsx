@@ -10,7 +10,7 @@ import {
   SocialMediaSearch,
 } from '@utils/apiService';
 import { GetBreweriesById } from '@utils/openBreweryDBRequests';
-import { MapModalTemplate, ReviewModal, ImageModal, ConfirmModal } from '@utils/modalTemplates';
+import { MapModalTemplate, ReviewModal, ImageModal, ConfirmModal, PictureFullscreenModal } from '@utils/modalTemplates';
 import BreweryReviews from './breweryReviews';
 import BreweryImages from './breweryImages';
 import LeftColumn from './leftColumn';
@@ -30,6 +30,8 @@ const Brewery = (props) => {
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [showImageModal, setShowImageModal] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [showImageFullscreen, setShowImageFullscreen] = useState(false);
+  const [fullScreenImage, setFullScreenImage] = useState(null);
   const [facebookLink, setFacebookLink] = useState('');
   const [instagramLink, setInstagramLink] = useState('');
   const [loading, setLoading] = useState(true);
@@ -97,10 +99,10 @@ const Brewery = (props) => {
   useEffect(() => {
     if (Object.keys(brewery).length > 0) {
       console.log('social media search for ' + brewery.name);
-      SocialMediaSearch(brewery.name, (response) => {
-        console.log(response);
-        getSocialLinks(response.items);
-      });
+      // SocialMediaSearch(brewery.name, (response) => {
+      //   console.log(response);
+      //   getSocialLinks(response.items);
+      // });
     }
   }, [brewery]);
 
@@ -151,13 +153,16 @@ const Brewery = (props) => {
 
   // Show confirm modal
   const handleShowConfirmModal = (id, content) => {
-    console.log(content);
-    console.log(id);
     setSelectedContent(content);
     setSelectedContentID(id);
     setShowConfirmModal(true);
   };
 
+  const handleShowFullscreen = (e, image) => {
+    e.preventDefault();
+    setShowImageFullscreen(true);
+    setFullScreenImage(image);
+  };
   // Handle review deletion
   const handleReviewDelete = () => {
     DeleteReview(selectedContentID, (response) => {
@@ -231,6 +236,7 @@ const Brewery = (props) => {
                 breweryImages={breweryImages}
                 currentUser={currentUser}
                 handleShowConfirmModal={handleShowConfirmModal}
+                handleShowFullscreen={handleShowFullscreen}
               />
               <BreweryReviews
                 breweryReviews={breweryReviews}
@@ -270,6 +276,12 @@ const Brewery = (props) => {
         setCaption={setCaption}
         caption={caption}
         handleSubmit={handleImageUpload}
+      />
+  
+      <PictureFullscreenModal
+        show={showImageFullscreen}
+        toggleShow={setShowImageFullscreen}
+        image={fullScreenImage}
       />
       {(() => {
         if (selectedContent === 'review')
