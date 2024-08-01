@@ -11,11 +11,26 @@ class User < ApplicationRecord
   validates_uniqueness_of :username
   validates_uniqueness_of :email
 
-  after_validation :hash_password
+  before_save :hash_password, if: :password_present?
+
+  before_save :log_before_save
+  after_save :log_after_save
 
   private
-
+  
   def hash_password
     self.password = BCrypt::Password.create(password)
+  end
+
+  def password_present?
+    password.present? && password_changed?
+  end
+
+  def log_before_save
+    Rails.logger.debug "Before save callback: #{self.attributes.inspect}"
+  end
+  
+  def log_after_save
+    Rails.logger.debug "After save callback: #{self.attributes.inspect}"
   end
 end

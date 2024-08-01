@@ -68,6 +68,10 @@ const Layout = (props) => {
     }
   }, [email]);
 
+  useEffect(() => {
+    console.log(email);
+  }, [email]);
+
   // debounce function
   const debounce = (func, wait) => {
     let timeout;

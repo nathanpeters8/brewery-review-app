@@ -4,3 +4,13 @@
     width: 75%;
   }
 }
+
+.home-container {
+  min-height: 100vh;
+}
+
+.user-image {
+  padding-top: calc(1 / 1 * 100%);
+  background-size: cover;
+  background-position: center;
+}

@@ -25,14 +25,14 @@ module Api
     end
 
     def update
-      # puts params.inspect
+      puts params.inspect
       @user = User.find(params[:id])
       return render json: { error: 'not_found' }, status: :not_found if !@user
 
-      # Rails.logger.info "Attempting to update user with params: #{user_params.inspect}"
+      Rails.logger.info "Attempting to update user with params: #{user_params.inspect}"
 
       if @user.update(user_params)
-        Rails.logger.info "Update successful: #{@user.reload.inspect}"
+        Rails.logger.info "Update successful: #{@user.attributes.inspect}"
         render 'api/users/update', status: :ok
       else
         Rails.logger.info "Update failed: #{@user.errors.full_messages.join(", ")}"
@@ -88,7 +88,14 @@ module Api
     private
 
     def user_params 
-      params.require(:user).permit(:username, :email, :password, :city, :state, :profile_picture)
+      params.require(:user).permit(:city, :state, :email, :username, :password).tap do |user_params|
+        if user_params[:password].blank?
+          Rails.logger.debug "Password is blank, removing from user_params"
+          user_params.delete(:password)
+        else
+          Rails.logger.debug "Password is present, keeping in user_params"
+        end
+      end
     end 
   end
 end

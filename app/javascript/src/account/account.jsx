@@ -43,6 +43,10 @@ const Account = (props) => {
     });
   }, []);
 
+  useEffect(() => {
+    console.log(changedFields);
+  }, [changedFields]);
+
   // handle form input changes and update changed fields
   const handleChange = (target) => {
     if (target.type === 'file') {
@@ -66,12 +70,14 @@ const Account = (props) => {
       });
     }
 
+    console.log(formData);
+
     // send updated info to API
     ApiService.EditProfile(formData, userId, (response) => {
       console.log(response);
       setShowEditModal(false);
       setShowProfilePicModal(false);
-      window.location.reload();
+      // window.location.reload();
     });
   };
 
