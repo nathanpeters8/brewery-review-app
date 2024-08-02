@@ -9,7 +9,7 @@ import { Authenticate, UserLogIn, UserSignOut, UserSignUp, GetUser, GetEmail } f
 import { GetBreweriesForAutoComplete } from './openBreweryDBRequests';
 import 'primereact/resources/themes/bootstrap4-light-blue/theme.css';
 
-const Layout = (props) => {
+const Layout = ({currentComponent, userLoggedIn, setUserLoggedIn, children}) => {
   // state variables
   const [showLogIn, setShowLogIn] = useState(false);
   const [showSignUp, setShowSignUp] = useState(false);
@@ -23,18 +23,18 @@ const Layout = (props) => {
   const [state, setState] = useState('');
   const [profilePic, setProfilePic] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
-  const [userLoggedIn, setUserLoggedIn] = useState(false);
+  // const [userLoggedIn, setUserLoggedIn] = useState(false);
   const [brewerySuggestions, setBrewerySuggestions] = useState([]);
 
   // check user authentication, on page load
-  useEffect(() => {
-    Authenticate((response) => {
-      console.log(response);
-      if (response.authenticated) {
-        setUserLoggedIn(true);
-      }
-    });
-  }, []);
+  // useEffect(() => {
+  //   Authenticate((response) => {
+  //     console.log(response);
+  //     if (response.authenticated) {
+  //       setUserLoggedIn(true);
+  //     }
+  //   });
+  // }, []);
 
   // check if username is valid during sign up
   useEffect(() => {
@@ -207,7 +207,7 @@ const Layout = (props) => {
         <Navbar.Toggle aria-controls='basic-navbar-nav' />
         <Navbar.Collapse id='basic-navbar-nav' className='justify-content-end'>
           <Nav className='d-flex flex-row gap-3 flex-column flex-md-row align-items-end pt-3 pt-md-0 ms-auto'>
-            {props.currentComponent !== 'home' && (
+            {currentComponent !== 'home' && (
               <form className='btn-group form-inline' onSubmit={handleSearch}>
                 <AutoComplete
                   id='brewSearch'
@@ -255,7 +255,7 @@ const Layout = (props) => {
           </Nav>
         </Navbar.Collapse>
       </Navbar>
-      {props.children}
+      {children}
       <ScrollTop className='p-scrolltop' />
       {/* Log In Modal */}
       <FormModalTemplate

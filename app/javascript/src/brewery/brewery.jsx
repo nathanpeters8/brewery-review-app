@@ -1,14 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  SubmitReview,
-  GetReviewsByBrewery,
-  UploadImage,
-  GetImagesByBrewery,
-  Authenticate,
-  DeleteReview,
-  DeleteImage,
-  SocialMediaSearch,
-} from '@utils/apiService';
+import * as ApiService from '@utils/apiService';
 import { GetBreweriesById } from '@utils/openBreweryDBRequests';
 import { MapModalTemplate, ReviewModal, ImageModal, ConfirmModal, PictureFullscreenModal } from '@utils/modalTemplates';
 import BreweryReviews from './breweryReviews';
@@ -19,29 +10,37 @@ import Layout from '@utils/layout';
 import './brewery.scss';
 
 const Brewery = (props) => {
+  const [loading, setLoading] = useState(true);
+  const [selectedContent, setSelectedContent] = useState(null);
+  const [selectedContentID, setSelectedContentID] = useState(null);
+  // brewery states
   const [id, setId] = useState('');
-  const [currentUser, setCurrentUser] = useState(null);
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  const [isFixed, setIsFixed] = useState(false);
-  const [showMap, setShowMap] = useState(false);
   const [brewery, setBrewery] = useState({});
   const [breweryReviews, setBreweryReviews] = useState([]);
   const [breweryImages, setBreweryImages] = useState([]);
+  const [facebookLink, setFacebookLink] = useState('');
+  const [instagramLink, setInstagramLink] = useState('');
+  // image states
+  const [image, setImage] = useState(null);
+  const [caption, setCaption] = useState('');
+  const [fullScreenImage, setFullScreenImage] = useState(null);
+  // review states
+  const [rating, setRating] = useState(0);
+  const [ratingHover, setRatingHover] = useState(0);
+  const [review, setReview] = useState('');
+  // show modal states
+  const [showMap, setShowMap] = useState(false);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [showImageModal, setShowImageModal] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showImageFullscreen, setShowImageFullscreen] = useState(false);
-  const [fullScreenImage, setFullScreenImage] = useState(null);
-  const [facebookLink, setFacebookLink] = useState('');
-  const [instagramLink, setInstagramLink] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [rating, setRating] = useState(0);
-  const [ratingHover, setRatingHover] = useState(0);
-  const [review, setReview] = useState('');
-  const [image, setImage] = useState(null);
-  const [caption, setCaption] = useState('');
-  const [selectedContent, setSelectedContent] = useState(null);
-  const [selectedContentID, setSelectedContentID] = useState(null);
+  // user states
+  const [currentUser, setCurrentUser] = useState(null);
+  const [userLoggedIn, setUserLoggedIn] = useState(false);
+  // window states
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [isFixed, setIsFixed] = useState(false);
+
 
   // Fix left column on scroll
   useEffect(() => {
@@ -69,8 +68,9 @@ const Brewery = (props) => {
 
   // Get current user
   useEffect(() => {
-    Authenticate((response) => {
+    ApiService.Authenticate((response) => {
       setCurrentUser(response.username);
+      setUserLoggedIn(true);
     });
   }, []);
 
@@ -85,10 +85,10 @@ const Brewery = (props) => {
       GetBreweriesById(id, (response) => {
         setBrewery(response);
         setLoading(false);
-        GetReviewsByBrewery(id, (reviews) => {
+        ApiService.GetReviewsByBrewery(id, (reviews) => {
           setBreweryReviews(reviews);
         });
-        GetImagesByBrewery(id, (images) => {
+        ApiService.GetImagesByBrewery(id, (images) => {
           setBreweryImages(images);
         });
       });
@@ -99,7 +99,7 @@ const Brewery = (props) => {
   useEffect(() => {
     if (Object.keys(brewery).length > 0) {
       console.log('social media search for ' + brewery.name);
-      // SocialMediaSearch(brewery.name, (response) => {
+      // ApiService.SocialMediaSearch(brewery.name, (response) => {
       //   console.log(response);
       //   getSocialLinks(response.items);
       // });
@@ -119,7 +119,7 @@ const Brewery = (props) => {
       formData.append('image[brewery_id]', id);
       formData.append('image[brewery_name]', brewery.name);
 
-      UploadImage(formData, (response) => {
+      ApiService.UploadImage(formData, (response) => {
         console.log(response);
         setImage(null);
         setShowImageModal(false);
@@ -141,7 +141,7 @@ const Brewery = (props) => {
       formData.append('review[brewery_id]', id);
       formData.append('review[brewery_name]', brewery.name);
 
-      SubmitReview(formData, (response) => {
+      ApiService.SubmitReview(formData, (response) => {
         console.log(response);
         setRating(0);
         setReview('');
@@ -165,7 +165,7 @@ const Brewery = (props) => {
   };
   // Handle review deletion
   const handleReviewDelete = () => {
-    DeleteReview(selectedContentID, (response) => {
+    ApiService.DeleteReview(selectedContentID, (response) => {
       console.log(response);
       setShowConfirmModal(false);
       setSelectedContent(null);
@@ -176,7 +176,7 @@ const Brewery = (props) => {
 
   // Handle image deletion
   const handleImageDelete = () => {
-    DeleteImage(selectedContentID, (response) => {
+    ApiService.DeleteImage(selectedContentID, (response) => {
       console.log(response);
       setShowConfirmModal(false);
       setSelectedContent(null);
@@ -205,7 +205,7 @@ const Brewery = (props) => {
   };
 
   return (
-    <Layout currentComponent='brewery'>
+    <Layout currentComponent='brewery' userLoggedIn={userLoggedIn} setUserLoggedIn={setUserLoggedIn}>
       <div className='container-xl pt-5 bg-secondary bg-opacity-10'>
         <div className='row'>
           {loading && <h4 className='text-center'>Loading...</h4>}

@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar } from '@fortawesome/free-solid-svg-icons';
 import { faStar as faStarEmpty } from '@fortawesome/free-regular-svg-icons';
 import { GetBreweries, GetBreweriesBySearchTerm } from '@utils/openBreweryDBRequests';
-import { GetReviewsByBrewery, GetImagesByBrewery } from '@utils/apiService';
+import { GetReviewsByBrewery, GetImagesByBrewery, Authenticate } from '@utils/apiService';
 import { MapModalTemplate } from '@utils/modalTemplates';
 import Layout from '@utils/layout';
 import PaginationButtons from './paginationButtons';
@@ -22,8 +22,18 @@ const Results = ({ queryParams }) => {
   const [loading, setLoading] = useState(true);
   const [breweryRatings, setBreweryRatings] = useState([]);
   const [breweryImages, setBreweryImages] = useState([]);
+  const [userLoggedIn, setUserLoggedIn] = useState(false);
 
   const itemsPerPage = 10;
+
+  // check user authentication, on page load
+  useEffect(() => {
+    Authenticate((response) => {
+      if (response.authenticated) {
+        setUserLoggedIn(true);
+      }
+    });
+  }, []);
 
   // update query state when queryParams change
   useEffect(() => {
@@ -153,7 +163,7 @@ const Results = ({ queryParams }) => {
   };
 
   return (
-    <Layout currentComponent='results'>
+    <Layout currentComponent='results' userLoggedIn={userLoggedIn} setUserLoggedIn={setUserLoggedIn}>
       <div id='resultsContainer' className='container-xl pt-5 bg-secondary bg-opacity-10'>
         <div id='breweryResults' className='row'>
           {total > 0 && (

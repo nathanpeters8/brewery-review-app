@@ -16,6 +16,7 @@ const Account = (props) => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showProfilePicModal, setShowProfilePicModal] = useState(false);
   const [userId, setUserId] = useState('');
+  const [userLoggedIn, setUserLoggedIn] = useState(false);
   const [changedFields, setChangedFields] = useState([]);
   const [userInfo, setUserInfo] = useState({
     email: '',
@@ -36,10 +37,15 @@ const Account = (props) => {
   // check user authentication and get user profile, reviews and images
   useEffect(() => {
     ApiService.Authenticate((response) => {
-      setUserId(response.id);
-      ApiService.GetProfile(response.id, (profile) => setUserInfo({ ...profile, password: '' }));
-      ApiService.GetReviewsByUser(response.id, (reviews) => setUserReviews(reviews));
-      ApiService.GetImagesByUser(response.id, (images) => setUserImages(images));
+      if (response.authenticated) {
+        setUserId(response.id);
+        setUserLoggedIn(true);
+        ApiService.GetProfile(response.id, (profile) => setUserInfo({ ...profile, password: '' }));
+        ApiService.GetReviewsByUser(response.id, (reviews) => setUserReviews(reviews));
+        ApiService.GetImagesByUser(response.id, (images) => setUserImages(images));
+      } else {
+        window.location.href = '/';
+      }
     });
   }, []);
 
@@ -105,7 +111,7 @@ const Account = (props) => {
   };
 
   return (
-    <Layout currentComponent='account'>
+    <Layout currentComponent='account' userLoggedIn={userLoggedIn} setUserLoggedIn={setUserLoggedIn}>
       <div className='container-xl bg-secondary bg-opacity-10'>
         <div className='row justify-content-center'>
           <div

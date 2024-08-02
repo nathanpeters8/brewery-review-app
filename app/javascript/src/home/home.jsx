@@ -171,7 +171,7 @@ const Home = (props) => {
   const debounceFetchBreweries = debounce(fetchBrewerySuggestions, 1000);
 
   return (
-    <Layout currentComponent='home'>
+    <Layout currentComponent='home' userLoggedIn={userLoggedIn} setUserLoggedIn={setUserLoggedIn}>
       <div className='home-container container-xl pt-5 d-flex flex-column align-items-center bg-secondary bg-opacity-10 overflow-hidden'>
         {userLoggedIn && <h3 className='mb-5'>{`Welcome Back ${userInfo.username}!`}</h3>}
         <div className='row'>
