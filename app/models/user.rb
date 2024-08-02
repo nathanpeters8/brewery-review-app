@@ -13,9 +13,6 @@ class User < ApplicationRecord
 
   before_save :hash_password, if: :password_present?
 
-  before_save :log_before_save
-  after_save :log_after_save
-
   private
   
   def hash_password
@@ -24,13 +21,5 @@ class User < ApplicationRecord
 
   def password_present?
     password.present? && password_changed?
-  end
-
-  def log_before_save
-    Rails.logger.debug "Before save callback: #{self.attributes.inspect}"
-  end
-  
-  def log_after_save
-    Rails.logger.debug "After save callback: #{self.attributes.inspect}"
   end
 end

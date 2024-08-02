@@ -27,9 +27,9 @@ const Home = (props) => {
 
   const stateInputRef = useRef(null);
 
+  // check if user is logged in
   useEffect(() => {
     Authenticate((response) => {
-      console.log(response);
       if (response.authenticated) {
         setUserLoggedIn(true);
         setUserInfo({ username: response.username, city: response.city, state: response.state });
@@ -157,10 +157,10 @@ const Home = (props) => {
     setCitiesLoading(false);
   };
 
+  // Get random breweries based on user's city and state
   useEffect(() => {
     if (userInfo.city && userInfo.state) {
       GetRandomBreweries(6, userInfo.city, userInfo.state, (response) => {
-        console.log(response);
         setRandomBreweries(response);
       });
     }
@@ -261,7 +261,7 @@ const Home = (props) => {
         {userLoggedIn && (
           <div className='row my-5 justify-content-center'>
             <h4 className='text-center text-ochre '>
-              Or check out these breweries in {userInfo.city}, {userInfo.state}
+              Or check out these breweries in {userInfo.city}, {userInfo.state}:
             </h4>
             <div className='col-4 col-lg-6 mt-3'>
               <BreweryCarousel
