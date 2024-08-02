@@ -4,6 +4,7 @@ import { FormModalTemplate } from './modalTemplates';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Navbar, Nav } from 'react-bootstrap';
 import { AutoComplete } from 'primereact/autocomplete';
+import { ScrollTop } from 'primereact/scrolltop';
 import { Authenticate, UserLogIn, UserSignOut, UserSignUp, GetUser, GetEmail } from './apiService';
 import { GetBreweriesForAutoComplete } from './openBreweryDBRequests';
 import 'primereact/resources/themes/bootstrap4-light-blue/theme.css';
@@ -38,7 +39,6 @@ const Layout = (props) => {
   // check if username is valid during sign up
   useEffect(() => {
     if (showSignUp) {
-      console.log(username);
       if (username.length >= 3 && username.length <= 20) {
         const specialCharacters = /[!@#$%^&*(),.?":{}|<>]/;
         if (specialCharacters.test(username)) {
@@ -52,9 +52,9 @@ const Layout = (props) => {
     }
   }, [username]);
 
+  // check if email is valid during sign up
   useEffect(() => {
     if(showSignUp) {
-      console.log(encodeURIComponent(email));
       if (email.length > 0) {
         const emailCharacters = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+\.[a-zA-Z]{3,}$/;
         if(!emailCharacters.test(email)) {
@@ -66,10 +66,6 @@ const Layout = (props) => {
         setValidEmail(false);
       }
     }
-  }, [email]);
-
-  useEffect(() => {
-    console.log(email);
   }, [email]);
 
   // debounce function
@@ -163,6 +159,7 @@ const Layout = (props) => {
     }
   };
 
+  // check if username already exists
   const findUser = (username) => {
     if (!username) return;
 
@@ -177,6 +174,7 @@ const Layout = (props) => {
     });
   };
 
+  // check if email already exists
   const findEmail = (email) => {
     if (!email) return;
 
@@ -191,10 +189,12 @@ const Layout = (props) => {
     });
   }
 
+  // debounce functions
   const debounceFetchBreweries = debounce(fetchBrewerySuggestions, 1000);
   const debounceFindUser = useCallback(debounce(findUser, 1000), []);
   const debounceFindEmail = debounce(findEmail, 1000);
 
+  // user info for sign up and log in
   const signUpInfo = { username, email, password, city, state, profilePic };
   const logInInfo = { email, password };
 
@@ -256,7 +256,7 @@ const Layout = (props) => {
         </Navbar.Collapse>
       </Navbar>
       {props.children}
-
+      <ScrollTop className='p-scrolltop' />
       {/* Log In Modal */}
       <FormModalTemplate
         show={showLogIn}

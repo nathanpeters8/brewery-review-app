@@ -84,7 +84,7 @@ module Api
     private
 
     def user_params 
-      params.require(:user).permit(:city, :state, :email, :username, :password).tap do |user_params|
+      params.require(:user).permit(:city, :state, :email, :username, :password, :profile_picture).tap do |user_params|
         user_params.delete(:password) if user_params[:password].blank?
       end
     end 
