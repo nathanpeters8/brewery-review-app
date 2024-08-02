@@ -5,6 +5,10 @@ body {
   font-family: 'Rubik', 'Arial Narrow Bold', Helvetica, sans-serif;
 }
 
+html, body {
+  height: 100%;
+}
+
 .bg-ochre {
   background-color: #C06014;
 }
@@ -14,6 +18,9 @@ body {
 .bg-cool-grey {
   background-color: #CDCDCD;
 }
+.bg-danger-soft {
+  background-color: #fcb8be !important;
+}
 .text-ochre {
   color: #C06014;
 }
@@ -22,4 +29,10 @@ body {
 }
 .text-cool-grey {
   color: #CDCDCD;
+}
+
+.fullscreen-img {
+  padding-top: calc(1 / 1 * 100%);
+  background-size: cover;
+  background-position: center;
 }

@@ -1,3 +1,5 @@
+require 'cgi'
+
 module Api 
   class UsersController < ApplicationController
     def create
@@ -23,14 +25,10 @@ module Api
     end
 
     def update
-      # puts params.inspect
       @user = User.find(params[:id])
       return render json: { error: 'not_found' }, status: :not_found if !@user
 
-      # Rails.logger.info "Attempting to update user with params: #{user_params.inspect}"
-
       if @user.update(user_params)
-        Rails.logger.info "Update successful: #{@user.reload.inspect}"
         render 'api/users/update', status: :ok
       else
         Rails.logger.info "Update failed: #{@user.errors.full_messages.join(", ")}"
@@ -49,10 +47,46 @@ module Api
       end
     end
 
+    def find_username
+      username = params[:username]
+      @user = User.find_by(username: username)
+
+      if @user
+        render json: {
+          success: true
+        }
+      else
+        render json: {
+          success: false
+        }
+      end
+    end
+
+    def find_email
+      encoded_email = params[:email]
+      email = CGI.unescape(encoded_email)
+      email += ".com"
+      Rails.logger.info "email: #{email}"
+
+      @user = User.find_by(email: email)
+
+      if @user
+        render json: {
+          success: true
+        }
+      else
+        render json: {
+          success: false
+        }
+      end
+    end
+
     private
 
     def user_params 
-      params.require(:user).permit(:username, :email, :password, :city, :state, :profile_picture)
+      params.require(:user).permit(:city, :state, :email, :username, :password).tap do |user_params|
+        user_params.delete(:password) if user_params[:password].blank?
+      end
     end 
   end
 end

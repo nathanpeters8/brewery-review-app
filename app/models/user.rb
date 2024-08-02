@@ -11,11 +11,15 @@ class User < ApplicationRecord
   validates_uniqueness_of :username
   validates_uniqueness_of :email
 
-  after_validation :hash_password
+  before_save :hash_password, if: :password_present?
 
   private
-
+  
   def hash_password
     self.password = BCrypt::Password.create(password)
+  end
+
+  def password_present?
+    password.present? && password_changed?
   end
 end

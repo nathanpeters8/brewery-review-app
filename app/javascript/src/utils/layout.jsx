@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { FormModalTemplate } from './modalTemplates';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Navbar, Nav } from 'react-bootstrap';
 import { AutoComplete } from 'primereact/autocomplete';
-import { Authenticate, UserLogIn, UserSignOut, UserSignUp } from './apiService';
+import { Authenticate, UserLogIn, UserSignOut, UserSignUp, GetUser, GetEmail } from './apiService';
 import { GetBreweriesForAutoComplete } from './openBreweryDBRequests';
 import 'primereact/resources/themes/bootstrap4-light-blue/theme.css';
-
 
 const Layout = (props) => {
   // state variables
@@ -16,6 +15,9 @@ const Layout = (props) => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [validUsername, setValidUsername] = useState(false);
+  const [validEmail, setValidEmail] = useState(false);
+  const [validPassword, setValidPassword] = useState(false);
   const [city, setCity] = useState('');
   const [state, setState] = useState('');
   const [profilePic, setProfilePic] = useState('');
@@ -32,6 +34,43 @@ const Layout = (props) => {
       }
     });
   }, []);
+
+  // check if username is valid during sign up
+  useEffect(() => {
+    if (showSignUp) {
+      console.log(username);
+      if (username.length >= 3 && username.length <= 20) {
+        const specialCharacters = /[!@#$%^&*(),.?":{}|<>]/;
+        if (specialCharacters.test(username)) {
+          setValidUsername(false);
+        } else {
+          debounceFindUser(username);
+        }
+      } else {
+        setValidUsername(false);
+      }
+    }
+  }, [username]);
+
+  useEffect(() => {
+    if(showSignUp) {
+      console.log(encodeURIComponent(email));
+      if (email.length > 0) {
+        const emailCharacters = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+\.[a-zA-Z]{3,}$/;
+        if(!emailCharacters.test(email)) {
+          setValidEmail(false);
+        } else {
+          debounceFindEmail(email);
+        }
+      } else {
+        setValidEmail(false);
+      }
+    }
+  }, [email]);
+
+  useEffect(() => {
+    console.log(email);
+  }, [email]);
 
   // debounce function
   const debounce = (func, wait) => {
@@ -124,7 +163,37 @@ const Layout = (props) => {
     }
   };
 
+  const findUser = (username) => {
+    if (!username) return;
+
+    GetUser(username, (response) => {
+      if (response.success) {
+        setValidUsername(false);
+        alert('Username already exists');
+        setUsername('');
+      } else {
+        setValidUsername(true);
+      }
+    });
+  };
+
+  const findEmail = (email) => {
+    if (!email) return;
+
+    GetEmail(encodeURIComponent(email), (response) => {
+      if (response.success) {
+        setValidEmail(false);
+        alert('Email already exists');
+        setEmail('');
+      } else {
+        setValidEmail(true);
+      }
+    });
+  }
+
   const debounceFetchBreweries = debounce(fetchBrewerySuggestions, 1000);
+  const debounceFindUser = useCallback(debounce(findUser, 1000), []);
+  const debounceFindEmail = debounce(findEmail, 1000);
 
   const signUpInfo = { username, email, password, city, state, profilePic };
   const logInInfo = { email, password };
@@ -208,6 +277,10 @@ const Layout = (props) => {
         handleChange={handleChange}
         userInfo={signUpInfo}
         submitMethod={handleSignUp}
+        validEmail={validEmail}
+        validUsername={validUsername}
+        setValidEmail={setValidEmail}
+        setValidUsername={setValidUsername}
       />
     </>
   );

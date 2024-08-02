@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Layout from '@utils/layout';
 import { getAllStates } from '@utils/fetchHelper';
-import { GetCitySuggestions } from '@utils/apiService';
-import { GetBreweriesForAutoComplete } from '@utils/openBreweryDBRequests';
+import { GetCitySuggestions, Authenticate } from '@utils/apiService';
+import { GetBreweriesForAutoComplete, GetRandomBreweries, GetBreweriesById } from '@utils/openBreweryDBRequests';
+import { MapModalTemplate } from '@utils/modalTemplates';
 import Select from 'react-select';
 import { AutoComplete } from 'primereact/autocomplete';
+import BreweryCarousel from './breweryCarousel';
 import './home.scss';
 import 'primereact/resources/themes/bootstrap4-light-blue/theme.css';
 
@@ -16,8 +18,24 @@ const Home = (props) => {
   const [stateSuggestions, setStateSuggestions] = useState([]);
   const [citySuggestions, setCitySuggestions] = useState([]);
   const [brewerySuggestions, setBrewerySuggestions] = useState([]);
+  const [randomBreweries, setRandomBreweries] = useState([]);
   const [citiesLoading, setCitiesLoading] = useState(false);
+  const [userLoggedIn, setUserLoggedIn] = useState(false);
+  const [userInfo, setUserInfo] = useState({ username: '', city: '', state: '' });
+  const [showMapModal, setShowMapModal] = useState(false);
+  const [clickedBrewery, setClickedBrewery] = useState(null);
+
   const stateInputRef = useRef(null);
+
+  // check if user is logged in
+  useEffect(() => {
+    Authenticate((response) => {
+      if (response.authenticated) {
+        setUserLoggedIn(true);
+        setUserInfo({ username: response.username, city: response.city, state: response.state });
+      }
+    });
+  }, []);
 
   // debounce function
   const debounce = (func, wait) => {
@@ -93,13 +111,15 @@ const Home = (props) => {
       setStateSuggestions(getAllStates().map((state) => ({ label: state, value: state })));
     }
   };
-  
+
   // Fetch brewery suggestions
   const fetchBrewerySuggestions = () => {
-    if(name) {
+    if (name) {
       GetBreweriesForAutoComplete(name, (response) => {
         console.log(response);
-        setBrewerySuggestions([...new Set(response.map((brewery) => brewery.name))].map((brewery) => ({ label: brewery, value: brewery })));
+        setBrewerySuggestions(
+          [...new Set(response.map((brewery) => brewery.name))].map((brewery) => ({ label: brewery, value: brewery }))
+        );
       });
     }
   };
@@ -109,12 +129,12 @@ const Home = (props) => {
     event.preventDefault();
     const params = new URLSearchParams();
     if (name) {
-      if(typeof name === 'object') {
+      if (typeof name === 'object') {
         params.append('name', name.value.replace(' ', '_').toLowerCase());
       } else {
         params.append('name', name.replace(' ', '_').toLowerCase());
       }
-    } 
+    }
     if (city) params.append('city', city.toLowerCase());
     if (state) params.append('state', state.toLowerCase());
 
@@ -137,13 +157,23 @@ const Home = (props) => {
     setCitiesLoading(false);
   };
 
+  // Get random breweries based on user's city and state
+  useEffect(() => {
+    if (userInfo.city && userInfo.state) {
+      GetRandomBreweries(6, userInfo.city, userInfo.state, (response) => {
+        setRandomBreweries(response);
+      });
+    }
+  }, [userInfo]);
+
   // debounce functions
   const debounceFetchCities = debounce(fetchCitySuggestions, 1000);
   const debounceFetchBreweries = debounce(fetchBrewerySuggestions, 1000);
 
   return (
     <Layout currentComponent='home'>
-      <div className='container-xl pt-5 d-flex flex-column align-items-center bg-secondary bg-opacity-10 vh-100'>
+      <div className='home-container container-xl pt-5 d-flex flex-column align-items-center bg-secondary bg-opacity-10'>
+        {userLoggedIn && <h3 className='mb-5'>{`Welcome Back ${userInfo.username}!`}</h3>}
         <div className='row'>
           <h4 className='text-center text-ochre'>Search for breweries using any or all fields below:</h4>
         </div>
@@ -157,13 +187,13 @@ const Home = (props) => {
             <label htmlFor='breweryName' className='form-label'>
               Brewery Name
             </label>
-            <div className="card justify-content-center">
-              <AutoComplete 
+            <div className='card justify-content-center'>
+              <AutoComplete
                 id='breweryName'
                 value={name}
                 suggestions={brewerySuggestions}
                 completeMethod={debounceFetchBreweries}
-                field="label"
+                field='label'
                 onChange={(e) => setName(e.value)}
                 inputClassName='w-100 h-100 border-none text-center text-ochre'
               />
@@ -227,7 +257,32 @@ const Home = (props) => {
             <button className='btn btn-lg btn-outline-secondary text-ochre border-0'>Search</button>
           </div>
         </form>
+        <hr />
+        {userLoggedIn && (
+          <div className='row my-5 justify-content-center'>
+            <h4 className='text-center text-ochre '>
+              Or check out these breweries in {userInfo.city}, {userInfo.state}:
+            </h4>
+            <div className='col-4 col-lg-6 mt-3'>
+              <BreweryCarousel
+                breweries={randomBreweries}
+                setClickedBrewery={setClickedBrewery}
+                setShowMapModal={setShowMapModal}
+              />
+            </div>
+          </div>
+        )}
       </div>
+      {clickedBrewery && (
+        <MapModalTemplate
+          showMap={showMapModal}
+          toggleShowMap={setShowMapModal}
+          name={clickedBrewery.name}
+          city={clickedBrewery.city}
+          state={clickedBrewery.state}
+          street={clickedBrewery.street}
+        />
+      )}
     </Layout>
   );
 };
