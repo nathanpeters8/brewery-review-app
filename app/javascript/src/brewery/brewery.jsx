@@ -157,11 +157,13 @@ const Brewery = (props) => {
     setShowConfirmModal(true);
   };
 
+  // Show image fullscreen
   const handleShowFullscreen = (e, image) => {
     e.preventDefault();
     setShowImageFullscreen(true);
     setFullScreenImage(image);
   };
+
   // Handle review deletion
   const handleReviewDelete = () => {
     ApiService.DeleteReview(selectedContentID, (response) => {
@@ -278,6 +280,7 @@ const Brewery = (props) => {
       />
 
       <PictureFullscreenModal show={showImageFullscreen} toggleShow={setShowImageFullscreen} image={fullScreenImage} />
+
       {(() => {
         if (selectedContent === 'review')
           return (

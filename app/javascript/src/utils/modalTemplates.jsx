@@ -74,7 +74,7 @@ export const FormModalTemplate = ({
             <FloatLabel>
               <InputText
                 id='inputEmail'
-                className={`${isEmailFocused ? (validEmail ? 'bg-success' : 'bg-danger-soft') : ''}`}
+                className={`${isEmailFocused && formType === 'signup' ? (validEmail ? 'bg-success-soft' : 'bg-danger-soft') : ''}`}
                 name='email'
                 onChange={(e) => handleChange(e.target)}
                 value={email}
@@ -92,7 +92,7 @@ export const FormModalTemplate = ({
               <FloatLabel>
                 <InputText
                   id='inputUsername'
-                  className={`${isNameFocused ? (validUsername ? 'bg-success' : 'bg-danger-soft') : ''}`}
+                  className={`${isNameFocused ? (validUsername ? 'bg-success-soft' : 'bg-danger-soft') : ''}`}
                   name='username'
                   onChange={(e) => handleChange(e.target)}
                   value={username}
@@ -152,7 +152,9 @@ export const FormModalTemplate = ({
           )}
           {formType === 'signup' && (
             <div className='col-10 mt-3 text-center'>
-              <label htmlFor="profilePic" className='text-secondary mb-1'>Upload Profile Picture</label>
+              <label htmlFor='profilePic' className='text-secondary mb-1'>
+                Upload Profile Picture
+              </label>
               <input
                 id='profilePic'
                 type='file'

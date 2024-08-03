@@ -2,6 +2,7 @@ require 'cgi'
 
 module Api 
   class UsersController < ApplicationController
+    # create new user
     def create
       @user = User.new(user_params)
 
@@ -13,6 +14,7 @@ module Api
       end
     end
 
+    # get user by id
     def show
       @user = User.find(params[:id])
 
@@ -24,6 +26,7 @@ module Api
       end
     end
 
+    # update user
     def update
       @user = User.find(params[:id])
       return render json: { error: 'not_found' }, status: :not_found if !@user
@@ -36,6 +39,7 @@ module Api
       end
     end
 
+    # delete user
     def destroy
       @user = User.find(params[:id])
       return render json: { error: 'not_found' }, status: :not_found if !@user
@@ -47,6 +51,7 @@ module Api
       end
     end
 
+    # find user by username
     def find_username
       username = params[:username]
       @user = User.find_by(username: username)
@@ -61,7 +66,8 @@ module Api
         }
       end
     end
-
+    
+    # find user by email
     def find_email
       encoded_email = params[:email]
       email = CGI.unescape(encoded_email)

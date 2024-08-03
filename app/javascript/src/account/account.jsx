@@ -3,7 +3,6 @@ import Layout from '@utils/layout';
 import { FormModalTemplate, ConfirmModal, ProfilePictureModal } from '@utils/modalTemplates.jsx';
 import * as ApiService from '@utils/apiService';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPenToSquare } from '@fortawesome/free-regular-svg-icons';
 import { faPencil, faImages, faX, faCamera } from '@fortawesome/free-solid-svg-icons';
 import ImageTemplate from './imageTemplate';
 import ReviewTemplate from './reviewTemplate';
@@ -114,6 +113,7 @@ const Account = (props) => {
     });
   };
 
+  // render tab menu items
   const itemRenderer = (item, index) => (
     <a className='d-flex align-items-center gap-2 text-ochre' onClick={() => setActiveIndex(index)}>
       <h5>{item.icon}</h5>
@@ -121,6 +121,7 @@ const Account = (props) => {
     </a>
   );
 
+  // tab menu items
   const items = [
     {
       name: 'Reviews',
@@ -152,8 +153,7 @@ const Account = (props) => {
                   userInfo.profile_picture ? userInfo.profile_picture : 'https://placehold.co/150'
                 })`,
               }}
-            >
-            </div>
+            ></div>
             <div className='d-flex flex-column align-items-center gap-2 mb-3 mb-md-5'>
               <h4 className='text-center'>{userInfo.username}</h4>
               <h6 className='text-center'>{`${userInfo.city}, ${userInfo.state}`}</h6>
@@ -225,6 +225,7 @@ const Account = (props) => {
                     created_at={image.created_at}
                     brewery_name={image.brewery_name}
                     brewery_id={image.brewery_id}
+                    id={image.id}
                     caption={image.caption}
                     handleImageDelete={handleImageDelete}
                   />

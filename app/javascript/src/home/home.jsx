@@ -177,7 +177,6 @@ const Home = (props) => {
         <div className='row'>
           <h4 className='text-center text-ochre'>Search for breweries using any or all fields below:</h4>
         </div>
-        {/* Brewery Search Form */}
         <form
           id='homeBrewerySearch'
           className='row d-flex justify-content-center mt-4 border bg-secondary bg-opacity-25 py-5'

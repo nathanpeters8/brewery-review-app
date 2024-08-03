@@ -3,8 +3,7 @@ import { Button } from 'primereact/button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 
-
-const ImageTemplate = ({ index, image, created_at, brewery_name, brewery_id, caption, handleImageDelete }) => {
+const ImageTemplate = ({ index, image, created_at, brewery_name, brewery_id, id, caption, handleImageDelete }) => {
   return (
     <div
       className='content-div col-11 col-md-9 d-flex flex-column flex-sm-row align-items-center text-center text-sm-start mt-4 px-2 py-3 border-bottom gap-3'

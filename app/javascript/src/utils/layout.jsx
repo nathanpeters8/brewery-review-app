@@ -5,11 +5,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Navbar, Nav } from 'react-bootstrap';
 import { AutoComplete } from 'primereact/autocomplete';
 import { ScrollTop } from 'primereact/scrolltop';
-import { Authenticate, UserLogIn, UserSignOut, UserSignUp, GetUser, GetEmail } from './apiService';
+import { UserLogIn, UserSignOut, UserSignUp, GetUser, GetEmail } from './apiService';
 import { GetBreweriesForAutoComplete } from './openBreweryDBRequests';
 import 'primereact/resources/themes/bootstrap4-light-blue/theme.css';
 
-const Layout = ({currentComponent, userLoggedIn, setUserLoggedIn, children}) => {
+const Layout = ({ currentComponent, userLoggedIn, setUserLoggedIn, children }) => {
   // state variables
   const [showLogIn, setShowLogIn] = useState(false);
   const [showSignUp, setShowSignUp] = useState(false);
@@ -23,18 +23,7 @@ const Layout = ({currentComponent, userLoggedIn, setUserLoggedIn, children}) => 
   const [state, setState] = useState('');
   const [profilePic, setProfilePic] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
-  // const [userLoggedIn, setUserLoggedIn] = useState(false);
   const [brewerySuggestions, setBrewerySuggestions] = useState([]);
-
-  // check user authentication, on page load
-  // useEffect(() => {
-  //   Authenticate((response) => {
-  //     console.log(response);
-  //     if (response.authenticated) {
-  //       setUserLoggedIn(true);
-  //     }
-  //   });
-  // }, []);
 
   // check if username is valid during sign up
   useEffect(() => {
@@ -54,10 +43,10 @@ const Layout = ({currentComponent, userLoggedIn, setUserLoggedIn, children}) => 
 
   // check if email is valid during sign up
   useEffect(() => {
-    if(showSignUp) {
+    if (showSignUp) {
       if (email.length > 0) {
         const emailCharacters = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+\.[a-zA-Z]{3,}$/;
-        if(!emailCharacters.test(email)) {
+        if (!emailCharacters.test(email)) {
           setValidEmail(false);
         } else {
           debounceFindEmail(email);
@@ -187,7 +176,7 @@ const Layout = ({currentComponent, userLoggedIn, setUserLoggedIn, children}) => 
         setValidEmail(true);
       }
     });
-  }
+  };
 
   // debounce functions
   const debounceFetchBreweries = debounce(fetchBrewerySuggestions, 1000);

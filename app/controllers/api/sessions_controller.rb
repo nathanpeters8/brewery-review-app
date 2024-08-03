@@ -1,8 +1,10 @@
 module Api
   class SessionsController < ApplicationController
+    # create new session
     def create
       @user = User.find_by(email: params[:user][:email])
 
+      # check if user exists and password is correct
       if @user && (BCrypt::Password.new(@user.password) == params[:user][:password])
         session = @user.sessions.create
         cookies.permanent.signed[:brewery_session_token] = {
@@ -16,6 +18,7 @@ module Api
       end
     end
 
+    # check if user is authenticated
     def authenticated
       token = cookies.signed[:brewery_session_token]
       session = Session.find_by(token: token)
@@ -28,6 +31,7 @@ module Api
       end
     end
 
+    # destroy session
     def destroy
       token = cookies.signed[:brewery_session_token]
       session = Session.find_by(token: token)

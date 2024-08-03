@@ -2,11 +2,14 @@ import React from 'react';
 import { Carousel } from 'primereact/carousel';
 
 const BreweryCarousel = ({ breweries, setClickedBrewery, setShowMapModal }) => {
+  
+  // handle opening map modal
   const handleOpenMap = (brewery) => {
     setClickedBrewery(brewery);
     setShowMapModal(true);
   };
 
+  // carousel item template
   const itemTemplate = (brewery) => {
     return (
       <div className='border border-light border-round m-2 text-center py-5 px-3 overflow-hidden'>
@@ -30,6 +33,7 @@ const BreweryCarousel = ({ breweries, setClickedBrewery, setShowMapModal }) => {
     );
   };
 
+  // responsive options for carousel
   const responsiveOptions = [
     {
       breakpoint: '1199px',
@@ -48,6 +52,7 @@ const BreweryCarousel = ({ breweries, setClickedBrewery, setShowMapModal }) => {
     },
   ];
 
+  // format phone number
   const formatPhoneNumber = (num) => `(${num.slice(0, 3)}) ${num.slice(3, 6)}-${num.slice(6)}`;
 
   return (
