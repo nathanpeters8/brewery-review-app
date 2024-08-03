@@ -4,10 +4,11 @@ import { FormModalTemplate, ConfirmModal, ProfilePictureModal } from '@utils/mod
 import * as ApiService from '@utils/apiService';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare } from '@fortawesome/free-regular-svg-icons';
-import { faPencil, faImages } from '@fortawesome/free-solid-svg-icons';
+import { faPencil, faImages, faX, faCamera } from '@fortawesome/free-solid-svg-icons';
 import ImageTemplate from './imageTemplate';
 import ReviewTemplate from './reviewTemplate';
 import { TabMenu } from 'primereact/tabmenu';
+import { Button } from 'primereact/button';
 import './account.scss';
 
 const Account = (props) => {
@@ -140,39 +141,59 @@ const Account = (props) => {
       <div className='container-xl bg-secondary bg-opacity-10'>
         <div className='row justify-content-center'>
           <div
-            className={`col-12 col-md-3 d-flex flex-column justify-content-between justify-content-md-start pt-md-5 align-items-center ${
+            className={`col-12 col-sm-8 col-md-3 d-flex flex-column flex-sm-row flex-md-column justify-content-between justify-content-md-start pt-md-5 align-items-center ${
               windowWidth >= 768 ? 'vh-100 border' : 'mt-4 border-bottom pb-4'
             }`}
           >
             <div
-              className='avatar-image col-4 col-md-9 border mb-5 position-relative'
+              className='avatar-image col-4 col-md-9 border mb-5 mb-sm-0 mb-md-5'
               style={{
                 backgroundImage: `url(${
                   userInfo.profile_picture ? userInfo.profile_picture : 'https://placehold.co/150'
                 })`,
               }}
             >
-              <button
-                className='btn btn-warning border-0 position-absolute top-0 end-0'
-                onClick={() => setShowProfilePicModal(true)}
-              >
-                <FontAwesomeIcon icon={faPenToSquare} />
-              </button>
             </div>
-            <div className='d-flex flex-column gap-2 mb-0 mb-md-5'>
-              <h5 className='text-center'>{userInfo.username}</h5>
-              <h5 className='text-center'>{`${userInfo.city}, ${userInfo.state}`}</h5>
-            </div>
-            <div className='d-flex flex-column gap-2'>
-              <button className='btn btn-outline-warning text-ochre border-0' onClick={() => setShowEditModal(true)}>
-                Edit Account
-              </button>
-              <button className='btn btn-outline-danger text-ochre border-0' onClick={() => setShowConfirmModal(true)}>
-                Delete Account
-              </button>
+            <div className='d-flex flex-column align-items-center gap-2 mb-3 mb-md-5'>
+              <h4 className='text-center'>{userInfo.username}</h4>
+              <h6 className='text-center'>{`${userInfo.city}, ${userInfo.state}`}</h6>
+              <div className='d-flex flex-row gap-2'>
+                <Button
+                  icon={<FontAwesomeIcon icon={faPencil} />}
+                  severity='warning'
+                  rounded
+                  raised
+                  className='rounded border-0'
+                  size='large'
+                  tooltip='Edit Profile'
+                  tooltipOptions={{ position: 'top', mouseTrack: true, mouseTrackTop: 15 }}
+                  onClick={() => setShowEditModal(true)}
+                />
+                <Button
+                  icon={<FontAwesomeIcon icon={faCamera} />}
+                  rounded
+                  raised
+                  className='rounded bg-ochre border-0'
+                  size='large'
+                  tooltip='Upload Avatar'
+                  tooltipOptions={{ position: 'top', mouseTrack: true, mouseTrackTop: 15 }}
+                  onClick={() => setShowProfilePicModal(true)}
+                />
+                <Button
+                  icon={<FontAwesomeIcon icon={faX} />}
+                  severity='danger'
+                  rounded
+                  raised
+                  className='rounded'
+                  size='large'
+                  tooltip='Delete Account'
+                  tooltipOptions={{ position: 'top', mouseTrack: true, mouseTrackTop: 15 }}
+                  onClick={() => setShowConfirmModal(true)}
+                />
+              </div>
             </div>
           </div>
-          <div className='col-12 col-md-9 d-flex flex-column align-items-cente mb-4'>
+          <div className='col-12 col-md-9 d-flex flex-column align-items-center mb-4'>
             <div className='col-11 col-md-9 mt-5 d-flex justify-content-center'>
               <TabMenu model={items} activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)} />
             </div>
@@ -203,6 +224,7 @@ const Account = (props) => {
                     image={image.upload}
                     created_at={image.created_at}
                     brewery_name={image.brewery_name}
+                    brewery_id={image.brewery_id}
                     caption={image.caption}
                     handleImageDelete={handleImageDelete}
                   />

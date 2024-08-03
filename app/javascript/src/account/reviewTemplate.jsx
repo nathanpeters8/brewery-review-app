@@ -20,11 +20,13 @@ const ReviewTemplate = ({ index, brewery_name, content, rating, created_at, id, 
       <div className='buttons d-flex flex-row gap-2 mt-3 mt-sm-5'>
         <Button
           icon={<FontAwesomeIcon icon={faArrowRight} />}
-          severity='warning'
           rounded
           raised
-          className='rounded'
+          className='rounded bg-ochre border-0'
           size='large'
+          tooltip='Go To Brewery'
+          tooltipOptions={{ position: 'top', mouseTrack: true, mouseTrackTop: 15 }}
+          onClick={(e) => (window.location.href = `/brewery/${brewery_id}`)}
         />
         <Button
           icon={<FontAwesomeIcon icon={faTrash} />}
@@ -33,6 +35,9 @@ const ReviewTemplate = ({ index, brewery_name, content, rating, created_at, id, 
           raised
           className='rounded'
           size='large'
+          tooltip='Delete Review'
+          tooltipOptions={{ position: 'top', mouseTrack: true, mouseTrackTop: 15 }}
+          onClick={(e) => handleReviewDelete(e, id)}
         />
       </div>
     </div>
