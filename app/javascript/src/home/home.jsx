@@ -171,13 +171,12 @@ const Home = (props) => {
   const debounceFetchBreweries = debounce(fetchBrewerySuggestions, 1000);
 
   return (
-    <Layout currentComponent='home'>
-      <div className='home-container container-xl pt-5 d-flex flex-column align-items-center bg-secondary bg-opacity-10'>
+    <Layout currentComponent='home' userLoggedIn={userLoggedIn} setUserLoggedIn={setUserLoggedIn}>
+      <div className='home-container container-xl pt-5 d-flex flex-column align-items-center bg-secondary bg-opacity-10 overflow-hidden'>
         {userLoggedIn && <h3 className='mb-5'>{`Welcome Back ${userInfo.username}!`}</h3>}
         <div className='row'>
           <h4 className='text-center text-ochre'>Search for breweries using any or all fields below:</h4>
         </div>
-        {/* Brewery Search Form */}
         <form
           id='homeBrewerySearch'
           className='row d-flex justify-content-center mt-4 border bg-secondary bg-opacity-25 py-5'
@@ -185,7 +184,7 @@ const Home = (props) => {
         >
           <div className='col-10 col-sm-8 text-center text-dark'>
             <label htmlFor='breweryName' className='form-label'>
-              Brewery Name
+              Brewery Name!
             </label>
             <div className='card justify-content-center'>
               <AutoComplete
@@ -260,10 +259,10 @@ const Home = (props) => {
         <hr />
         {userLoggedIn && (
           <div className='row my-5 justify-content-center'>
-            <h4 className='text-center text-ochre '>
-              Or check out these breweries in {userInfo.city}, {userInfo.state}:
-            </h4>
-            <div className='col-4 col-lg-6 mt-3'>
+            <div className='col-3 col-sm-4 col-lg-6 mt-3'>
+              <h4 className='text-center text-ochre mb-3'>
+                Or check out these breweries in {userInfo.city}, {userInfo.state}:
+              </h4>
               <BreweryCarousel
                 breweries={randomBreweries}
                 setClickedBrewery={setClickedBrewery}

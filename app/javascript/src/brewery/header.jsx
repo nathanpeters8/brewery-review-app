@@ -4,8 +4,7 @@ import { faStar } from '@fortawesome/free-solid-svg-icons';
 import { faStar as faStarEmpty } from '@fortawesome/free-regular-svg-icons';
 import './brewery.scss';
 
-const Header = ({ brewery, breweryImages, breweryReviews, }) => {
-
+const Header = ({ brewery, breweryImages, breweryReviews }) => {
   // Get average rating from reviews
   const getAverageRating = () => {
     let total = 0;
@@ -17,7 +16,7 @@ const Header = ({ brewery, breweryImages, breweryReviews, }) => {
     return average;
   };
 
-  return(
+  return (
     <>
       {breweryImages.length > 0 ? (
         <div
@@ -47,13 +46,11 @@ const Header = ({ brewery, breweryImages, breweryReviews, }) => {
               />
             );
           })}
-          <small className='fs-6 ms-2'>{`${getAverageRating().toFixed(1)} (${
-            breweryReviews.length
-          } reviews)`}</small>
+          <small className='fs-6 ms-2'>{`${getAverageRating().toFixed(1)} (${breweryReviews.length} reviews)`}</small>
         </h5>
       </div>
     </>
   );
-}
+};
 
 export default Header;

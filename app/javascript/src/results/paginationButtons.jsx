@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
 const PaginationButtons = ({ handlePageChange, currentPage, pagesArray, total, itemsPerPage }) => {
   return (

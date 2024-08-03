@@ -3,6 +3,9 @@ import { Modal, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar } from '@fortawesome/free-solid-svg-icons';
 import { faStar as faStarEmpty } from '@fortawesome/free-regular-svg-icons';
+import { Password } from 'primereact/password';
+import { FloatLabel } from 'primereact/floatlabel';
+import { InputText } from 'primereact/inputtext';
 
 export const MapModalTemplate = ({ showMap, toggleShowMap, name, city, state, street }) => {
   return (
@@ -67,98 +70,98 @@ export const FormModalTemplate = ({
       </Modal.Header>
       <Modal.Body>
         <form className='row d-flex justify-content-center gap-3' onSubmit={submitMethod}>
-          <div className='col-8 form-floating'>
-            <input
-              id='inputEmail'
-              className={`form-control ${isEmailFocused ? (validEmail ? 'bg-success' : 'bg-danger-soft') : ''}`}
-              type='text'
-              name='email'
-              placeholder='name@example.com'
-              onChange={(e) => handleChange(e.target)}
-              onFocus={() => setIsEmailFocused(true)}
-              onBlur={handleEmailBlur}
-              value={email}
-              required={formType !== 'editprofile' ? true : false}
-            />
-            <label htmlFor='inputEmail' className='form-label'>
-              Email
-            </label>
+          <div className='col-8 d-flex justify-content-center mt-3'>
+            <FloatLabel>
+              <InputText
+                id='inputEmail'
+                className={`${isEmailFocused && formType === 'signup' ? (validEmail ? 'bg-success-soft' : 'bg-danger-soft') : ''}`}
+                name='email'
+                onChange={(e) => handleChange(e.target)}
+                value={email}
+                required={formType !== 'editprofile' ? true : false}
+                onFocus={() => setIsEmailFocused(true)}
+                onBlur={handleEmailBlur}
+              />
+              <label htmlFor='inputEmail' className='form-label'>
+                Email
+              </label>
+            </FloatLabel>
           </div>
           {formType !== 'login' && (
-            <div className='col-8 form-floating'>
-              <input
-                id='inputUsername'
-                className={`form-control ${isNameFocused ? (validUsername ? 'bg-success' : 'bg-danger-soft') : ''}`}
-                type='text'
-                name='username'
-                placeholder='my_username'
-                onChange={(e) => handleChange(e.target)}
-                onFocus={() => setIsNameFocused(true)}
-                onBlur={handleUsernameBlur}
-                value={username}
-                required={formType !== 'editprofile' ? true : false}
-              />
-              <label htmlFor='inputUsername' className='form-label'>
-                Username
-              </label>
+            <div className='col-8 d-flex justify-content-center mt-2'>
+              <FloatLabel>
+                <InputText
+                  id='inputUsername'
+                  className={`${isNameFocused ? (validUsername ? 'bg-success-soft' : 'bg-danger-soft') : ''}`}
+                  name='username'
+                  onChange={(e) => handleChange(e.target)}
+                  value={username}
+                  required={formType !== 'editprofile' ? true : false}
+                  onFocus={() => setIsNameFocused(true)}
+                  onBlur={handleUsernameBlur}
+                />
+                <label htmlFor='inputUsername' className='form-label'>
+                  Username
+                </label>
+              </FloatLabel>
             </div>
           )}
-          <div className='col-8 text-center form-floating'>
-            <input
-              id='inputPassword'
-              className='form-control'
-              type='password'
-              name='password'
-              placeholder='1234567890'
-              onChange={(e) => handleChange(e.target)}
-              value={password}
-              required={formType !== 'editprofile' ? true : false}
-            />
-            <label htmlFor='inputPassword' className='form-label'>
-              Password
-            </label>
+          <div className='col-8 d-flex justify-content-center mt-2'>
+            <FloatLabel>
+              <Password
+                inputId='inputPassword'
+                name='password'
+                onChange={(e) => handleChange(e.target)}
+                value={password}
+                required={formType !== 'editprofile' ? true : false}
+                feedback={false}
+                toggleMask
+              />
+              <label htmlFor='inputPassword'>Password</label>
+            </FloatLabel>
           </div>
           {formType !== 'login' && (
-            <div className='col-10 d-flex flex-row justify-content-center gap-3'>
-              <div className='col-5 text-center form-floating'>
-                <input
-                  id='inputCity'
-                  className='form-control'
-                  type='city'
-                  name='city'
-                  placeholder='Denver'
-                  onChange={(e) => handleChange(e.target)}
-                  value={city}
-                />
-                <label htmlFor='inputCity' className='form-label'>
-                  City
-                </label>
+            <div className='col-10 d-flex flex-row justify-content-center gap-3 mt-3'>
+              <div className='col-5 d-flex justify-content-center'>
+                <FloatLabel>
+                  <InputText
+                    id='inputCity'
+                    className='col-12'
+                    name='city'
+                    onChange={(e) => handleChange(e.target)}
+                    value={city}
+                    required
+                  />
+                  <label htmlFor='inputCity'>City</label>
+                </FloatLabel>
               </div>
-              <div className='col-5 text-center form-floating'>
-                <input
-                  id='inputState'
-                  className='form-control'
-                  type='state'
-                  name='state'
-                  placeholder='Colorado'
-                  onChange={(e) => handleChange(e.target)}
-                  value={state}
-                />
-                <label htmlFor='inputState' className='form-label'>
-                  State
-                </label>
+              <div className='col-5 d-flex justify-content-center'>
+                <FloatLabel>
+                  <InputText
+                    id='inputState'
+                    className='col-12'
+                    name='state'
+                    onChange={(e) => handleChange(e.target)}
+                    value={state}
+                    required
+                  />
+                  <label htmlFor='inputState'>State</label>
+                </FloatLabel>
               </div>
             </div>
           )}
           {formType === 'signup' && (
-            <div className='col-10'>
+            <div className='col-10 mt-3 text-center'>
+              <label htmlFor='profilePic' className='text-secondary mb-1'>
+                Upload Profile Picture
+              </label>
               <input
+                id='profilePic'
                 type='file'
                 name='profile_picture'
                 accept='image/*'
                 className='form-control'
                 onChange={(e) => handleChange(e.target)}
-                required
               />
             </div>
           )}

@@ -1,34 +1,38 @@
-@import "bootstrap";
+@import 'bootstrap';
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@500&family=Rubik&family=Work+Sans:wght@500&display=swap');
 
 body {
   font-family: 'Rubik', 'Arial Narrow Bold', Helvetica, sans-serif;
 }
 
-html, body {
+html,
+body {
   height: 100%;
 }
 
 .bg-ochre {
-  background-color: #C06014;
+  background-color: #c06014;
 }
 .bg-pastel-peach {
-  background-color: #EDDBCD;
+  background-color: #eddbcd;
 }
 .bg-cool-grey {
-  background-color: #CDCDCD;
+  background-color: #cdcdcd;
 }
 .bg-danger-soft {
   background-color: #fcb8be !important;
 }
+.bg-success-soft {
+  background-color: #b8fcb8 !important;
+}
 .text-ochre {
-  color: #C06014;
+  color: #c06014;
 }
 .text-pastel-peach {
-  color: #EDDBCD;
+  color: #eddbcd;
 }
 .text-cool-grey {
-  color: #CDCDCD;
+  color: #cdcdcd;
 }
 
 .fullscreen-img {

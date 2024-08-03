@@ -237,20 +237,22 @@ export const DeleteUser = (userId, callback) => {
     });
 };
 
+// get request to find user by username
 export const GetUser = (username, callback) => {
-    fetch(
-      `/api/users/get_username/${username}`,
-      safeCredentials({
-        method: 'GET',
-      })
-    )
-      .then(handleErrors)
-      .then((response) => {
-        console.log('Username found:', response);
-        return callback(response);
-      });
+  fetch(
+    `/api/users/get_username/${username}`,
+    safeCredentials({
+      method: 'GET',
+    })
+  )
+    .then(handleErrors)
+    .then((response) => {
+      console.log('Username found:', response);
+      return callback(response);
+    });
 };
 
+// get request to find user by email
 export const GetEmail = (email, callback) => {
   fetch(
     `/api/users/get_email/${email}`,
@@ -264,7 +266,6 @@ export const GetEmail = (email, callback) => {
       return callback(response);
     });
 };
-
 
 //*** City and State Search API ***//
 

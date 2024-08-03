@@ -1,5 +1,6 @@
 module Api
   class ReviewsController < ApplicationController
+    # create new review
     def create
       token = cookies.signed[:brewery_session_token]
       session = Session.find_by(token: token)
@@ -14,11 +15,13 @@ module Api
       end
     end
 
+    # get reviews by brewery
     def index_by_brewery
       @reviews = Review.where(brewery_id: params[:brewery_id]).order(created_at: :desc)
       render 'api/reviews/index'
     end
 
+    # get reviews by user
     def index_by_user
       token = cookies.signed[:brewery_session_token]
       session = Session.find_by(token: token)
@@ -30,6 +33,7 @@ module Api
       render 'api/reviews/index'
     end
 
+    # destroy review
     def destroy
       token = cookies.signed[:brewery_session_token]
       session = Session.find_by(token: token)

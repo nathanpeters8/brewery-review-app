@@ -46,6 +46,7 @@ export const GetBreweriesBySearchTerm = (search, page, per_page, callback) => {
   });
 };
 
+// get request to get breweries for autocomplete
 export const GetBreweriesForAutoComplete = (query, callback) => {
   fetch(`https://api.openbrewerydb.org/v1/breweries/autocomplete?query=${query}`)
     .then(handleErrors)
@@ -54,11 +55,12 @@ export const GetBreweriesForAutoComplete = (query, callback) => {
     });
 };
 
+// get request to get random breweries by city and state
 export const GetRandomBreweries = (size, city, state, callback) => {
   fetch(
-    `https://api.openbrewerydb.org/v1/breweries?by_type=micro&by_city=${encodeURIComponent(city)}&by_state=${encodeURIComponent(
-      state
-    )}`
+    `https://api.openbrewerydb.org/v1/breweries?by_type=micro&by_city=${encodeURIComponent(
+      city
+    )}&by_state=${encodeURIComponent(state)}`
   )
     .then(handleErrors)
     .then((response) => {

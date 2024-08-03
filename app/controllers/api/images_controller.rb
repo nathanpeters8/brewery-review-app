@@ -1,5 +1,6 @@
 module Api
   class ImagesController < ApplicationController
+    # create new image
     def create
       token = cookies.signed[:brewery_session_token]
       session = Session.find_by(token: token)
@@ -14,11 +15,13 @@ module Api
       end
     end
 
+    # get images by brewery
     def index_by_brewery
       @images = Image.where(brewery_id: params[:brewery_id]).order(created_at: :desc)
       render 'api/images/index'
     end
 
+    # get images by user
     def index_by_user
       token = cookies.signed[:brewery_session_token]
       session = Session.find_by(token: token)
@@ -30,6 +33,7 @@ module Api
       render 'api/images/index'
     end
 
+    # destroy image
     def destroy
       token = cookies.signed[:brewery_session_token]
       session = Session.find_by(token: token)

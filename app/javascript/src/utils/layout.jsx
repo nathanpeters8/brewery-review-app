@@ -4,11 +4,12 @@ import { FormModalTemplate } from './modalTemplates';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Navbar, Nav } from 'react-bootstrap';
 import { AutoComplete } from 'primereact/autocomplete';
-import { Authenticate, UserLogIn, UserSignOut, UserSignUp, GetUser, GetEmail } from './apiService';
+import { ScrollTop } from 'primereact/scrolltop';
+import { UserLogIn, UserSignOut, UserSignUp, GetUser, GetEmail } from './apiService';
 import { GetBreweriesForAutoComplete } from './openBreweryDBRequests';
 import 'primereact/resources/themes/bootstrap4-light-blue/theme.css';
 
-const Layout = (props) => {
+const Layout = ({ currentComponent, userLoggedIn, setUserLoggedIn, children }) => {
   // state variables
   const [showLogIn, setShowLogIn] = useState(false);
   const [showSignUp, setShowSignUp] = useState(false);
@@ -22,23 +23,11 @@ const Layout = (props) => {
   const [state, setState] = useState('');
   const [profilePic, setProfilePic] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
-  const [userLoggedIn, setUserLoggedIn] = useState(false);
   const [brewerySuggestions, setBrewerySuggestions] = useState([]);
-
-  // check user authentication, on page load
-  useEffect(() => {
-    Authenticate((response) => {
-      console.log(response);
-      if (response.authenticated) {
-        setUserLoggedIn(true);
-      }
-    });
-  }, []);
 
   // check if username is valid during sign up
   useEffect(() => {
     if (showSignUp) {
-      console.log(username);
       if (username.length >= 3 && username.length <= 20) {
         const specialCharacters = /[!@#$%^&*(),.?":{}|<>]/;
         if (specialCharacters.test(username)) {
@@ -52,12 +41,12 @@ const Layout = (props) => {
     }
   }, [username]);
 
+  // check if email is valid during sign up
   useEffect(() => {
-    if(showSignUp) {
-      console.log(encodeURIComponent(email));
+    if (showSignUp) {
       if (email.length > 0) {
         const emailCharacters = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+\.[a-zA-Z]{3,}$/;
-        if(!emailCharacters.test(email)) {
+        if (!emailCharacters.test(email)) {
           setValidEmail(false);
         } else {
           debounceFindEmail(email);
@@ -66,10 +55,6 @@ const Layout = (props) => {
         setValidEmail(false);
       }
     }
-  }, [email]);
-
-  useEffect(() => {
-    console.log(email);
   }, [email]);
 
   // debounce function
@@ -163,6 +148,7 @@ const Layout = (props) => {
     }
   };
 
+  // check if username already exists
   const findUser = (username) => {
     if (!username) return;
 
@@ -177,6 +163,7 @@ const Layout = (props) => {
     });
   };
 
+  // check if email already exists
   const findEmail = (email) => {
     if (!email) return;
 
@@ -189,12 +176,14 @@ const Layout = (props) => {
         setValidEmail(true);
       }
     });
-  }
+  };
 
+  // debounce functions
   const debounceFetchBreweries = debounce(fetchBrewerySuggestions, 1000);
   const debounceFindUser = useCallback(debounce(findUser, 1000), []);
   const debounceFindEmail = debounce(findEmail, 1000);
 
+  // user info for sign up and log in
   const signUpInfo = { username, email, password, city, state, profilePic };
   const logInInfo = { email, password };
 
@@ -207,7 +196,7 @@ const Layout = (props) => {
         <Navbar.Toggle aria-controls='basic-navbar-nav' />
         <Navbar.Collapse id='basic-navbar-nav' className='justify-content-end'>
           <Nav className='d-flex flex-row gap-3 flex-column flex-md-row align-items-end pt-3 pt-md-0 ms-auto'>
-            {props.currentComponent !== 'home' && (
+            {currentComponent !== 'home' && (
               <form className='btn-group form-inline' onSubmit={handleSearch}>
                 <AutoComplete
                   id='brewSearch'
@@ -255,8 +244,8 @@ const Layout = (props) => {
           </Nav>
         </Navbar.Collapse>
       </Navbar>
-      {props.children}
-
+      {children}
+      <ScrollTop className='p-scrolltop' />
       {/* Log In Modal */}
       <FormModalTemplate
         show={showLogIn}
