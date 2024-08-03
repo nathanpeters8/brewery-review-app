@@ -4,8 +4,10 @@ import { FormModalTemplate, ConfirmModal, ProfilePictureModal } from '@utils/mod
 import * as ApiService from '@utils/apiService';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare } from '@fortawesome/free-regular-svg-icons';
-import ReviewsTable from './reviewsTable';
-import ImagesTable from './imagesTable';
+import { faPencil, faImages } from '@fortawesome/free-solid-svg-icons';
+import ImageTemplate from './imageTemplate';
+import ReviewTemplate from './reviewTemplate';
+import { TabMenu } from 'primereact/tabmenu';
 import './account.scss';
 
 const Account = (props) => {
@@ -18,6 +20,7 @@ const Account = (props) => {
   const [userId, setUserId] = useState('');
   const [userLoggedIn, setUserLoggedIn] = useState(false);
   const [changedFields, setChangedFields] = useState([]);
+  const [activeIndex, setActiveIndex] = useState(0);
   const [userInfo, setUserInfo] = useState({
     email: '',
     username: '',
@@ -110,17 +113,39 @@ const Account = (props) => {
     });
   };
 
+  const itemRenderer = (item, index) => (
+    <a className='d-flex align-items-center gap-2 text-ochre' onClick={() => setActiveIndex(index)}>
+      <h5>{item.icon}</h5>
+      <span className='fw-bold'>{item.name}</span>
+    </a>
+  );
+
+  const items = [
+    {
+      name: 'Reviews',
+      icon: <FontAwesomeIcon icon={faPencil} />,
+      className: 'mx-3 mx-sm-5',
+      template: (item) => itemRenderer(item, 0),
+    },
+    {
+      name: 'Images',
+      icon: <FontAwesomeIcon icon={faImages} />,
+      className: 'mx-3 mx-sm-5',
+      template: (item) => itemRenderer(item, 1),
+    },
+  ];
+
   return (
     <Layout currentComponent='account' userLoggedIn={userLoggedIn} setUserLoggedIn={setUserLoggedIn}>
       <div className='container-xl bg-secondary bg-opacity-10'>
         <div className='row justify-content-center'>
           <div
-            className={`col-12 col-md-3 d-flex flex-row flex-md-column justify-content-between justify-content-md-start pt-md-5 align-items-center ${
+            className={`col-12 col-md-3 d-flex flex-column justify-content-between justify-content-md-start pt-md-5 align-items-center ${
               windowWidth >= 768 ? 'vh-100 border' : 'mt-4 border-bottom pb-4'
             }`}
           >
             <div
-              className='avatar-image col-4 col-md-9 border mb-0 mb-md-5 position-relative'
+              className='avatar-image col-4 col-md-9 border mb-5 position-relative'
               style={{
                 backgroundImage: `url(${
                   userInfo.profile_picture ? userInfo.profile_picture : 'https://placehold.co/150'
@@ -147,15 +172,46 @@ const Account = (props) => {
               </button>
             </div>
           </div>
-          <div className='col-12 col-md-9 d-flex flex-column align-items-center'>
-            <div className='col-11 col-md-9 table-responsive mt-5'>
-              <h5 className='text-center text-decoration-underline mb-3'>My Uploaded Images</h5>
-              <ImagesTable userImages={userImages} handleImageDelete={handleImageDelete} />
+          <div className='col-12 col-md-9 d-flex flex-column align-items-cente mb-4'>
+            <div className='col-11 col-md-9 mt-5 d-flex justify-content-center'>
+              <TabMenu model={items} activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)} />
             </div>
-            <div className='col-11 col-md-9 table-responsive mt-5'>
-              <h5 className='text-center text-decoration-underline mb-3'>My Reviews</h5>
-              <ReviewsTable userReviews={userReviews} handleReviewDelete={handleReviewDelete} />
-            </div>
+            {activeIndex === 0 &&
+              (userReviews.length > 0 ? (
+                userReviews.map((review, index) => (
+                  <ReviewTemplate
+                    key={index}
+                    brewery_name={review.brewery_name}
+                    content={review.content}
+                    rating={review.rating}
+                    created_at={review.created_at}
+                    id={review.id}
+                    brewery_id={review.brewery_id}
+                    handleReviewDelete={handleReviewDelete}
+                  />
+                ))
+              ) : (
+                <div className='mt-5 text-center'>
+                  <h5>No reviews yet :(</h5>
+                </div>
+              ))}
+            {activeIndex === 1 &&
+              (userImages.length > 0 ? (
+                userImages.map((image, index) => (
+                  <ImageTemplate
+                    key={index}
+                    image={image.upload}
+                    created_at={image.created_at}
+                    brewery_name={image.brewery_name}
+                    caption={image.caption}
+                    handleImageDelete={handleImageDelete}
+                  />
+                ))
+              ) : (
+                <div className='mt-5 text-center'>
+                  <h5>No images yet :(</h5>
+                </div>
+              ))}
           </div>
         </div>
       </div>

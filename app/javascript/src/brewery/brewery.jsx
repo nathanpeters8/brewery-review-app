@@ -41,7 +41,6 @@ const Brewery = (props) => {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [isFixed, setIsFixed] = useState(false);
 
-
   // Fix left column on scroll
   useEffect(() => {
     const column = document.querySelector('#leftColumn');
@@ -277,12 +276,8 @@ const Brewery = (props) => {
         caption={caption}
         handleSubmit={handleImageUpload}
       />
-  
-      <PictureFullscreenModal
-        show={showImageFullscreen}
-        toggleShow={setShowImageFullscreen}
-        image={fullScreenImage}
-      />
+
+      <PictureFullscreenModal show={showImageFullscreen} toggleShow={setShowImageFullscreen} image={fullScreenImage} />
       {(() => {
         if (selectedContent === 'review')
           return (
