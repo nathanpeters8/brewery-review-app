@@ -82,7 +82,11 @@ const Layout = ({ currentComponent, userLoggedIn, setUserLoggedIn, children }) =
     if (state) formData.append('user[state]', state);
     if (profilePic) formData.append('user[profile_picture]', profilePic);
 
-    UserSignUp(formData, (response) => {
+    UserSignUp(formData, (error, response) => {
+      if (error) {
+        alert('Error signing up. Please try again later.');
+        return;
+      }
       console.log(response);
       handleLogIn(e);
     });
@@ -91,12 +95,12 @@ const Layout = ({ currentComponent, userLoggedIn, setUserLoggedIn, children }) =
   // log in user
   const handleLogIn = (e) => {
     e.preventDefault();
-    UserLogIn(email, password, (response) => {
-      console.log(response);
-      if (!response.ok) {
+    UserLogIn(email, password, (error, response) => {
+      if (error || !response.ok) {
         alert('Invalid email or password');
         return;
       }
+      console.log(response);
       window.location.href = window.location.search;
     });
   };
@@ -104,7 +108,11 @@ const Layout = ({ currentComponent, userLoggedIn, setUserLoggedIn, children }) =
   // log out user
   const handleLogOut = (e) => {
     e.preventDefault();
-    UserSignOut((response) => {
+    UserSignOut((error, response) => {
+      if (error) {
+        alert('Error logging out. Please try again later.');
+        return;
+      }
       console.log(response);
       setUserLoggedIn(false);
       window.location.href = window.location.search;
@@ -139,7 +147,11 @@ const Layout = ({ currentComponent, userLoggedIn, setUserLoggedIn, children }) =
   // Fetch brewery suggestions
   const fetchBrewerySuggestions = () => {
     if (searchTerm) {
-      GetBreweriesForAutoComplete(searchTerm, (response) => {
+      GetBreweriesForAutoComplete(searchTerm, (error, response) => {
+        if (error) {
+          console.error('Error getting brewery suggestions:', error);
+          return;
+        }
         console.log(response);
         setBrewerySuggestions(
           [...new Set(response.map((brewery) => brewery.name))].map((brewery) => ({ label: brewery, value: brewery }))
@@ -152,7 +164,11 @@ const Layout = ({ currentComponent, userLoggedIn, setUserLoggedIn, children }) =
   const findUser = (username) => {
     if (!username) return;
 
-    GetUser(username, (response) => {
+    GetUser(username, (error, response) => {
+      if (error) {
+        console.error('Error getting user:', error);
+        return;
+      }
       if (response.success) {
         setValidUsername(false);
         alert('Username already exists');
@@ -167,7 +183,11 @@ const Layout = ({ currentComponent, userLoggedIn, setUserLoggedIn, children }) =
   const findEmail = (email) => {
     if (!email) return;
 
-    GetEmail(encodeURIComponent(email), (response) => {
+    GetEmail(encodeURIComponent(email), (error, response) => {
+      if (error) {
+        console.error('Error getting email:', error);
+        return;
+      }
       if (response.success) {
         setValidEmail(false);
         alert('Email already exists');

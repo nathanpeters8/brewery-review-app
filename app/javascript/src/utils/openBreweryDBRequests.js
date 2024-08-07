@@ -18,9 +18,14 @@ export const GetBreweries = (query, page, per_page, callback) => {
     fetch(`https://api.openbrewerydb.org/v1/breweries/meta?${params}&page=${page}&per_page=${per_page}`).then(
       handleErrors
     ),
-  ]).then(([breweriesResponse, metadataResponse]) => {
-    return callback({ breweries: breweriesResponse, metadata: metadataResponse });
-  });
+  ])
+    .then(([breweriesResponse, metadataResponse]) => {
+      return callback(null, { breweries: breweriesResponse, metadata: metadataResponse });
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+      return callback(error.message);
+    });
 };
 
 // get request to search for a brewery by id
@@ -28,7 +33,11 @@ export const GetBreweriesById = (id, callback) => {
   fetch(`https://api.openbrewerydb.org/v1/breweries/${id}`)
     .then(handleErrors)
     .then((response) => {
-      return callback(response);
+      return callback(null, response);
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+      return callback(error.message);
     });
 };
 
@@ -41,9 +50,14 @@ export const GetBreweriesBySearchTerm = (search, page, per_page, callback) => {
     fetch(
       `https://api.openbrewerydb.org/v1/breweries/meta?by_name=${search.query}&page=${page}&per_page=${per_page}`
     ).then(handleErrors),
-  ]).then(([breweriesResponse, metadataResponse]) => {
-    return callback({ breweries: breweriesResponse, metadata: metadataResponse });
-  });
+  ])
+    .then(([breweriesResponse, metadataResponse]) => {
+      return callback(null, { breweries: breweriesResponse, metadata: metadataResponse });
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+      return callback(error.message);
+    });
 };
 
 // get request to get breweries for autocomplete
@@ -51,7 +65,11 @@ export const GetBreweriesForAutoComplete = (query, callback) => {
   fetch(`https://api.openbrewerydb.org/v1/breweries/autocomplete?query=${query}`)
     .then(handleErrors)
     .then((response) => {
-      return callback(response);
+      return callback(null, response);
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+      return callback(error.message);
     });
 };
 
@@ -75,6 +93,10 @@ export const GetRandomBreweries = (size, city, state, callback) => {
         }
       }
 
-      return callback(randomBreweries);
+      return callback(null, randomBreweries);
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+      return callback(error.message);
     });
 };

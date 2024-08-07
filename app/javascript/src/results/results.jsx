@@ -28,7 +28,10 @@ const Results = ({ queryParams }) => {
 
   // check user authentication, on page load
   useEffect(() => {
-    Authenticate((response) => {
+    Authenticate((error, response) => {
+      if (error) {
+        alert('Error authenticating user. Please try again later.');
+      }
       if (response.authenticated) {
         setUserLoggedIn(true);
       }
@@ -46,18 +49,26 @@ const Results = ({ queryParams }) => {
     if (query) {
       setBreweryRatings([]);
       if (query.hasOwnProperty('query')) {
-        GetBreweriesBySearchTerm(query, currentPage, itemsPerPage, (response) => {
-          console.log(response);
-          setResults(response.breweries);
-          setTotal(parseInt(response.metadata.total));
-          setLoading(false);
+        GetBreweriesBySearchTerm(query, currentPage, itemsPerPage, (error, response) => {
+          if (error) {
+            alert(error + ' Please try again later.');
+          } else {
+            console.log(response);
+            setResults(response.breweries);
+            setTotal(parseInt(response.metadata.total));
+            setLoading(false);
+          }
         });
       } else {
-        GetBreweries(query, currentPage, itemsPerPage, (response) => {
-          console.log(response);
-          setResults(response.breweries);
-          setTotal(parseInt(response.metadata.total));
-          setLoading(false);
+        GetBreweries(query, currentPage, itemsPerPage, (error, response) => {
+          if (error) {
+            alert(error + ' Please try again later.');
+          } else {
+            console.log(response);
+            setResults(response.breweries);
+            setTotal(parseInt(response.metadata.total));
+            setLoading(false);
+          }
         });
       }
     }

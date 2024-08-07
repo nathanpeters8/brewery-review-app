@@ -39,13 +39,35 @@ const Account = (props) => {
 
   // check user authentication and get user profile, reviews and images
   useEffect(() => {
-    ApiService.Authenticate((response) => {
+    ApiService.Authenticate((error, response) => {
+      if (error) {
+        alert('Error authenticating user. Please try again later.');
+        window.location.href = '/';
+      }
       if (response.authenticated) {
         setUserId(response.id);
         setUserLoggedIn(true);
-        ApiService.GetProfile(response.id, (profile) => setUserInfo({ ...profile, password: '' }));
-        ApiService.GetReviewsByUser(response.id, (reviews) => setUserReviews(reviews));
-        ApiService.GetImagesByUser(response.id, (images) => setUserImages(images));
+        ApiService.GetProfile(response.id, (error, profile) => {
+          if (error) {
+            alert('Error getting user profile. Please try again later.');
+          } else {
+            setUserInfo({ ...profile, password: '' });
+          }
+        });
+        ApiService.GetReviewsByUser(response.id, (error, reviews) => {
+          if (error) {
+            alert('Error getting reviews. Please try again later.');
+          } else {
+            setUserReviews(reviews);
+          }
+        });
+        ApiService.GetImagesByUser(response.id, (images) => {
+          if (error) {
+            alert('Error getting reviews. Please try again later.');
+          } else {
+            setUserImages(images);
+          }
+        });
       } else {
         window.location.href = '/';
       }
@@ -76,7 +98,11 @@ const Account = (props) => {
     }
 
     // send updated info to API
-    ApiService.EditProfile(formData, userId, (response) => {
+    ApiService.EditProfile(formData, userId, (error, response) => {
+      if (error) {
+        alert('Error updating profile. Please try again later.');
+        return;
+      }
       console.log(response);
       setShowEditModal(false);
       setShowProfilePicModal(false);
@@ -87,7 +113,11 @@ const Account = (props) => {
   // handle review deletion
   const handleReviewDelete = (e, reviewId) => {
     e.preventDefault();
-    ApiService.DeleteReview(reviewId, (response) => {
+    ApiService.DeleteReview(reviewId, (error, response) => {
+      if (error) {
+        alert('Error deleting review. Please try again later.');
+        return;
+      }
       console.log(response);
       window.location.reload();
     });
@@ -96,7 +126,11 @@ const Account = (props) => {
   // handle image deletion
   const handleImageDelete = (e, imageId) => {
     e.preventDefault();
-    ApiService.DeleteImage(imageId, (response) => {
+    ApiService.DeleteImage(imageId, (error, response) => {
+      if (error) {
+        alert('Error deleting image. Please try again later.');
+        return;
+      }
       console.log(response);
       window.location.reload();
     });
@@ -105,8 +139,16 @@ const Account = (props) => {
   // handle user deletion
   const handleUserDelete = (e) => {
     e.preventDefault();
-    ApiService.UserSignOut((response) => {
-      ApiService.DeleteUser(userId, (r) => {
+    ApiService.UserSignOut((error, response) => {
+      if (error) {
+        alert('Error logging out. Please try again later.');
+        return;
+      }
+      ApiService.DeleteUser(userId, (e, r) => {
+        if (e) {
+          alert('Error deleting user. Please try again later.');
+          return;
+        }
         console.log(r);
         window.location.href = '/';
       });

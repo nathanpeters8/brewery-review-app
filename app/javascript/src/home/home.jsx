@@ -29,7 +29,11 @@ const Home = (props) => {
 
   // check if user is logged in
   useEffect(() => {
-    Authenticate((response) => {
+    Authenticate((error, response) => {
+      if (error) {
+        alert('Error authenticating user. Please try again later.');
+        setUserLoggedIn(false);
+      }
       if (response.authenticated) {
         setUserLoggedIn(true);
         setUserInfo({ username: response.username, city: response.city, state: response.state });
@@ -56,7 +60,13 @@ const Home = (props) => {
       setCitiesLoading(true);
 
       // Get city suggestions based on input value
-      GetCitySuggestions(value, state, (response) => {
+      GetCitySuggestions(value, state, (error, response) => {
+        if (error) {
+          alert('Error fetching city suggestions. Please try again later.');
+          setCitiesLoading(false);
+          return;
+        }
+
         const cityArray = response.map((city) => ({
           label: city.name,
           value: city.name,
@@ -115,11 +125,15 @@ const Home = (props) => {
   // Fetch brewery suggestions
   const fetchBrewerySuggestions = () => {
     if (name) {
-      GetBreweriesForAutoComplete(name, (response) => {
-        console.log(response);
-        setBrewerySuggestions(
-          [...new Set(response.map((brewery) => brewery.name))].map((brewery) => ({ label: brewery, value: brewery }))
-        );
+      GetBreweriesForAutoComplete(name, (error, response) => {
+        if (error) {
+          alert('Error fetching brewery suggestions. Please try again later.');
+        } else {
+          console.log(response);
+          setBrewerySuggestions(
+            [...new Set(response.map((brewery) => brewery.name))].map((brewery) => ({ label: brewery, value: brewery }))
+          );
+        }
       });
     }
   };
@@ -160,8 +174,12 @@ const Home = (props) => {
   // Get random breweries based on user's city and state
   useEffect(() => {
     if (userInfo.city && userInfo.state) {
-      GetRandomBreweries(6, userInfo.city, userInfo.state, (response) => {
-        setRandomBreweries(response);
+      GetRandomBreweries(6, userInfo.city, userInfo.state, (error, response) => {
+        if (error) {
+          alert('Error fetching random breweries');
+        } else {
+          setRandomBreweries(response);
+        }
       });
     }
   }, [userInfo]);

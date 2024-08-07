@@ -11,7 +11,7 @@ module Api
       if @image.save
         render 'api/images/create', status: :created
       else
-        render json: {success: false}, status: :bad_request
+        render json: { success: false, errors: @image.errors.full_messages }, status: :unprocessable_entity
       end
     end
 
@@ -45,7 +45,7 @@ module Api
       if @image.destroy
         render json: {success: true}, status: :ok
       else
-        render json: {success: false}, status: :bad_request
+        render json: {success: false, errors: @review.errors.full_messages}, status: :bad_request
       end
     end
     

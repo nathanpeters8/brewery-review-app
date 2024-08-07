@@ -67,9 +67,13 @@ const Brewery = (props) => {
 
   // Get current user
   useEffect(() => {
-    ApiService.Authenticate((response) => {
-      setCurrentUser(response.username);
-      setUserLoggedIn(true);
+    ApiService.Authenticate((error, response) => {
+      if (error) {
+        alert('Error fetching user data. Please try again later.');
+      } else {
+        setCurrentUser(response.username);
+        setUserLoggedIn(true);
+      }
     });
   }, []);
 
@@ -81,15 +85,19 @@ const Brewery = (props) => {
   // Fetch brewery data when id changes
   useEffect(() => {
     if (id) {
-      GetBreweriesById(id, (response) => {
-        setBrewery(response);
-        setLoading(false);
-        ApiService.GetReviewsByBrewery(id, (reviews) => {
-          setBreweryReviews(reviews);
-        });
-        ApiService.GetImagesByBrewery(id, (images) => {
-          setBreweryImages(images);
-        });
+      GetBreweriesById(id, (error, response) => {
+        if (error) {
+          alert('Error fetching brewery data. Please try again later.');
+        } else {
+          setBrewery(response);
+          setLoading(false);
+          ApiService.GetReviewsByBrewery(id, (reviews) => {
+            setBreweryReviews(reviews);
+          });
+          ApiService.GetImagesByBrewery(id, (images) => {
+            setBreweryImages(images);
+          });
+        }
       });
     }
   }, [id]);
@@ -98,9 +106,14 @@ const Brewery = (props) => {
   useEffect(() => {
     if (Object.keys(brewery).length > 0) {
       console.log('social media search for ' + brewery.name);
-      // ApiService.SocialMediaSearch(brewery.name, (response) => {
-      //   console.log(response);
-      //   getSocialLinks(response.items);
+      // ApiService.SocialMediaSearch(brewery.name, (error, response) => {
+      //   if (error) {
+      //     alert('Error fetching social media links. Please try again later.');
+      //   }
+      //   else {
+      //     console.log(response);
+      //     getSocialLinks(response.items);
+      //  }
       // });
     }
   }, [brewery]);
@@ -118,7 +131,11 @@ const Brewery = (props) => {
       formData.append('image[brewery_id]', id);
       formData.append('image[brewery_name]', brewery.name);
 
-      ApiService.UploadImage(formData, (response) => {
+      ApiService.UploadImage(formData, (error, response) => {
+        if (error) {
+          alert('Image must be less than 5MB and a valid image file type');
+          return;
+        }
         console.log(response);
         setImage(null);
         setShowImageModal(false);
@@ -140,7 +157,11 @@ const Brewery = (props) => {
       formData.append('review[brewery_id]', id);
       formData.append('review[brewery_name]', brewery.name);
 
-      ApiService.SubmitReview(formData, (response) => {
+      ApiService.SubmitReview(formData, (error, response) => {
+        if (error) {
+          alert('Review must be between 5 and 500 characters');
+          return;
+        }
         console.log(response);
         setRating(0);
         setReview('');
@@ -166,7 +187,11 @@ const Brewery = (props) => {
 
   // Handle review deletion
   const handleReviewDelete = () => {
-    ApiService.DeleteReview(selectedContentID, (response) => {
+    ApiService.DeleteReview(selectedContentID, (error, response) => {
+      if (error) {
+        alert(error + '. Please try again later.');
+        return;
+      }
       console.log(response);
       setShowConfirmModal(false);
       setSelectedContent(null);
@@ -177,7 +202,11 @@ const Brewery = (props) => {
 
   // Handle image deletion
   const handleImageDelete = () => {
-    ApiService.DeleteImage(selectedContentID, (response) => {
+    ApiService.DeleteImage(selectedContentID, (error, response) => {
+      if (error) {
+        alert(error + '. Please try again later.');
+        return;
+      }
       console.log(response);
       setShowConfirmModal(false);
       setSelectedContent(null);
