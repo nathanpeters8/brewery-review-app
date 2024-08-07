@@ -2,7 +2,6 @@ import React from 'react';
 import { Carousel } from 'primereact/carousel';
 
 const BreweryCarousel = ({ breweries, setClickedBrewery, setShowMapModal }) => {
-  
   // handle opening map modal
   const handleOpenMap = (brewery) => {
     setClickedBrewery(brewery);
@@ -56,14 +55,15 @@ const BreweryCarousel = ({ breweries, setClickedBrewery, setShowMapModal }) => {
   const formatPhoneNumber = (num) => `(${num.slice(0, 3)}) ${num.slice(3, 6)}-${num.slice(6)}`;
 
   return (
-    <div className='card bg-secondary bg-opacity-10'>
+    <div className='card bg-secondary bg-opacity-10 w-100'>
       <Carousel
         value={breweries}
-        numVisible={3}
+        numVisible={breweries.length > 2 ? 3 : breweries.length}
         numScroll={1}
         itemTemplate={itemTemplate}
         responsiveOptions={responsiveOptions}
-        autoplayInterval={3000}
+        autoplayInterval={breweries.length > 2 ? 3000 : null}
+        showNavigators={breweries.length > 2 ? true : false}
         circular
       />
     </div>

@@ -53,7 +53,6 @@ const Results = ({ queryParams }) => {
           if (error) {
             alert(error + ' Please try again later.');
           } else {
-            console.log(response);
             setResults(response.breweries);
             setTotal(parseInt(response.metadata.total));
             setLoading(false);
@@ -64,7 +63,6 @@ const Results = ({ queryParams }) => {
           if (error) {
             alert(error + ' Please try again later.');
           } else {
-            console.log(response);
             setResults(response.breweries);
             setTotal(parseInt(response.metadata.total));
             setLoading(false);

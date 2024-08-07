@@ -76,20 +76,30 @@ export const GetBreweriesForAutoComplete = (query, callback) => {
 // get request to get random breweries by city and state
 export const GetRandomBreweries = (size, city, state, callback) => {
   fetch(
-    `https://api.openbrewerydb.org/v1/breweries?by_type=micro&by_city=${encodeURIComponent(
-      city
-    )}&by_state=${encodeURIComponent(state)}`
+    `https://api.openbrewerydb.org/v1/breweries?&by_city=${encodeURIComponent(city)}&by_state=${encodeURIComponent(
+      state
+    )}`
   )
     .then(handleErrors)
     .then((response) => {
       const randomBreweries = [];
       const uniqueBreweries = new Set();
 
+      // Check if the response length is less than the requested size
+      if (response.length < size) {
+        return callback(null, response);
+      }
+
       while (uniqueBreweries.size < size) {
         const randomBrewery = response[Math.floor(Math.random() * response.length)];
-        if (randomBrewery.street && randomBrewery.phone && !uniqueBreweries.has(randomBrewery)) {
+        if (!uniqueBreweries.has(randomBrewery)) {
           uniqueBreweries.add(randomBrewery);
           randomBreweries.push(randomBrewery);
+        }
+
+        // Break out of the loop if it's not possible to get the required number of unique breweries
+        if (uniqueBreweries.size + (response.length - uniqueBreweries.size) < size) {
+          break;
         }
       }
 

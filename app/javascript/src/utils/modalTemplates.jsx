@@ -94,7 +94,9 @@ export const FormModalTemplate = ({
               <FloatLabel>
                 <InputText
                   id='inputUsername'
-                  className={`${isNameFocused ? (validUsername ? 'bg-success-soft' : 'bg-danger-soft') : ''}`}
+                  className={`${
+                    isNameFocused && formType === 'signup' ? (validUsername ? 'bg-success-soft' : 'bg-danger-soft') : ''
+                  }`}
                   name='username'
                   onChange={(e) => handleChange(e.target)}
                   value={username}
@@ -190,6 +192,20 @@ export const ReviewModal = ({
   setHover,
   handleSubmit,
 }) => {
+  const [charCount, setCharCount] = useState(0);
+  const [validCharCount, setValidCharCount] = useState(false);
+  const charLimits = [5, 500];
+
+  const handleReviewChange = (e) => {
+    setReview(e.target.value);
+    setCharCount(e.target.value.length);
+    if (e.target.value.length >= charLimits[0] && e.target.value.length <= charLimits[1]) {
+      setValidCharCount(true);
+    } else {
+      setValidCharCount(false);
+    }
+  };
+
   return (
     <Modal show={show} onHide={() => toggleShow(false)} centered fullscreen={'sm-down'} keyboard>
       <Modal.Header closeButton></Modal.Header>
@@ -226,27 +242,43 @@ export const ReviewModal = ({
               id='reviewInput'
               className='form-control'
               placeholder='Leave your review...'
-              onChange={(e) => setReview(e.target.value)}
+              onChange={(e) => handleReviewChange(e)}
               required
             ></textarea>
+            <h6 className={`mt-1 ${!validCharCount ? 'text-danger' : ''}`}>{charCount}</h6>
           </div>
           <div className='col-6 text-center mt-3'>
-            <button type='submit' className='btn btn-outline-primary text-ochre border-0'>
+            <button
+              type='submit'
+              className={`btn btn-outline-secondary text-ochre border-0 ${
+                !validCharCount || !rating ? 'disabled' : ''
+              }`}
+            >
               Submit
             </button>
           </div>
         </form>
       </Modal.Body>
-      <Modal.Footer className='text-center'>
-        {/* <Button variant='outline-primary' className='text-ochre border-0'>
-          Submit
-        </Button> */}
-      </Modal.Footer>
+      <Modal.Footer className='text-center'></Modal.Footer>
     </Modal>
   );
 };
 
 export const ImageModal = ({ show, toggleShow, setImage, image, setCaption, caption, handleSubmit }) => {
+  const [charCount, setCharCount] = useState(0);
+  const [validCharCount, setValidCharCount] = useState(true);
+  const charLimit = 100;
+
+  const handleCaptionChange = (e) => {
+    setCaption(e.target.value);
+    setCharCount(e.target.value.length);
+    if (e.target.value.length <= charLimit) {
+      setValidCharCount(true);
+    } else {
+      setValidCharCount(false);
+    }
+  };
+
   return (
     <Modal show={show} onHide={() => toggleShow(false)} centered fullscreen={'sm-down'} keyboard>
       <Modal.Header closeButton>Upload an Image</Modal.Header>
@@ -263,17 +295,21 @@ export const ImageModal = ({ show, toggleShow, setImage, image, setCaption, capt
               required
             />
           </div>
-          <div className='col-10'>
+          <div className='col-10 mt-3'>
             <textarea
               name='caption'
               id='captionInput'
               className='form-control'
-              placeholder='Leave your caption...'
-              onChange={(e) => setCaption(e.target.value)}
+              placeholder='Leave a caption (optional)'
+              onChange={(e) => handleCaptionChange(e)}
             ></textarea>
+            {charCount > 0 && <h6 className={`mt-1 ${!validCharCount ? 'text-danger' : ''}`}>{charCount}</h6>}
           </div>
           <div className='col-6 text-center mt-3'>
-            <button type='submit' className='btn btn-outline-primary text-ochre border-0'>
+            <button
+              type='submit'
+              className={`btn btn-outline-secondary text-ochre border-0 ${!validCharCount ? 'disabled' : ''}`}
+            >
               Upload
             </button>
           </div>
@@ -349,7 +385,9 @@ export const PictureFullscreenModal = ({ show, toggleShow, imageDetails }) => {
       </Modal.Body>
       <Modal.Footer className='d-flex flex-column align-items-start'>
         <p className='fs-5'>{`Posted by ${imageDetails.user}`}</p>
-        <p className='fs-6 text-secondary fst-italic'>{`Created on: ${new Date(imageDetails.created_at).toLocaleString()}`} </p>
+        <p className='fs-6 text-secondary fst-italic'>
+          {`Created on: ${new Date(imageDetails.created_at).toLocaleString()}`}{' '}
+        </p>
       </Modal.Footer>
     </Modal>
   );

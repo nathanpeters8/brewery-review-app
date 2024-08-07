@@ -110,16 +110,13 @@ const Brewery = (props) => {
   // Search for social media links when brewery changes
   useEffect(() => {
     if (Object.keys(brewery).length > 0) {
-      console.log('social media search for ' + brewery.name);
-      // ApiService.SocialMediaSearch(brewery.name, (error, response) => {
-      //   if (error) {
-      //     alert('Error fetching social media links. Please try again later.');
-      //   }
-      //   else {
-      //     console.log(response);
-      //     getSocialLinks(response.items);
-      //  }
-      // });
+      ApiService.SocialMediaSearch(brewery.name, (error, response) => {
+        if (error) {
+          alert('Error fetching social media links. Please try again later.');
+        } else {
+          getSocialLinks(response.items);
+        }
+      });
     }
   }, [brewery]);
 
@@ -141,7 +138,6 @@ const Brewery = (props) => {
           alert('Image must be less than 5MB and a valid image file type');
           return;
         }
-        console.log(response);
         setImage(null);
         setShowImageModal(false);
         window.location.reload();
@@ -167,7 +163,6 @@ const Brewery = (props) => {
           alert('Review must be between 5 and 500 characters');
           return;
         }
-        console.log(response);
         setRating(0);
         setReview('');
         setShowReviewModal(false);
@@ -197,7 +192,6 @@ const Brewery = (props) => {
         alert(error + '. Please try again later.');
         return;
       }
-      console.log(response);
       setShowConfirmModal(false);
       setSelectedContent(null);
       setSelectedContentID(null);
@@ -212,7 +206,6 @@ const Brewery = (props) => {
         alert(error + '. Please try again later.');
         return;
       }
-      console.log(response);
       setShowConfirmModal(false);
       setSelectedContent(null);
       setSelectedContentID(null);
@@ -313,7 +306,11 @@ const Brewery = (props) => {
         handleSubmit={handleImageUpload}
       />
 
-      <PictureFullscreenModal show={showImageFullscreen} toggleShow={setShowImageFullscreen} imageDetails={fullScreenImageDetails} />
+      <PictureFullscreenModal
+        show={showImageFullscreen}
+        toggleShow={setShowImageFullscreen}
+        imageDetails={fullScreenImageDetails}
+      />
 
       {(() => {
         if (selectedContent === 'review')

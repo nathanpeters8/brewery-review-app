@@ -112,7 +112,7 @@ export const GetReviewsByBrewery = (breweryId, callback) => {
   )
     .then(handleErrors)
     .then((response) => {
-      // console.log('Reviews:', response);
+      console.log('Reviews:', response);
       return callback(response.reviews);
     });
 };
@@ -246,7 +246,6 @@ export const GetProfile = (userId, callback) => {
 
 // patch request to update user profile
 export const EditProfile = (formData, userId, callback) => {
-  // console.log('Sending update with info:', info);
   fetch(
     `/api/users/${userId}`,
     safeCredentialsForm({
@@ -295,7 +294,7 @@ export const GetUser = (username, callback) => {
     .then(handleErrors)
     .then((response) => {
       console.log('Username found:', response);
-      return callback(response);
+      return callback(null, response);
     })
     .catch((error) => {
       console.error('Error getting user:', error);
@@ -340,7 +339,6 @@ export const GetCitySuggestions = (query, state, callback) => {
   )
     .then(handleErrors)
     .then((response) => {
-      // console.log(response);
       return callback(null, response);
     })
     .catch((error) => {

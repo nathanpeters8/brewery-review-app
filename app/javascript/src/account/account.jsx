@@ -103,7 +103,6 @@ const Account = (props) => {
         alert('Error updating profile. Please try again later.');
         return;
       }
-      console.log(response);
       setShowEditModal(false);
       setShowProfilePicModal(false);
       window.location.reload();
@@ -118,7 +117,6 @@ const Account = (props) => {
         alert('Error deleting review. Please try again later.');
         return;
       }
-      console.log(response);
       window.location.reload();
     });
   };
@@ -131,7 +129,6 @@ const Account = (props) => {
         alert('Error deleting image. Please try again later.');
         return;
       }
-      console.log(response);
       window.location.reload();
     });
   };
@@ -149,7 +146,6 @@ const Account = (props) => {
           alert('Error deleting user. Please try again later.');
           return;
         }
-        console.log(r);
         window.location.href = '/';
       });
     });
@@ -198,7 +194,7 @@ const Account = (props) => {
             ></div>
             <div className='d-flex flex-column align-items-center gap-2 mb-3 mb-md-5'>
               <h4 className='text-center'>{userInfo.username}</h4>
-              <h6 className='text-center'>{`${userInfo.city}, ${userInfo.state}`}</h6>
+              <h6 className='text-center'>{`${userInfo.city.trim()}, ${userInfo.state.trim()}`}</h6>
               <div className='d-flex flex-row gap-2'>
                 <Button
                   icon={<FontAwesomeIcon icon={faPencil} />}

@@ -129,7 +129,6 @@ const Home = (props) => {
         if (error) {
           alert('Error fetching brewery suggestions. Please try again later.');
         } else {
-          console.log(response);
           setBrewerySuggestions(
             [...new Set(response.map((brewery) => brewery.name))].map((brewery) => ({ label: brewery, value: brewery }))
           );
@@ -177,7 +176,7 @@ const Home = (props) => {
       GetRandomBreweries(6, userInfo.city, userInfo.state, (error, response) => {
         if (error) {
           console.log('Error fetching random breweries');
-          setRandomBreweries([]); 
+          setRandomBreweries([]);
         } else {
           setRandomBreweries(response);
         }
@@ -276,7 +275,7 @@ const Home = (props) => {
           </div>
         </form>
         <hr />
-        {(userLoggedIn && randomBreweries.length > 0) && (
+        {userLoggedIn && randomBreweries.length > 0 && (
           <div className='row my-5 justify-content-center'>
             <div className='col-3 col-sm-4 col-lg-6 mt-3'>
               <h4 className='text-center text-ochre mb-3'>

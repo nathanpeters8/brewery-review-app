@@ -87,7 +87,6 @@ const Layout = ({ currentComponent, userLoggedIn, setUserLoggedIn, children }) =
         alert('Error signing up. Please try again later.');
         return;
       }
-      console.log(response);
       handleLogIn(e);
     });
   };
@@ -100,7 +99,6 @@ const Layout = ({ currentComponent, userLoggedIn, setUserLoggedIn, children }) =
         alert('Invalid email or password');
         return;
       }
-      console.log(response);
       window.location.href = window.location.search;
     });
   };
@@ -113,7 +111,6 @@ const Layout = ({ currentComponent, userLoggedIn, setUserLoggedIn, children }) =
         alert('Error logging out. Please try again later.');
         return;
       }
-      console.log(response);
       setUserLoggedIn(false);
       window.location.href = window.location.search;
     });
@@ -152,7 +149,6 @@ const Layout = ({ currentComponent, userLoggedIn, setUserLoggedIn, children }) =
           console.error('Error getting brewery suggestions:', error);
           return;
         }
-        console.log(response);
         setBrewerySuggestions(
           [...new Set(response.map((brewery) => brewery.name))].map((brewery) => ({ label: brewery, value: brewery }))
         );
@@ -164,7 +160,7 @@ const Layout = ({ currentComponent, userLoggedIn, setUserLoggedIn, children }) =
   const findUser = (username) => {
     if (!username) return;
 
-    GetUser(username, (error, response) => {
+    GetUser(encodeURIComponent(username), (error, response) => {
       if (error) {
         console.error('Error getting user:', error);
         return;
