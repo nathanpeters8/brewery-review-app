@@ -11,7 +11,11 @@ export const Authenticate = (callback) => {
     .then(handleErrors)
     .then((response) => {
       console.log('Authenticated:', response.authenticated);
-      return callback(response);
+      return callback(null, response);
+    })
+    .catch((error) => {
+      console.error('Error authenticating user:', error);
+      return callback(error.message);
     });
 };
 
@@ -27,7 +31,11 @@ export const UserSignUp = (formData, callback) => {
     .then(handleErrors)
     .then((response) => {
       console.log('Sign up:', response);
-      return callback(response);
+      return callback(null, response);
+    })
+    .catch((error) => {
+      console.error('Error signing in user:', error);
+      return callback(error.message);
     });
 };
 
@@ -44,10 +52,15 @@ export const UserLogIn = (email, password, callback) => {
         },
       }),
     })
-  ).then((response) => {
-    console.log('Log in:', response);
-    return callback(response);
-  });
+  )
+    .then((response) => {
+      console.log('Log in:', response);
+      return callback(null, response);
+    })
+    .catch((error) => {
+      console.error('Error logging in user:', error);
+      return callback(error.message);
+    });
 };
 
 // delete request to sign out a user
@@ -61,7 +74,11 @@ export const UserSignOut = (callback) => {
     .then(handleErrors)
     .then((response) => {
       console.log('User signed out:', response);
-      return callback(response);
+      return callback(null, response);
+    })
+    .catch((error) => {
+      console.error('Error signing out user:', error);
+      return callback(error.message);
     });
 };
 
@@ -77,7 +94,11 @@ export const SubmitReview = (formData, callback) => {
     .then(handleErrors)
     .then((response) => {
       console.log('Review submitted:', response);
-      return callback(response);
+      return callback(null, response);
+    })
+    .catch((error) => {
+      console.error('Error submitting review:', error);
+      return callback(error.message);
     });
 };
 
@@ -91,7 +112,7 @@ export const GetReviewsByBrewery = (breweryId, callback) => {
   )
     .then(handleErrors)
     .then((response) => {
-      // console.log('Reviews:', response);
+      console.log('Reviews:', response);
       return callback(response.reviews);
     });
 };
@@ -108,7 +129,11 @@ export const UploadImage = (formData, callback) => {
     .then(handleErrors)
     .then((response) => {
       console.log('Image uploaded:', response);
-      return callback(response);
+      return callback(null, response);
+    })
+    .catch((error) => {
+      console.error('Error uploading image:', error);
+      return callback(error.message);
     });
 };
 
@@ -136,10 +161,11 @@ export const GetReviewsByUser = (userId, callback) => {
   )
     .then(handleErrors)
     .then((response) => {
-      return callback(response.reviews);
+      return callback(null, response.reviews);
     })
     .catch((error) => {
-      console.error('Error:', error);
+      console.error('Error getting reviews:', error);
+      return callback(error.message);
     });
 };
 
@@ -156,7 +182,8 @@ export const GetImagesByUser = (userId, callback) => {
       return callback(response.images);
     })
     .catch((error) => {
-      console.error('Error:', error);
+      console.error('Error getting images:', error);
+      return callback(error.message);
     });
 };
 
@@ -171,7 +198,11 @@ export const DeleteReview = (reviewId, callback) => {
     .then(handleErrors)
     .then((response) => {
       console.log('Review deleted:', response);
-      return callback(response);
+      return callback(null, response);
+    })
+    .catch((error) => {
+      console.error('Error deleting review:', error);
+      return callback(error.message);
     });
 };
 
@@ -186,7 +217,11 @@ export const DeleteImage = (imageId, callback) => {
     .then(handleErrors)
     .then((response) => {
       console.log('Image deleted:', response);
-      return callback(response);
+      return callback(null, response);
+    })
+    .catch((error) => {
+      console.error('Error deleting image:', error);
+      return callback(error.message);
     });
 };
 
@@ -201,13 +236,16 @@ export const GetProfile = (userId, callback) => {
     .then(handleErrors)
     .then((response) => {
       console.log('Profile:', response);
-      return callback(response.user);
+      return callback(null, response.user);
+    })
+    .catch((error) => {
+      console.error('Error getting profile:', error);
+      return callback(error.message);
     });
 };
 
 // patch request to update user profile
 export const EditProfile = (formData, userId, callback) => {
-  // console.log('Sending update with info:', info);
   fetch(
     `/api/users/${userId}`,
     safeCredentialsForm({
@@ -218,7 +256,11 @@ export const EditProfile = (formData, userId, callback) => {
     .then(handleErrors)
     .then((response) => {
       console.log('Profile updated: ', response);
-      return callback(response);
+      return callback(null, response);
+    })
+    .catch((error) => {
+      console.error('Error updating profile:', error);
+      return callback(error.message);
     });
 };
 
@@ -233,7 +275,11 @@ export const DeleteUser = (userId, callback) => {
     .then(handleErrors)
     .then((response) => {
       console.log('User deleted:', response);
-      return callback(response);
+      return callback(null, response);
+    })
+    .catch((error) => {
+      console.error('Error deleting user:', error);
+      return callback(error.message);
     });
 };
 
@@ -248,7 +294,11 @@ export const GetUser = (username, callback) => {
     .then(handleErrors)
     .then((response) => {
       console.log('Username found:', response);
-      return callback(response);
+      return callback(null, response);
+    })
+    .catch((error) => {
+      console.error('Error getting user:', error);
+      return callback(error.message);
     });
 };
 
@@ -263,7 +313,11 @@ export const GetEmail = (email, callback) => {
     .then(handleErrors)
     .then((response) => {
       console.log('Email found:', response);
-      return callback(response);
+      return callback(null, response);
+    })
+    .catch((error) => {
+      console.error('Error getting email:', error);
+      return callback(error.message);
     });
 };
 
@@ -285,8 +339,11 @@ export const GetCitySuggestions = (query, state, callback) => {
   )
     .then(handleErrors)
     .then((response) => {
-      // console.log(response);
-      return callback(response);
+      return callback(null, response);
+    })
+    .catch((error) => {
+      console.error('Error getting suggestions:', error);
+      return callback(error.message);
     });
 };
 
@@ -302,6 +359,10 @@ export const SocialMediaSearch = (name, callback) => {
   )
     .then(handleErrors)
     .then((response) => {
-      return callback(response);
+      return callback(null, response);
+    })
+    .catch((error) => {
+      console.error('Error searching social media:', error);
+      return callback(error.message);
     });
 };

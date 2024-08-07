@@ -53,7 +53,8 @@ module Api
 
     # find user by username
     def find_username
-      username = params[:username]
+      encoded_username = params[:username]
+      username = CGI.unescape(encoded_username)
       @user = User.find_by(username: username)
 
       if @user

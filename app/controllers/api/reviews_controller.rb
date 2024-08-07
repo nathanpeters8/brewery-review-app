@@ -11,7 +11,7 @@ module Api
       if @review.save
         render 'api/reviews/create', status: :created
       else
-        render json: {success: false}, status: :bad_request
+        render json: { success: false, errors: @review.errors.full_messages }, status: :unprocessable_entity
       end
     end
 
@@ -45,7 +45,7 @@ module Api
       if @review.destroy
         render json: {success: true}, status: :ok
       else
-        render json: {success: false}, status: :bad_request
+        render json: {success: false, errors: @review.errors.full_messages}, status: :bad_request
       end
     end
 

@@ -23,7 +23,12 @@ const Brewery = (props) => {
   // image states
   const [image, setImage] = useState(null);
   const [caption, setCaption] = useState('');
-  const [fullScreenImage, setFullScreenImage] = useState(null);
+  const [fullScreenImageDetails, setFullScreenImageDetails] = useState({
+    image: null,
+    caption: '',
+    user: '',
+    created_at: '',
+  });
   // review states
   const [rating, setRating] = useState(0);
   const [ratingHover, setRatingHover] = useState(0);
@@ -67,9 +72,13 @@ const Brewery = (props) => {
 
   // Get current user
   useEffect(() => {
-    ApiService.Authenticate((response) => {
-      setCurrentUser(response.username);
-      setUserLoggedIn(true);
+    ApiService.Authenticate((error, response) => {
+      if (error) {
+        alert('Error fetching user data. Please try again later.');
+      } else {
+        setCurrentUser(response.username);
+        setUserLoggedIn(true);
+      }
     });
   }, []);
 
@@ -81,15 +90,19 @@ const Brewery = (props) => {
   // Fetch brewery data when id changes
   useEffect(() => {
     if (id) {
-      GetBreweriesById(id, (response) => {
-        setBrewery(response);
-        setLoading(false);
-        ApiService.GetReviewsByBrewery(id, (reviews) => {
-          setBreweryReviews(reviews);
-        });
-        ApiService.GetImagesByBrewery(id, (images) => {
-          setBreweryImages(images);
-        });
+      GetBreweriesById(id, (error, response) => {
+        if (error) {
+          alert('Error fetching brewery data. Please try again later.');
+        } else {
+          setBrewery(response);
+          setLoading(false);
+          ApiService.GetReviewsByBrewery(id, (reviews) => {
+            setBreweryReviews(reviews);
+          });
+          ApiService.GetImagesByBrewery(id, (images) => {
+            setBreweryImages(images);
+          });
+        }
       });
     }
   }, [id]);
@@ -97,11 +110,13 @@ const Brewery = (props) => {
   // Search for social media links when brewery changes
   useEffect(() => {
     if (Object.keys(brewery).length > 0) {
-      console.log('social media search for ' + brewery.name);
-      // ApiService.SocialMediaSearch(brewery.name, (response) => {
-      //   console.log(response);
-      //   getSocialLinks(response.items);
-      // });
+      ApiService.SocialMediaSearch(brewery.name, (error, response) => {
+        if (error) {
+          alert('Error fetching social media links. Please try again later.');
+        } else {
+          getSocialLinks(response.items);
+        }
+      });
     }
   }, [brewery]);
 
@@ -118,8 +133,11 @@ const Brewery = (props) => {
       formData.append('image[brewery_id]', id);
       formData.append('image[brewery_name]', brewery.name);
 
-      ApiService.UploadImage(formData, (response) => {
-        console.log(response);
+      ApiService.UploadImage(formData, (error, response) => {
+        if (error) {
+          alert('Image must be less than 5MB and a valid image file type');
+          return;
+        }
         setImage(null);
         setShowImageModal(false);
         window.location.reload();
@@ -140,8 +158,11 @@ const Brewery = (props) => {
       formData.append('review[brewery_id]', id);
       formData.append('review[brewery_name]', brewery.name);
 
-      ApiService.SubmitReview(formData, (response) => {
-        console.log(response);
+      ApiService.SubmitReview(formData, (error, response) => {
+        if (error) {
+          alert('Review must be between 5 and 500 characters');
+          return;
+        }
         setRating(0);
         setReview('');
         setShowReviewModal(false);
@@ -158,16 +179,19 @@ const Brewery = (props) => {
   };
 
   // Show image fullscreen
-  const handleShowFullscreen = (e, image) => {
+  const handleShowFullscreen = (e, imageDetails) => {
     e.preventDefault();
     setShowImageFullscreen(true);
-    setFullScreenImage(image);
+    setFullScreenImageDetails(imageDetails);
   };
 
   // Handle review deletion
   const handleReviewDelete = () => {
-    ApiService.DeleteReview(selectedContentID, (response) => {
-      console.log(response);
+    ApiService.DeleteReview(selectedContentID, (error, response) => {
+      if (error) {
+        alert(error + '. Please try again later.');
+        return;
+      }
       setShowConfirmModal(false);
       setSelectedContent(null);
       setSelectedContentID(null);
@@ -177,8 +201,11 @@ const Brewery = (props) => {
 
   // Handle image deletion
   const handleImageDelete = () => {
-    ApiService.DeleteImage(selectedContentID, (response) => {
-      console.log(response);
+    ApiService.DeleteImage(selectedContentID, (error, response) => {
+      if (error) {
+        alert(error + '. Please try again later.');
+        return;
+      }
       setShowConfirmModal(false);
       setSelectedContent(null);
       setSelectedContentID(null);
@@ -279,7 +306,11 @@ const Brewery = (props) => {
         handleSubmit={handleImageUpload}
       />
 
-      <PictureFullscreenModal show={showImageFullscreen} toggleShow={setShowImageFullscreen} image={fullScreenImage} />
+      <PictureFullscreenModal
+        show={showImageFullscreen}
+        toggleShow={setShowImageFullscreen}
+        imageDetails={fullScreenImageDetails}
+      />
 
       {(() => {
         if (selectedContent === 'review')

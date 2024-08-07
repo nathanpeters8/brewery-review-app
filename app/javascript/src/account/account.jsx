@@ -39,13 +39,35 @@ const Account = (props) => {
 
   // check user authentication and get user profile, reviews and images
   useEffect(() => {
-    ApiService.Authenticate((response) => {
+    ApiService.Authenticate((error, response) => {
+      if (error) {
+        alert('Error authenticating user. Please try again later.');
+        window.location.href = '/';
+      }
       if (response.authenticated) {
         setUserId(response.id);
         setUserLoggedIn(true);
-        ApiService.GetProfile(response.id, (profile) => setUserInfo({ ...profile, password: '' }));
-        ApiService.GetReviewsByUser(response.id, (reviews) => setUserReviews(reviews));
-        ApiService.GetImagesByUser(response.id, (images) => setUserImages(images));
+        ApiService.GetProfile(response.id, (error, profile) => {
+          if (error) {
+            alert('Error getting user profile. Please try again later.');
+          } else {
+            setUserInfo({ ...profile, password: '' });
+          }
+        });
+        ApiService.GetReviewsByUser(response.id, (error, reviews) => {
+          if (error) {
+            alert('Error getting reviews. Please try again later.');
+          } else {
+            setUserReviews(reviews);
+          }
+        });
+        ApiService.GetImagesByUser(response.id, (images) => {
+          if (error) {
+            alert('Error getting reviews. Please try again later.');
+          } else {
+            setUserImages(images);
+          }
+        });
       } else {
         window.location.href = '/';
       }
@@ -76,8 +98,11 @@ const Account = (props) => {
     }
 
     // send updated info to API
-    ApiService.EditProfile(formData, userId, (response) => {
-      console.log(response);
+    ApiService.EditProfile(formData, userId, (error, response) => {
+      if (error) {
+        alert('Error updating profile. Please try again later.');
+        return;
+      }
       setShowEditModal(false);
       setShowProfilePicModal(false);
       window.location.reload();
@@ -87,8 +112,11 @@ const Account = (props) => {
   // handle review deletion
   const handleReviewDelete = (e, reviewId) => {
     e.preventDefault();
-    ApiService.DeleteReview(reviewId, (response) => {
-      console.log(response);
+    ApiService.DeleteReview(reviewId, (error, response) => {
+      if (error) {
+        alert('Error deleting review. Please try again later.');
+        return;
+      }
       window.location.reload();
     });
   };
@@ -96,8 +124,11 @@ const Account = (props) => {
   // handle image deletion
   const handleImageDelete = (e, imageId) => {
     e.preventDefault();
-    ApiService.DeleteImage(imageId, (response) => {
-      console.log(response);
+    ApiService.DeleteImage(imageId, (error, response) => {
+      if (error) {
+        alert('Error deleting image. Please try again later.');
+        return;
+      }
       window.location.reload();
     });
   };
@@ -105,9 +136,16 @@ const Account = (props) => {
   // handle user deletion
   const handleUserDelete = (e) => {
     e.preventDefault();
-    ApiService.UserSignOut((response) => {
-      ApiService.DeleteUser(userId, (r) => {
-        console.log(r);
+    ApiService.UserSignOut((error, response) => {
+      if (error) {
+        alert('Error logging out. Please try again later.');
+        return;
+      }
+      ApiService.DeleteUser(userId, (e, r) => {
+        if (e) {
+          alert('Error deleting user. Please try again later.');
+          return;
+        }
         window.location.href = '/';
       });
     });
@@ -126,13 +164,13 @@ const Account = (props) => {
     {
       name: 'Reviews',
       icon: <FontAwesomeIcon icon={faPencil} />,
-      className: 'mx-3 mx-sm-5',
+      className: 'mx-3 mx-sm-5 mb-3 p-2 rounded ' + (activeIndex === 0 ? 'bg-secondary bg-opacity-25' : ''),
       template: (item) => itemRenderer(item, 0),
     },
     {
       name: 'Images',
       icon: <FontAwesomeIcon icon={faImages} />,
-      className: 'mx-3 mx-sm-5',
+      className: 'mx-3 mx-sm-5 mb-3 p-2 rounded ' + (activeIndex === 1 ? 'bg-secondary bg-opacity-25' : ''),
       template: (item) => itemRenderer(item, 1),
     },
   ];
@@ -156,7 +194,7 @@ const Account = (props) => {
             ></div>
             <div className='d-flex flex-column align-items-center gap-2 mb-3 mb-md-5'>
               <h4 className='text-center'>{userInfo.username}</h4>
-              <h6 className='text-center'>{`${userInfo.city}, ${userInfo.state}`}</h6>
+              <h6 className='text-center'>{`${userInfo.city.trim()}, ${userInfo.state.trim()}`}</h6>
               <div className='d-flex flex-row gap-2'>
                 <Button
                   icon={<FontAwesomeIcon icon={faPencil} />}
