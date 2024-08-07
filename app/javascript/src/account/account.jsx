@@ -168,13 +168,13 @@ const Account = (props) => {
     {
       name: 'Reviews',
       icon: <FontAwesomeIcon icon={faPencil} />,
-      className: 'mx-3 mx-sm-5',
+      className: 'mx-3 mx-sm-5 mb-3 p-2 rounded ' + (activeIndex === 0 ? 'bg-secondary bg-opacity-25' : ''),
       template: (item) => itemRenderer(item, 0),
     },
     {
       name: 'Images',
       icon: <FontAwesomeIcon icon={faImages} />,
-      className: 'mx-3 mx-sm-5',
+      className: 'mx-3 mx-sm-5 mb-3 p-2 rounded ' + (activeIndex === 1 ? 'bg-secondary bg-opacity-25' : ''),
       template: (item) => itemRenderer(item, 1),
     },
   ];

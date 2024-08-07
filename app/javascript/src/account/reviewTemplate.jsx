@@ -7,8 +7,16 @@ import { Button } from 'primereact/button';
 const ReviewTemplate = ({ index, brewery_name, content, rating, created_at, id, brewery_id, handleReviewDelete }) => {
   return (
     <div className='content-div col-11 col-md-9 mt-4 pb-3 border-bottom p-2 rounded' key={index}>
-      <h5>{brewery_name}</h5>
-      {created_at.split('T')[0]}, {created_at.split('T')[1].split('.')[0]}
+      <h5 className='fw-bold'>{brewery_name}</h5>
+      <h6 className='fst-italic'>
+        {new Date(created_at).toLocaleString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+        })}
+      </h6>
       <h6 className='mt-2'>
         {[...Array(5)].map((star, i) => {
           return (
@@ -16,7 +24,7 @@ const ReviewTemplate = ({ index, brewery_name, content, rating, created_at, id, 
           );
         })}
       </h6>
-      <p className='fst-italic mt-3'>{content}</p>
+      <p className='fst-italic mt-3'>"{content}"</p>
       <div className='buttons d-flex flex-row gap-2 mt-3 mt-sm-5'>
         <Button
           icon={<FontAwesomeIcon icon={faArrowRight} />}

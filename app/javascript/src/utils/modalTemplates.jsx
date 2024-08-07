@@ -74,7 +74,9 @@ export const FormModalTemplate = ({
             <FloatLabel>
               <InputText
                 id='inputEmail'
-                className={`${isEmailFocused && formType === 'signup' ? (validEmail ? 'bg-success-soft' : 'bg-danger-soft') : ''}`}
+                className={`${
+                  isEmailFocused && formType === 'signup' ? (validEmail ? 'bg-success-soft' : 'bg-danger-soft') : ''
+                }`}
                 name='email'
                 onChange={(e) => handleChange(e.target)}
                 value={email}
@@ -247,7 +249,7 @@ export const ReviewModal = ({
 export const ImageModal = ({ show, toggleShow, setImage, image, setCaption, caption, handleSubmit }) => {
   return (
     <Modal show={show} onHide={() => toggleShow(false)} centered fullscreen={'sm-down'} keyboard>
-      <Modal.Header closeButton></Modal.Header>
+      <Modal.Header closeButton>Upload an Image</Modal.Header>
       <Modal.Body>
         <form className='row d-flex justify-content-center' onSubmit={handleSubmit}>
           <div className='col-10'>
@@ -268,7 +270,6 @@ export const ImageModal = ({ show, toggleShow, setImage, image, setCaption, capt
               className='form-control'
               placeholder='Leave your caption...'
               onChange={(e) => setCaption(e.target.value)}
-              required
             ></textarea>
           </div>
           <div className='col-6 text-center mt-3'>
@@ -307,7 +308,9 @@ export const ConfirmModal = ({ show, toggleShow, handleDelete, header }) => {
 export const ProfilePictureModal = ({ show, toggleShow, handleChange, handleSubmit }) => {
   return (
     <Modal show={show} onHide={() => toggleShow(false)} centered fullscreen={'sm-down'} keyboard>
-      <Modal.Header closeButton></Modal.Header>
+      <Modal.Header closeButton>
+        <Modal.Title>Upload Avatar</Modal.Title>
+      </Modal.Header>
       <Modal.Body>
         <form className='row d-flex justify-content-center' onSubmit={handleSubmit}>
           <div className='col-10'>
@@ -332,14 +335,22 @@ export const ProfilePictureModal = ({ show, toggleShow, handleChange, handleSubm
   );
 };
 
-export const PictureFullscreenModal = ({ show, toggleShow, image }) => {
+export const PictureFullscreenModal = ({ show, toggleShow, imageDetails }) => {
   return (
     <Modal show={show} size='lg' onHide={() => toggleShow(false)} centered fullscreen={'sm-down'} keyboard>
-      <Modal.Header closeButton></Modal.Header>
+      <Modal.Header closeButton>
+        {imageDetails.caption !== '' && <p className='fs-5 text-secondary'>"{imageDetails.caption}"</p>}
+      </Modal.Header>
       <Modal.Body>
-        <div className='fullscreen-img figure-img border' style={{ backgroundImage: `url(${image})` }}></div>
+        <div
+          className='fullscreen-img figure-img border'
+          style={{ backgroundImage: `url(${imageDetails.image})` }}
+        ></div>
       </Modal.Body>
-      <Modal.Footer className='text-center'></Modal.Footer>
+      <Modal.Footer className='d-flex flex-column align-items-start'>
+        <p className='fs-5'>{`Posted by ${imageDetails.user}`}</p>
+        <p className='fs-6 text-secondary fst-italic'>{`Created on: ${new Date(imageDetails.created_at).toLocaleString()}`} </p>
+      </Modal.Footer>
     </Modal>
   );
 };

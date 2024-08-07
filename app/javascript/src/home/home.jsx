@@ -176,7 +176,8 @@ const Home = (props) => {
     if (userInfo.city && userInfo.state) {
       GetRandomBreweries(6, userInfo.city, userInfo.state, (error, response) => {
         if (error) {
-          alert('Error fetching random breweries');
+          console.log('Error fetching random breweries');
+          setRandomBreweries([]); 
         } else {
           setRandomBreweries(response);
         }
@@ -202,7 +203,7 @@ const Home = (props) => {
         >
           <div className='col-10 col-sm-8 text-center text-dark'>
             <label htmlFor='breweryName' className='form-label'>
-              Brewery Name!
+              Brewery Name
             </label>
             <div className='card justify-content-center'>
               <AutoComplete
@@ -275,7 +276,7 @@ const Home = (props) => {
           </div>
         </form>
         <hr />
-        {userLoggedIn && (
+        {(userLoggedIn && randomBreweries.length > 0) && (
           <div className='row my-5 justify-content-center'>
             <div className='col-3 col-sm-4 col-lg-6 mt-3'>
               <h4 className='text-center text-ochre mb-3'>

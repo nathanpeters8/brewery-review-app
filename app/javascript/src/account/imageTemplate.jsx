@@ -13,10 +13,16 @@ const ImageTemplate = ({ index, image, created_at, brewery_name, brewery_id, id,
         <div className='brewery-image rounded-3' style={{ backgroundImage: `url(${image})` }}></div>
       </div>
       <div className='col-10 d-flex flex-column justify-content-center'>
-        <h5>{brewery_name}</h5>
-        <h6>
-          {created_at.split('T')[0]}, {created_at.split('T')[1].split('.')[0]}
-        </h6>
+        <h5 className='fw-bold'>{brewery_name}</h5>
+        <p className='fs-6 fst-italic fw-light'>
+          {new Date(created_at).toLocaleString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+          })}
+        </p>
         <small className='fst-italic'>"{caption}"</small>
         <div className='buttons d-flex flex-row justify-content-center justify-content-sm-start gap-2 mt-3 mt-sm-5'>
           <Button

@@ -23,7 +23,12 @@ const Brewery = (props) => {
   // image states
   const [image, setImage] = useState(null);
   const [caption, setCaption] = useState('');
-  const [fullScreenImage, setFullScreenImage] = useState(null);
+  const [fullScreenImageDetails, setFullScreenImageDetails] = useState({
+    image: null,
+    caption: '',
+    user: '',
+    created_at: '',
+  });
   // review states
   const [rating, setRating] = useState(0);
   const [ratingHover, setRatingHover] = useState(0);
@@ -179,10 +184,10 @@ const Brewery = (props) => {
   };
 
   // Show image fullscreen
-  const handleShowFullscreen = (e, image) => {
+  const handleShowFullscreen = (e, imageDetails) => {
     e.preventDefault();
     setShowImageFullscreen(true);
-    setFullScreenImage(image);
+    setFullScreenImageDetails(imageDetails);
   };
 
   // Handle review deletion
@@ -308,7 +313,7 @@ const Brewery = (props) => {
         handleSubmit={handleImageUpload}
       />
 
-      <PictureFullscreenModal show={showImageFullscreen} toggleShow={setShowImageFullscreen} image={fullScreenImage} />
+      <PictureFullscreenModal show={showImageFullscreen} toggleShow={setShowImageFullscreen} imageDetails={fullScreenImageDetails} />
 
       {(() => {
         if (selectedContent === 'review')
