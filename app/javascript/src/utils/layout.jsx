@@ -207,7 +207,7 @@ const Layout = ({ currentComponent, userLoggedIn, setUserLoggedIn, children }) =
     <>
       <Navbar expand='md' className='sticky-top border-bottom bg-secondary bg-opacity-25 ps-2'>
         <a href='/' className='navbar-brand'>
-          <h4 className='text-ochre mb-0'>Brewery Review</h4>
+          <h4 className='text-ochre mb-0'>BreweryScout</h4>
         </a>
         <Navbar.Toggle aria-controls='basic-navbar-nav' />
         <Navbar.Collapse id='basic-navbar-nav' className='justify-content-end'>
