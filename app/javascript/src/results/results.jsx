@@ -26,6 +26,16 @@ const Results = ({ queryParams }) => {
 
   const itemsPerPage = 10;
 
+  const images = require.context('/app/assets/images/breweries', false, /\.(png|jpe?g|svg)$/);
+  const placeholderImages = images.keys().map(images);
+
+  const getRandomImage = () => {
+    let index = Math.floor(Math.random() * placeholderImages.length);
+    let randImg = placeholderImages[index];
+    placeholderImages.splice(index, 1);
+    return randImg;
+  };
+
   // check user authentication, on page load
   useEffect(() => {
     Authenticate((error, response) => {
@@ -226,7 +236,7 @@ const Results = ({ queryParams }) => {
                   ) : (
                     <div
                       className='col-6 col-sm-5 col-md-3 brewery-main-img mb-3 rounded-2'
-                      style={{ backgroundImage: `url(https://placehold.co/200)` }}
+                      style={{ backgroundImage: `url(${getRandomImage()})` }}
                       onClick={(e) => handleBreweryClick(e, brewery.id)}
                     ></div>
                   )}
