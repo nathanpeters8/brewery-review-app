@@ -191,6 +191,7 @@ export const ReviewModal = ({
   hover,
   setHover,
   handleSubmit,
+  userLoggedIn
 }) => {
   const [charCount, setCharCount] = useState(0);
   const [validCharCount, setValidCharCount] = useState(false);
@@ -205,6 +206,18 @@ export const ReviewModal = ({
       setValidCharCount(false);
     }
   };
+
+  if(!userLoggedIn) {
+    return (
+      <Modal show={show} onHide={() => toggleShow(false)} centered fullscreen={'sm-down'} keyboard>
+        <Modal.Header closeButton></Modal.Header>
+        <Modal.Body>
+          <p className='text-center'>You must be logged in to leave a review.</p>
+        </Modal.Body>
+        <Modal.Footer className='text-center'></Modal.Footer>
+      </Modal>
+    );
+  }
 
   return (
     <Modal show={show} onHide={() => toggleShow(false)} centered fullscreen={'sm-down'} keyboard>
@@ -264,7 +277,7 @@ export const ReviewModal = ({
   );
 };
 
-export const ImageModal = ({ show, toggleShow, setImage, image, setCaption, caption, handleSubmit }) => {
+export const ImageModal = ({ show, toggleShow, setImage, image, setCaption, caption, handleSubmit, userLoggedIn }) => {
   const [charCount, setCharCount] = useState(0);
   const [validCharCount, setValidCharCount] = useState(true);
   const charLimit = 100;
@@ -278,6 +291,18 @@ export const ImageModal = ({ show, toggleShow, setImage, image, setCaption, capt
       setValidCharCount(false);
     }
   };
+
+  if (!userLoggedIn) {
+    return (
+      <Modal show={show} onHide={() => toggleShow(false)} centered fullscreen={'sm-down'} keyboard>
+        <Modal.Header closeButton></Modal.Header>
+        <Modal.Body>
+          <p className='text-center'>You must be logged in to upload an image.</p>
+        </Modal.Body>
+        <Modal.Footer className='text-center'></Modal.Footer>
+      </Modal>
+    );
+  }
 
   return (
     <Modal show={show} onHide={() => toggleShow(false)} centered fullscreen={'sm-down'} keyboard>

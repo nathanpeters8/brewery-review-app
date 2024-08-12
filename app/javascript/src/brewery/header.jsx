@@ -4,7 +4,7 @@ import { faStar } from '@fortawesome/free-solid-svg-icons';
 import { faStar as faStarEmpty } from '@fortawesome/free-regular-svg-icons';
 import './brewery.scss';
 
-const Header = ({ brewery, breweryImages, breweryReviews }) => {
+const Header = ({ brewery, breweryImages, breweryReviews, placeholderImage }) => {
   // Get average rating from reviews
   const getAverageRating = () => {
     let total = 0;
@@ -26,7 +26,7 @@ const Header = ({ brewery, breweryImages, breweryReviews }) => {
       ) : (
         <div
           className='col-7 col-sm-5 col-lg-4 brewery-main-img border'
-          style={{ backgroundImage: `url(https://placehold.co/200)` }}
+          style={{ backgroundImage: `url(${placeholderImage})` }}
         ></div>
       )}
       <div className='col-md-6 d-flex flex-column text-ochre text-center text-md-start ms-0 ms-md-5 mt-3 mt-md-0 justify-content-around'>

@@ -9,6 +9,7 @@ import Header from './header';
 import Layout from '@utils/layout';
 import './brewery.scss';
 
+
 const Brewery = (props) => {
   const [loading, setLoading] = useState(true);
   const [selectedContent, setSelectedContent] = useState(null);
@@ -46,6 +47,14 @@ const Brewery = (props) => {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [isFixed, setIsFixed] = useState(false);
 
+  const [placeholderImage, setPlaceholderImage] = useState(null);
+  const images = require.context('/app/assets/images/breweries', false, /\.(png|jpe?g|svg)$/);
+
+  const getRandomImage = () => {
+    const placeholderImages = images.keys().map(images);
+    return placeholderImages[Math.floor(Math.random() * placeholderImages.length)];
+  }
+
   // Fix left column on scroll
   useEffect(() => {
     const column = document.querySelector('#leftColumn');
@@ -76,8 +85,12 @@ const Brewery = (props) => {
       if (error) {
         alert('Error fetching user data. Please try again later.');
       } else {
-        setCurrentUser(response.username);
-        setUserLoggedIn(true);
+        if (response.authenticated) {
+          setCurrentUser(response.username);
+          setUserLoggedIn(true);
+        } else {
+          setUserLoggedIn(false);
+        }
       }
     });
   }, []);
@@ -101,6 +114,9 @@ const Brewery = (props) => {
           });
           ApiService.GetImagesByBrewery(id, (images) => {
             setBreweryImages(images);
+            if (images.length === 0) {
+              setPlaceholderImage(getRandomImage());
+            }
           });
         }
       });
@@ -238,7 +254,7 @@ const Brewery = (props) => {
         <div className='row'>
           {loading && <h4 className='text-center'>Loading...</h4>}
           <div className='col-12 col-md-8 mb-2 d-flex flex-column flex-sm-row py-2 justify-content-around align-items-center align-items-sm-start'>
-            <Header brewery={brewery} breweryImages={breweryImages} breweryReviews={breweryReviews} />
+            <Header brewery={brewery} breweryImages={breweryImages} breweryReviews={breweryReviews} placeholderImage={placeholderImage} />
           </div>
           <hr />
           <div className='col-12 d-flex flex-column flex-md-row'>
@@ -294,6 +310,7 @@ const Brewery = (props) => {
         hover={ratingHover}
         setHover={setRatingHover}
         handleSubmit={handleReviewSubmit}
+        userLoggedIn={userLoggedIn}
       />
 
       <ImageModal
@@ -304,6 +321,7 @@ const Brewery = (props) => {
         setCaption={setCaption}
         caption={caption}
         handleSubmit={handleImageUpload}
+        userLoggedIn={userLoggedIn}
       />
 
       <PictureFullscreenModal
